@@ -23,7 +23,8 @@ export class globalPropertiesView extends ItemView {
     fileProperties = [];
     properties = null;
     public GLOBAL_PROPERTIES_VIEW = "glbVeID";
-    table = null;
+    private table : HTMLElement | null = null;
+
     constructor(app: App) {
         super(app);
     }
@@ -324,7 +325,7 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
         this.buildTableHeader();
         this.buildTableBody();
         this.addZoomFeature();
-        console.log("fin onOpn");
+        console.log("fin onOpen");
     }
 
 
@@ -709,10 +710,12 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
 				const isValidA = cellA && (cellA.querySelector("input") || cellA.querySelector("select")) && !isNaN(new Date(cellA.querySelector("input, select").value.trim()).getTime());
 				const isValidB = cellB && (cellB.querySelector("input") || cellB.querySelector("select")) && !isNaN(new Date(cellB.querySelector("input, select").value.trim()).getTime());
 
+
+//a reecrire.
 				// Si les deux cellules contiennent des valeurs valides, les comparer
 				if (isValidA && isValidB) {
-					const cA = new Date(cellA.querySelector("input, select").value.trim()).getTime();
-					const cB = new Date(cellB.querySelector("input, select").value.trim()).getTime();
+					const cA = new Date(cellA.querySelector("input, select").value?.trim()).getTime();
+					const cB = new Date(cellB.querySelector("input, select").value?.trim()).getTime();
 					return ascending ? cA - cB : cB - cA;
 				}
 				// Si une seule des deux cellules contient une valeur valide, la placer en premier
@@ -729,14 +732,14 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
 			});
             }else if (type == "Id"){
                 rows.sort((a, b) => {
-                    const cellA = a.getElementsByTagName("td")[columnIndex]?.textContent.trim().toLowerCase() ||"";
-                    const cellB = b.getElementsByTagName("td")[columnIndex]?.textContent.trim().toLowerCase() ||"";
+                    const cellA = a?.getElementsByTagName("td")[columnIndex]?.textContent?.trim().toLowerCase() ||"";
+                    const cellB = b?.getElementsByTagName("td")[columnIndex]?.textContent?.trim().toLowerCase() ||"";
                     return ascending ? Number(cellA) - Number(cellB) : Number(cellB) - Number(cellA);
                 });
             }else{
                 rows.sort((a, b) => {
-                const cellA = a.getElementsByTagName("td")[columnIndex]?.textContent.trim().toLowerCase() ||"";
-                const cellB = b.getElementsByTagName("td")[columnIndex]?.textContent.trim().toLowerCase() ||"";
+                const cellA = a?.getElementsByTagName("td")[columnIndex]?.textContent?.trim().toLowerCase() ||"";
+                const cellB = b?.getElementsByTagName("td")[columnIndex]?.textContent?.trim().toLowerCase() ||"";
                 return ascending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
                 });
             }
@@ -744,8 +747,9 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
        }
 
     private addZoomFeature() {
-        let scale = 1; // Échelle de zoom initiale
+        if (!this.table) return; // Vérification supplémentaire pour éviter les erreurs
 
+        let scale = 1; // Échelle de zoom initiale
         this.table.addEventListener("wheel", (event) => {
             if (!event.ctrlKey) return; // Vérifie que CTRL est enfoncé
 
@@ -758,11 +762,13 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
                 scale = Math.max(0.5, scale - zoomFactor); // Zoom arrière (limite à 50%)
             }
 
-            // Appliquer la transformation CSS
-            this.table.style.transform = `scale(${scale})`;
-            this.table.style.transformOrigin = "top center";
+            if (this.table) { // Vérification au cas où
+                this.table.style.transform = `scale(${scale})`;
+                this.table.style.transformOrigin = "top center";
+            }
         });
     }
+
 
 
     getAllValuesForProperty(property: string) {
@@ -779,7 +785,7 @@ addList(cell: HTMLElement, filepath: string, prop: string, currentValue: Array<s
     }
 
 
-    onClose() {
+async  onClose():Promise<void> {
         this.contentEl.empty();
     }
 }
