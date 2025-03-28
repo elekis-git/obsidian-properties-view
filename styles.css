@@ -1,0 +1,115 @@
+/* styles.css */
+.full-j-modal {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+}
+
+.modal-j-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-j-title {
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.scroll-j-container {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #ccc;
+  position: relative;
+  cursor: grab;
+}
+
+.scroll-j-container.dragging {
+  cursor: grabbing;
+}
+
+.properties-j-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.properties-j-table th, .properties-j-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.a-j {
+  text-decoration: underline;
+}
+
+.th-j-container {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+
+.button-j-container {
+  width: 16px; 
+  height: 16px; 
+  border-radius: 50%; 
+  background-color: deepskyblue; 
+  border: none;
+  font-size: 12px; 
+  text-align: center;
+  line-height: 16px;
+  cursor: pointer;
+}
+
+.button-j-container:hover {
+  background-color: deepskyblue; /* Bleu un peu plus foncé au survol */
+}
+
+/* Élément de filtre individuel */
+.properties-filter-elekis-divprop {
+    display: inline-flex;
+    align-items: right;
+    margin: 0px;
+}
+
+/* Bouton de suppression des filtres */
+.properties-filter-elekis-divprop-button {
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    background-color: #ffcc00; /* Jaune par exemple */
+}
+
+.filter-active {
+    background-color: #ffcc00 !important; /* Jaune par exemple */
+    color: black;
+    font-weight: bold;
+}
+
+.clear-filter-button {
+    background-color: red;
+    color: white;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.clear-filter-button:hover {
+    background-color: darkred;
+}
+
+.my-gray-input {
+    background-color: #ffffff !important;
+    color: #ffffff !important;
+    border: 1px solid #ccc !important;
+    padding: 5px !important;
+    border-radius: 4px !important;
+}
+
+.properties-add-elekis-date-button{
+    background-color: #f0f0f0 !important;
+}
+
