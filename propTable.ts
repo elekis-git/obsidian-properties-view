@@ -1,12 +1,4 @@
-import {
-	App,
-	MarkdownRenderer,
-	TFile,
-	parseYaml,
-	stringifyYaml,
-	ItemView,
-	WorkspaceLeaf
-} from "obsidian";
+import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf } from "obsidian";
 import { FilterModal } from "./FilterModal";
 
 export class GlobalPropertiesView extends ItemView {
@@ -14,12 +6,12 @@ export class GlobalPropertiesView extends ItemView {
 	properties: { name: string; type: string; filter: string[] }[] = [];
 	public static GLOBAL_PROPERTIES_VIEW = "glbVeID";
 	private table: HTMLElement | null = null;
-    private propColStart = 3;
-    private scale = 1;
+	private propColStart = 3;
+	private scale = 1;
 
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
-	}
+	}+3.
 
 	public refreshView() {
 		this.onOpen();
@@ -51,31 +43,29 @@ export class GlobalPropertiesView extends ItemView {
 
 		const list = cell.createEl("ul", { cls: "properties-list-elekis" });
 
-		cv.forEach(v => {
+		cv.forEach((v) => {
 			if (v == null) return;
 			const listItem = list.createEl("li", { cls: "properties-list-item" });
 
-            if (/^\[\[.*\]\]$/.test(v))
-            {
-                const fileName = v.replace(/^\[\[|\]\]$/g, ""); // Nettoyer [[ ]]
-                let tfile = this.app.metadataCache.getFirstLinkpathDest(fileName, "");
-                if (tfile == null){
-                     this.createHref(listItem,fileName);
-                }else
-                {
-			        this.createHref(listItem, tfile);
-                }
-            }else{
-                listItem.createEl("span", {text:v});
-            }
+			if (/^\[\[.*\]\]$/.test(v)) {
+				const fileName = v.replace(/^\[\[|\]\]$/g, ""); // Nettoyer [[ ]]
+				let tfile = this.app.metadataCache.getFirstLinkpathDest(fileName, "");
+				if (tfile == null) {
+					this.createHref(listItem, fileName);
+				} else {
+					this.createHref(listItem, tfile);
+				}
+			} else {
+				listItem.createEl("span", { text: v });
+			}
 
 			const delbutton = listItem.createEl("button", {
-				text: '-',
-				cls: 'properties-del-elekis-divprop-button',
-				attr: { "filepath": filepath, "prop": prop, "value": v }
+				text: "-",
+				cls: "properties-del-elekis-divprop-button",
+				attr: { filepath: filepath, prop: prop, value: v }
 			});
 
-			delbutton.addEventListener('click', async (event) => {
+			delbutton.addEventListener("click", async (event) => {
 				event.preventDefault();
 				event.stopPropagation();
 				const filep = delbutton.getAttribute("filepath")!;
@@ -88,7 +78,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		cell.appendChild(list);
 
-		cell.addEventListener('click', () => {
+		cell.addEventListener("click", () => {
 			if (cell.querySelector("textarea")) return;
 			let markdownText = cv.join("\n");
 			cell.empty();
@@ -98,7 +88,10 @@ export class GlobalPropertiesView extends ItemView {
 			});
 			textarea.focus();
 			textarea.addEventListener("blur", async () => {
-				const newValue = textarea.value.trim().split("\n").filter(v => v !== "");
+				const newValue = textarea.value
+					.trim()
+					.split("\n")
+					.filter((v) => v !== "");
 				cell.empty();
 				await this.updateYamlProperty(filepath, prop, newValue, "update");
 				this.addList(cell, filepath, prop, newValue);
@@ -152,56 +145,54 @@ export class GlobalPropertiesView extends ItemView {
 		await this.app.vault.modify(fileOrAbstract, fileContent);
 	}
 
-    addBoolean(cell: HTMLElement, filepath: string, prop: string, currentValue: boolean | null) {
-        //console.log("addBooleanButton", filepath, prop, currentValue);
-        cell.empty();
-        
-        const createCheckbox = (value: boolean | null) => {
-            cell.empty();
-            const checkbox = cell.createEl("input", { type: "checkbox" });
-            // Maintenant vous pouvez définir la propriété `checked` séparément
-            checkbox.checked = value ?? false; 
-            checkbox.setAttribute("filepath", filepath);
-            checkbox.setAttribute("prop", prop);
+	addBoolean(cell: HTMLElement, filepath: string, prop: string, currentValue: boolean | null) {
+		//console.log("addBooleanButton", filepath, prop, currentValue);
+		cell.empty();
 
-            checkbox.addEventListener("change", async () => {
-                const newValue = checkbox.checked; // true ou false selon l'état du checkbox
-                const filep = checkbox.getAttribute("filepath")!;
-                const propp = checkbox.getAttribute("prop")!;
-                await this.updateYamlProperty(filep, propp, newValue, "update");
-            });
+		const createCheckbox = (value: boolean | null) => {
+			cell.empty();
+			const checkbox = cell.createEl("input", { type: "checkbox" });
+			// Maintenant vous pouvez définir la propriété `checked` séparément
+			checkbox.checked = value ?? false;
+			checkbox.setAttribute("filepath", filepath);
+			checkbox.setAttribute("prop", prop);
 
-            checkbox.addEventListener("blur", () => {
-                // Aucune action spécifique au blur, mais c'est là au cas où
-            });
+			checkbox.addEventListener("change", async () => {
+				const newValue = checkbox.checked; // true ou false selon l'état du checkbox
+				const filep = checkbox.getAttribute("filepath")!;
+				const propp = checkbox.getAttribute("prop")!;
+				await this.updateYamlProperty(filep, propp, newValue, "update");
+			});
 
-            checkbox.focus();
-        };
+			checkbox.addEventListener("blur", () => {
+				// Aucune action spécifique au blur, mais c'est là au cas où
+			});
 
-    if (currentValue == null) {
-        // Si la valeur actuelle est null ou undefined, on attend un clic pour créer le checkbox
-        cell.empty();
-        cell.addEventListener("click", () => createCheckbox(null), { once: true });
-    } else {
-        createCheckbox(currentValue); // Crée la checkbox avec la valeur actuelle
-    }
-}
+			checkbox.focus();
+		};
 
-
+		if (currentValue == null) {
+			// Si la valeur actuelle est null ou undefined, on attend un clic pour créer le checkbox
+			cell.empty();
+			cell.addEventListener("click", () => createCheckbox(null), { once: true });
+		} else {
+			createCheckbox(currentValue); // Crée la checkbox avec la valeur actuelle
+		}
+	}
 
 	addText(cell: HTMLElement, path: string, prop: string, v2: string) {
 		let value = v2 != null ? String(v2) : "";
-		const displayDiv = cell.createEl('div', { cls: 'markdown-preview' });
+		const displayDiv = cell.createEl("div", { cls: "markdown-preview" });
 
 		const renderMarkdown = () => {
 			displayDiv.empty();
 			// Utilisation de "this" (la vue qui est un Component) au lieu de this.app
 			MarkdownRenderer.renderMarkdown(value, displayDiv, path, this);
-			const links = displayDiv.querySelectorAll('a');
-			links.forEach(link => {
-				link.addEventListener('click', (event) => {
+			const links = displayDiv.querySelectorAll("a");
+			links.forEach((link) => {
+				link.addEventListener("click", (event) => {
 					event.preventDefault();
-					const targetPath = link.getAttribute('href');
+					const targetPath = link.getAttribute("href");
 					if (targetPath) {
 						this.app.workspace.openLinkText(targetPath, "", true);
 					}
@@ -211,20 +202,20 @@ export class GlobalPropertiesView extends ItemView {
 
 		renderMarkdown();
 
-		const input = cell.createEl('input', { type: 'text', cls: 'markdown-input' });
+		const input = cell.createEl("input", { type: "text", cls: "markdown-input" });
 		input.value = value;
-		input.style.display = 'none';
+		input.style.display = "none";
 
-		cell.addEventListener('click', () => {
-			displayDiv.style.display = 'none';
-			input.style.display = 'block';
+		cell.addEventListener("click", () => {
+			displayDiv.style.display = "none";
+			input.style.display = "block";
 			input.focus();
 		});
 
-		input.addEventListener('blur', async () => {
+		input.addEventListener("blur", async () => {
 			value = input.value;
-			displayDiv.style.display = 'block';
-			input.style.display = 'none';
+			displayDiv.style.display = "block";
+			input.style.display = "none";
 			await this.updateYamlProperty(path, prop, value, "update");
 			renderMarkdown();
 		});
@@ -276,7 +267,7 @@ export class GlobalPropertiesView extends ItemView {
 
 	addDateButton(cell: HTMLElement, filepath: string, prop: string, value: string, type: string) {
 		cell.empty();
-		const input = cell.createEl("input", { cls: 'properties-add-elekis-date-button' });
+		const input = cell.createEl("input", { cls: "properties-add-elekis-date-button" });
 		input.setAttribute("filepath", filepath);
 		input.setAttribute("prop", prop);
 		input.type = type === "DateTime" ? "datetime-local" : "date";
@@ -284,10 +275,8 @@ export class GlobalPropertiesView extends ItemView {
 			let dd = new Date(value);
 			// Assurer qu'on travaille avec un objet Date
 			const dateValue = dd instanceof Date ? dd : new Date(dd);
-			if (type === "DateTime")
-				input.value = dateValue.toISOString().split(".")[0];
-			else
-				input.value = dateValue.toISOString().split("T")[0] + "T00:00";
+			if (type === "DateTime") input.value = dateValue.toISOString().split(".")[0];
+			else input.value = dateValue.toISOString().split("T")[0] + "T00:00";
 		} else {
 			input.classList.add("my-gray-input");
 		}
@@ -299,9 +288,10 @@ export class GlobalPropertiesView extends ItemView {
 			const dateValue = new Date(rawVal);
 			let v2 = "";
 			if (rawVal !== "") {
-				v2 = input.type === "datetime-local"
-					? dateValue.toISOString().split(".")[0]
-					: dateValue.toISOString().split("T")[0];
+				v2 =
+					input.type === "datetime-local"
+						? dateValue.toISOString().split(".")[0]
+						: dateValue.toISOString().split("T")[0];
 				input.classList.remove("my-gray-input");
 			} else {
 				input.classList.add("my-gray-input");
@@ -326,7 +316,7 @@ export class GlobalPropertiesView extends ItemView {
 		this.buildTableBody();
 		this.addZoomFeature();
 		console.log("fin onOpen");
-        this.contentEl.scrollTop = 0;
+		this.contentEl.scrollTop = 0;
 	}
 
 	private buildFileProperties() {
@@ -355,7 +345,9 @@ export class GlobalPropertiesView extends ItemView {
 			type: type || "Text",
 			filter: []
 		}));
-        this.properties = this.properties.sort( (a,b) => {return a.name.localeCompare(b.name)} )
+		this.properties = this.properties.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
 	}
 
 	private detectPropertyType(key: string, value: any, propertyMap: Map<string, string>): string {
@@ -372,8 +364,8 @@ export class GlobalPropertiesView extends ItemView {
 			if (this.isDateTime(value)) return "DateTime";
 			if (this.isDate(value)) return "Date";
 			return "Text";
-		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))){
-          return propertyMap.get(key) || "Int";
+		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
+			return propertyMap.get(key) || "Int";
 		} else if (typeof value === "boolean") {
 			return "Boolean";
 		}
@@ -388,20 +380,19 @@ export class GlobalPropertiesView extends ItemView {
 		headerRow.createEl("th", {
 			text: "⇅",
 			cls: "th-j-container",
-			attr: { "columnId": "0", "sortasc": "false", "type": "Id" }
+			attr: { columnId: "0", sortasc: "false", type: "Id" }
 		});
 
 		headerRow.createEl("th", {
 			text: "Dossier",
 			cls: "th-j-container",
-			attr: { "columnId": "0", "sortasc": "false", "type": "Id" }
+			attr: { columnId: "0", sortasc: "false", type: "Id" }
 		});
-
 
 		headerRow.createEl("th", {
 			text: "Fichier",
 			cls: "th-j-container",
-			attr: { "columnId": "1", "sortasc": "false", "type": "Text" }
+			attr: { columnId: "1", sortasc: "false", type: "Text" }
 		});
 
 		for (let i = 0; i < this.properties.length; i++) {
@@ -409,7 +400,7 @@ export class GlobalPropertiesView extends ItemView {
 			headerRow.createEl("th", {
 				text: `${prop.name} (${prop.type})`,
 				cls: "th-j-container",
-				attr: { "columnId": (i + this.propColStart).toString(), "sortasc": "false", "type": prop.type }
+				attr: { columnId: (i + this.propColStart).toString(), sortasc: "false", type: prop.type }
 			});
 		}
 
@@ -423,15 +414,15 @@ export class GlobalPropertiesView extends ItemView {
 		});
 
 		const filterRow = thead.createEl("tr");
-        for (let i = 0 ; i < this.propColStart; i++)filterRow.createEl("th", { cls: "th-j-container" });
+		for (let i = 0; i < this.propColStart; i++) filterRow.createEl("th", { cls: "th-j-container" });
 
 		for (const prop of this.properties) {
 			const th = filterRow.createEl("th", { cls: "th-j-container" });
 			const filterButton = th.createEl("button", {
-				text: '+',
-				cls: 'properties-filter-elekis-divprop-button'
+				text: "+",
+				cls: "properties-filter-elekis-divprop-button"
 			});
-			filterButton.setAttribute('data-prop', prop.name);
+			filterButton.setAttribute("data-prop", prop.name);
 			filterButton.addEventListener("click", () => {
 				this.openFilterModal(prop);
 			});
@@ -458,16 +449,16 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	private updateFilterButtonStyles() {
-		const filterButtons = document.querySelectorAll('.properties-filter-elekis-divprop-button');
+		const filterButtons = document.querySelectorAll(".properties-filter-elekis-divprop-button");
 		filterButtons.forEach((button) => {
-			const propName = button.getAttribute('data-prop');
+			const propName = button.getAttribute("data-prop");
 			if (!propName) return;
 			const prop = this.properties.find((p: { name: string }) => p.name === propName);
 			if (!prop) return;
 			if (prop.filter && prop.filter.length > 0) {
-				button.classList.add('filter-active');
+				button.classList.add("filter-active");
 			} else {
-				button.classList.remove('filter-active');
+				button.classList.remove("filter-active");
 			}
 		});
 	}
@@ -487,7 +478,7 @@ export class GlobalPropertiesView extends ItemView {
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
 		const rows = Array.from(tbody.querySelectorAll("tr"));
-		rows.forEach(row => {
+		rows.forEach((row) => {
 			let visible = true;
 			const cells = row.querySelectorAll("td");
 			this.properties.forEach((prop, i) => {
@@ -510,7 +501,11 @@ export class GlobalPropertiesView extends ItemView {
 						}
 					} else if (prop.type === "Text") {
 						const cellText = cell ? cell.textContent!.trim() : "";
-						if (!prop.filter.some((filterValue: string) => cellText.toLowerCase().includes(filterValue.toLowerCase()))) {
+						if (
+							!prop.filter.some((filterValue: string) =>
+								cellText.toLowerCase().includes(filterValue.toLowerCase())
+							)
+						) {
 							visible = false;
 						}
 					} else if (prop.type === "DateTime") {
@@ -551,17 +546,16 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 
-	private createHref(elem: HTMLElement, fname: TFile | string ) {
-   
+	private createHref(elem: HTMLElement, fname: TFile | string) {
 		const fileLink = elem.createEl("a", {
-			text: fname instanceof TFile ? fname.basename : fname, 
+			text: fname instanceof TFile ? fname.basename : fname,
 			cls: "cm-underline",
-			href: fname instanceof TFile? fname.path : "/"+fname,
+			href: fname instanceof TFile ? fname.path : "/" + fname,
 			attr: { tabindex: "-1" }
 		});
 		fileLink.addEventListener("click", (evt) => {
 			evt.preventDefault();
-			this.app.workspace.openLinkText(fname instanceof TFile? fname.path : "/"+fname, "", false);
+			this.app.workspace.openLinkText(fname instanceof TFile ? fname.path : "/" + fname, "", false);
 		});
 	}
 
@@ -575,10 +569,10 @@ export class GlobalPropertiesView extends ItemView {
 				text: i.toString(),
 				cls: "td-j-container"
 			});
-            
-            const tdDir = tr.createEl("td", {
-				text: "/"+file.path.substring(0, file.path.lastIndexOf("/")),
-				 cls: "td-j-container"
+
+			const tdDir = tr.createEl("td", {
+				text: "/" + file.path.substring(0, file.path.lastIndexOf("/")),
+				cls: "td-j-container"
 			});
 
 			const tdFile = tr.createEl("td", { cls: "td-j-container" });
@@ -600,9 +594,10 @@ export class GlobalPropertiesView extends ItemView {
 				} else if (typep === "Text") {
 					this.addText(td, file.path, prop, value);
 				} else if (typep === "Boolean") {
-                    //console.log(prop,value, value instanceof Boolean );
-					this.addBoolean(td, file.path, prop, value);    
-				}0
+					//console.log(prop,value, value instanceof Boolean );
+					this.addBoolean(td, file.path, prop, value);
+				}
+				0;
 			}
 			i++;
 		}
@@ -671,9 +666,8 @@ export class GlobalPropertiesView extends ItemView {
 
 	private addZoomFeature() {
 		if (!this.table) return;
-	    this.table.style.transform = `scale(${this.scale})`;
+		this.table.style.transform = `scale(${this.scale})`;
 		this.table.style.transformOrigin = "top center";
-
 
 		this.table.addEventListener("wheel", (event) => {
 			if (!event.ctrlKey) return;
@@ -705,4 +699,3 @@ export class GlobalPropertiesView extends ItemView {
 		this.contentEl.empty();
 	}
 }
-
