@@ -1,19 +1,20 @@
 import { App, Modal } from "obsidian";
+import { Column, ListColumn, TextColumn, BoolColumn, DateTimeColumn, DateColumn, IDColumn,IntColumn} from "src/ColumnData";
 
 export class FilterModal extends Modal {
-  property: { name: string; type: string; filter?: any[] };
+  col : Column;
   allowedValues: any[];
   onSubmit: (selectedValues: any[]) => void;
   selectedValues: Set<any>;
 
   constructor(
     app: App,
-    property: { name: string; type: string; filter?: any[] },
+    col: Column,
     allowedValues: any[],
     onSubmit: (selectedValues: any[]) => void
   ) {
     super(app);
-    this.property = property;
+    this.col = col;
     this.allowedValues = allowedValues;
     this.onSubmit = onSubmit;
     this.selectedValues = new Set();
@@ -21,7 +22,7 @@ export class FilterModal extends Modal {
 
   private createCheckbox(value: any, container: HTMLElement) {
     const checkbox = container.createEl("input", { attr: { type: "checkbox" } });
-    if (this.property.filter && this.property.filter.includes(value)) {
+    if (this.col.getFilter() && this.col.getFilter().includes(value)) {
       checkbox.checked = true;
       this.selectedValues.add(value);
     }
@@ -107,9 +108,9 @@ export class FilterModal extends Modal {
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("h2", { text: `Filtrer ${this.property.name}` });
+    contentEl.createEl("h2", { text: `Filtrer ${this.col.getPropertyName()}` });
 
-    if (this.property.type === "Date" || this.property.type === "DateTime") {
+    if (this.col instanceof DateTimeColumn || this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
     } else {
       this.createDefaultFilter(contentEl);
