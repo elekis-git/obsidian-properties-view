@@ -1,5 +1,5 @@
 import { Plugin, WorkspaceLeaf } from "obsidian";
-import { GlobalPropertiesView } from "propTable";
+import { GlobalPropertiesView } from "src/propTable";
 
 export default class GlobalPropertiesPlugin extends Plugin {
 
