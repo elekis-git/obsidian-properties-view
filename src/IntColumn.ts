@@ -3,11 +3,11 @@ import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, Works
 import Column from "./Column";
 
 export default class IntColumn extends Column {
-    constructor(pname, vault) {
-        super(pname, vault);
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
 
-    public filterRows(rows) {
+    public filterRows(rows : HTMLElement[]) {
         rows.forEach((row) => {
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
@@ -27,11 +27,11 @@ export default class IntColumn extends Column {
         });
     }
 
-    public getStrType() {
+    public getStrType():string {
         return "Int";
     }
 
-    public sortRows(rows) {
+    public sortRows(rows : HTMLElement[]) : HTMLElement[] {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];
@@ -54,7 +54,7 @@ export default class IntColumn extends Column {
         return rows;
     }
 
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string) {
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value:Object|null) {
         cell.empty();
         const createInput = (value: string | null) => {
             cell.empty();
@@ -87,11 +87,11 @@ export default class IntColumn extends Column {
             input.focus();
         };
 
-        if (currentValue == null || currentValue === "") {
+        if (value == null || value === "" || value ===null) {
             cell.empty();
             cell.addEventListener("click", () => createInput(null), { once: true });
         } else {
-            createInput(currentValue);
+            createInput((value as string));
         }
     }
 }

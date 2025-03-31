@@ -12,11 +12,11 @@ import Column from "./Column"
 
 
 export default class ListColumn extends Column {
-    constructor(pname, vault) {
-        super(pname, vault);
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
 
-    public filterRows(rows) {
+    public filterRows(rows:HTMLElement[]) {
         rows.forEach(row => {
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
@@ -36,19 +36,19 @@ export default class ListColumn extends Column {
         });
     }
 
-    public getStrType() {
+    public getStrType():string {
         return "List";
     }
-    public sortRows(rows) {
+    public sortRows(rows:HTMLElement[]):HTMLElement[] {
         return super.sortRows(rows);
     }
 
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string){
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object|null){
         cell.empty();
 		cell.setAttribute("filepath", file.path);
 		cell.setAttribute("prop", prop);
 
-		let cv = Array.isArray(currentValue) ? currentValue : [currentValue];
+		let cv = Array.isArray(value) ? value : [value];
 
 		const list = cell.createEl("ul", { cls: "properties-list-elekis" });
 
@@ -102,8 +102,8 @@ export default class ListColumn extends Column {
 					.split("\n")
 					.filter((v) => v !== "");
 				cell.empty();
-				await this.updateYamlProperty(filepath, prop, newValue, "update");
-				this.fillCell(cell, filepath, prop, newValue);
+				await this.updateYamlProperty(file.path, prop, newValue, "update");
+				this.fillCell(cell, file, prop, newValue);
 			});
 		});
     }

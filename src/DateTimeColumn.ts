@@ -11,12 +11,15 @@ import {
 import Column from "./Column"
 
 export default class DateTimeColumn extends Column {
-    constructor(pname, vault, dtype) {
-        super(pname, vault);
-        this.datetype = dtype;
+    
+    private dtype:string;
+    
+    constructor(pname:string, app:App, dtype:string) {
+        super(pname, app);
+        this.dtype = dtype;
     }
 
-    public filterRows(rows) {
+    public filterRows(rows : HTMLElement[]) {
         rows.forEach(row => {
             row.style.display = ""
             const cells = row.querySelectorAll("td");
@@ -52,11 +55,11 @@ export default class DateTimeColumn extends Column {
         });
     }
 
-    public getStrType() {
+    public getStrType():string {
         return this.dtype;
     }
 
-    public sortRows(rows) {
+    public sortRows(rows : HTMLElement[]) {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];
@@ -79,14 +82,14 @@ export default class DateTimeColumn extends Column {
         return rows;
     }
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: string[] | string){
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null){
         cell.empty();
 		const input = cell.createEl("input", { cls: "properties-add-elekis-date-button" });
 		input.setAttribute("filepath", file.path);
 		input.setAttribute("prop", prop);
 		input.type = this.dtype == "DateTime" ? "datetime-local" : "date";
 		if (value != null && value !== "") {
-			let dd = new Date(value);
+			let dd = new Date(value as string);
 			// Assurer qu'on travaille avec un objet Date
 			const dateValue = dd instanceof Date ? dd : new Date(dd);
 			if (this.dtype== "DateTime") input.value = dateValue.toISOString().split(".")[0];

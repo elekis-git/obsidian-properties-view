@@ -9,16 +9,13 @@ import {
     Vault,
 } from "obsidian";
 
-
-import { App, TFile } from "obsidian";
-
 export interface IColumn {
     // Propriétés
     app: App;
     vault: Vault; 
     sortasc: boolean;
     columnIndex: number;
-    filter: string;
+    filter: string[];
     propertyName: string;
     columnId: string;
 
@@ -31,18 +28,21 @@ export interface IColumn {
     setPropertyName(a: string): void;
     getPropertyName(): string;
 
+    setStrType(a:string):void
+    getStrType():string
+    
     setSortAsc(a: boolean): void;
     getSortAsc(): boolean;
 
     setIndex(a: number): void;
     getIndex(): number;
 
-    fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string): void;
+    fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object|null): void;
 
     createHref(elem: HTMLElement, fname: TFile | string): void;
 
-    setFilter(a: string): void;
-    getFilter(): string;
+    setFilter(a: string[]): void;
+    getFilter(): string[];
 
     filterRows(rows: HTMLElement[]): void;
 
@@ -59,7 +59,7 @@ export default class Column implements IColumn {
     vault: any;
     sortasc: boolean;
     columnIndex: number;
-    filter: string;
+    filter: string[];
     propertyName: string;
     columnId: string;
     
@@ -68,7 +68,7 @@ export default class Column implements IColumn {
         this.vault = app.vault;
         this.sortasc = false;
         this.columnIndex = -1
-        this.filter = ""
+        this.filter = []
         this.propertyName = pname
         this.columnId = ""
     }
@@ -76,37 +76,37 @@ export default class Column implements IColumn {
         return true
     }
 
-    public setId(a) {
+    public setId(a:string) {
         this.columnId = a;
     }
-    public getId() {
+    public getId():string {
         return this.columnId;
     }
 
-    public setPropertyName(a) {
+    public setPropertyName(a:string) {
         this.propertyName = a;
     }
-    public getPropertyName() {
+    public getPropertyName():string {
         return this.propertyName;
     }
 
-    public setSortAsc(a) {
+    public setSortAsc(a:boolean) {
         this.sortasc = a;
     }
-    public getSortAsc() {
+    public getSortAsc():boolean {
         return this.sortasc;
     }
 
-    public setIndex(a) {
+    public setIndex(a:number) {
         this.columnIndex = a
     };
-    public getIndex() {
+    public getIndex(): number {
         return this.columnIndex
     };
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string){
-        
-    }
+    public setStrType(a:string):void{}
+    public getStrType():string {return "";}
+
 
     public createHref(elem: HTMLElement, fname: TFile | string) {
 		const fileLink = elem.createEl("a", {
@@ -121,16 +121,17 @@ export default class Column implements IColumn {
 		});
 	}
 
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null){}
+
     
-    
-    public setFilter(a) {
+    public setFilter(a:string[]) {
         this.filter = a
     };
-    public getFilter() {
+    public getFilter():string[] {
         return this.filter
     };
 
-    public filterRows(rows) {
+    public filterRows(rows : HTMLElement[]) {
         rows.forEach(row => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
@@ -145,9 +146,7 @@ export default class Column implements IColumn {
 
 
     async updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string) {
-        //console.log("updateYAMLPROPERTY", filePath, prop, value, actiontype);
         const fileOrAbstract = this.vault.getAbstractFileByPath(filePath);
-        // Vérifier que c'est bien un fichier
         if (!(fileOrAbstract instanceof TFile)) return;
 
         let fileContent = await this.vault.read(fileOrAbstract);
@@ -190,7 +189,7 @@ export default class Column implements IColumn {
         await this.vault.modify(fileOrAbstract, fileContent);
     }
 
-    public sortRows(rows) {
+    public sortRows(rows  : HTMLElement[]): HTMLElement[] {
         return rows.sort((a, b) => {
             console.log(this.columnIndex);
             console.log(a, b.getElementsByTagName("td")[this.columnIndex]);

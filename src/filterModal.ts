@@ -11,7 +11,7 @@ import DateColumn from "./TextColumn"
 import Column from "./Column"
 import IDColumn from "./IDColumn"
 import ListColumn from "./ListColumn"
-import IntColumn from "./ColumnData"
+import IntColumn from "./IntColumn"
 
 
 

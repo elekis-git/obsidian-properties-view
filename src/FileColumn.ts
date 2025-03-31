@@ -12,16 +12,16 @@ import {
 import Column from "./Column"
 import TextColumn from "./TextColumn"
 
-export default class FileColumn extends TextColumn {
-    constructor(pname, vault) {
-        super(pname, vault);
+export default class FileColumn extends Column {
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
-    public getStrType() {
+    public getStrType():string {
         return "FILE";
     }
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string){
-        this.createHref(cell, file.path);
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: Object|null):void{
+        this.createHref(cell, file);
     }
     
 }

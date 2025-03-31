@@ -12,18 +12,18 @@ import {
 import Column from "./Column"
 
 export default class TextColumn extends Column {
-    constructor(pname, vault) {
-        super(pname, vault);
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
-    public getStrType() {
+    public getStrType():string {
         return "Text";
     }
 
-    public sortRows(rows) {
+    public sortRows(rows : HTMLElement[]):HTMLElement[] {
         return super.sortRows(rows);
     }
 
-    public filterRows(rows) {
+    public filterRows(rows: HTMLElement[]) {
         rows.forEach(row => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
@@ -37,16 +37,15 @@ export default class TextColumn extends Column {
         });
     }
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: string[] | string){
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null){
         let v2 = value != null ? String(value) : "";
 		const displayDiv = cell.createEl("div", { cls: "markdown-preview" });
 
 		const renderMarkdown = () => {
 			displayDiv.empty();
-			// Utilisation de "this" (la vue qui est un Component) au lieu de this.app
             
-			const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-            MarkdownRenderer.renderMarkdown(v2, displayDiv, file.path, view ?? null);
+            //@ts-ignore
+            MarkdownRenderer.renderMarkdown(v2, displayDiv, file.path, null);
 
 			const links = displayDiv.querySelectorAll("a");
 			links.forEach((link) => {
@@ -59,7 +58,6 @@ export default class TextColumn extends Column {
 				});
 			});
 		};
-
 		renderMarkdown();
 
 		const input = cell.createEl("input", { type: "text", cls: "markdown-input" });
@@ -76,7 +74,7 @@ export default class TextColumn extends Column {
 			value = input.value;
 			displayDiv.style.display = "block";
 			input.style.display = "none";
-			await this.updateYamlProperty(path, prop, value, "update");
+			await this.updateYamlProperty(file.path, prop, value, "update");
 			renderMarkdown();
 		});
 

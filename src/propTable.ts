@@ -8,17 +8,11 @@ import TextColumn from "./TextColumn"
 import BoolColumn from "./BoolColumn"
 import DateTimeColumn from "./DateTimeColumn"
 
-import Column from "./Column"
+import Column, {IColumn} from "./Column"
+
 import IDColumn from "./IDColumn"
 import ListColumn from "./ListColumn"
 import IntColumn from "./IntColumn"
-
-
-/*
- * [ ]  creer des tests. 
- * [ ]  accerlerer le rendu 
- * [ ]  sauver le tout dans un fichier. 
- * */
 
 
 export class GlobalPropertiesView extends ItemView {
@@ -27,7 +21,7 @@ export class GlobalPropertiesView extends ItemView {
 	private table: HTMLElement | null = null;
 	private propColStart = 3;
 	private scale = 1;
-	private columnsMapping = []
+	private columnsMapping : IColumn[] = []
 	
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
@@ -69,7 +63,7 @@ export class GlobalPropertiesView extends ItemView {
 	
 	
 	
-	private detectPropertyType(key: string, value: any, propertyMap: Map<string, string>): string {
+	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn>): IColumn {
 		
 	 const isDate = (value: string): boolean => {	return /^\d{4}-\d{2}-\d{2}$/.test(value);	} 
 	 const isDateTime = (value: string): boolean => {		return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);	}
@@ -85,7 +79,7 @@ export class GlobalPropertiesView extends ItemView {
 			return new  ListColumn(key, this.app);
 		} else if (typeof value === "string") {
 			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
-			if (isDate(value)) return new DateColumn(key, this.app, "Date");
+			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
 			return new  TextColumn(key, this.app);
 		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
 			return propertyMap.get(key) || new  IntColumn(key, this.app);
@@ -113,9 +107,9 @@ export class GlobalPropertiesView extends ItemView {
 		this.contentEl.scrollTop = 0;
 	}
 
-	private buildFileProperties() {
+	private buildFileProperties():IColumn[] {
 		const files = this.app.vault.getMarkdownFiles();
-		const propertyMap: Map<string, string> = new Map();
+		const propertyMap: Map<string, IColumn> = new Map();
 		this.fileProperties = [];
 
 		for (const file of files) {
@@ -135,7 +129,7 @@ export class GlobalPropertiesView extends ItemView {
 			}
 		}
 		console.log(propertyMap);
-		return Array.from(propertyMap.entries().map(([name, typeInstance]) => typeInstance ));
+		return Array.from(new Set(Array.from(propertyMap.values())));
 	}
 
 	private buildTableHeader() {
@@ -162,7 +156,7 @@ export class GlobalPropertiesView extends ItemView {
 		
 		headerRow.querySelectorAll("th").forEach((h) => {
 			h.addEventListener("click", () => {
-				const columnIdx = h.getAttribute("columnIdx");
+				const columnIdx = Number(h.getAttribute("columnIdx"));
 				this.sortTable(columnIdx);
 				this.columnsMapping[columnIdx].setSortAsc(!this.columnsMapping[columnIdx].getSortAsc());
 			});
@@ -178,10 +172,10 @@ export class GlobalPropertiesView extends ItemView {
 				text: "+",
 				cls: "properties-filter-elekis-divprop-button"
 			}); 
-			filterButton.setAttribute("columnIdx", col.getIndex() )
+			filterButton.setAttribute("columnIdx", col.getIndex().toString() )
 			
 			filterButton.addEventListener("click", () => {
-				const columnIdx = filterButton.getAttribute("columnIdx");
+				const columnIdx = Number(filterButton.getAttribute("columnIdx"));
 				this.openFilterModal(columnIdx);
 			});
 		});
@@ -210,7 +204,7 @@ export class GlobalPropertiesView extends ItemView {
 	private updateFilterButtonStyles() {
 		const filterButtons = document.querySelectorAll(".properties-filter-elekis-divprop-button");
 		filterButtons.forEach((button) => {
-			const col = this.columnsMapping[button.getAttribute("columnIdx")];
+			const col = this.columnsMapping[Number(button.getAttribute("columnIdx"))];
 			if (col.getFilter().length > 0) {
 				button.classList.add("filter-active");
 			} else {
@@ -219,7 +213,7 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 
-	private openFilterModal(columnIdx) {
+	private openFilterModal(columnIdx:number) {
 	//	console.log(columnIdx, this.columnsMapping[columnIdx].getPropertyName());
 		const allowedValues = this.getAllUniqueValuesForProperty(this.columnsMapping[columnIdx].getPropertyName());
 		const modal = new FilterModal(this.app, this.columnsMapping[columnIdx], allowedValues, (selectedValues: any[]) => {
@@ -230,7 +224,7 @@ export class GlobalPropertiesView extends ItemView {
 		modal.open();
 	}
 
-	private applyFilters(columnIdx): void {
+	private applyFilters(columnIdx:number): void {
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
@@ -244,7 +238,7 @@ export class GlobalPropertiesView extends ItemView {
 	private buildTableBody() {
 		if (!this.table) return;
 		const tbody = this.table.createEl("tbody");
-		let i = 1;
+		console.log(this.fileProperties);
 		for (const { file, props } of this.fileProperties) {
 			const tr = tbody.createEl("tr");
 		
@@ -254,11 +248,10 @@ export class GlobalPropertiesView extends ItemView {
 				const td = tr.createEl("td", { cls: "td-j-container" });				
 				col.fillCell(td, file, prop, value);
 			});
-			i++;
 		}
 	}
 
-	sortTable(columnIdx) {
+	sortTable(columnIdx:number) {
 		console.log("->",columnIdx);
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");

@@ -11,19 +11,22 @@ import {
 import Column from "./Column"
  
 export default class IDColumn extends Column {
-    constructor(pname, vault) {
-        super(pname, vault);
+    
+    static counter:number=0
+    
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
 
-    public isFiltering() {
+    public isFiltering():boolean {
         return false
     }
 
 
-    public getStrType() {
+    public getStrType():string {
         return "ID";
     }
-    public sortRows(rows) {
+    public sortRows(rows : HTMLElement[]) : HTMLElement[] {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
@@ -35,9 +38,10 @@ export default class IDColumn extends Column {
         return rows;
     }
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string){
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null):void{
         	cell.empty();
-		      const input = cell.createEl("div", { text:currentValue });
+        IDColumn.counter +=1;
+		  const input = cell.createEl("div", { text: IDColumn.counter.toString() });
     }
     
     

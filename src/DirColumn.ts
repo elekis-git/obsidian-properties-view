@@ -12,18 +12,18 @@ import Column from "./Column"
 import TextColumn from "./TextColumn"
 
 
-export default class DirColumn extends TextColumn {
-    constructor(pname, vault) {
-        super(pname, vault);
+export default class DirColumn extends Column {
+    constructor(pname:string, app:App) {
+        super(pname, app);
     }
-    public getStrType() {
+    public getStrType():string {
         return "DIR";
     }
     
     
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: string[] | string){
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value:Object|null){
         let p = "/" + file.path.substring(0, file.path.lastIndexOf("/"))
-        super.fillCell(cell, file.path, prop,  p );
+        cell.createEl("div", {text:p});
     }
     
 }
