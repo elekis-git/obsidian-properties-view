@@ -190,7 +190,7 @@ export class GlobalPropertiesView extends ItemView {
 			// Ajout du texte entre parenthèses sur une nouvelle ligne avec une classe
 			th.createEl("br"); // Saut de ligne
 			const smallText = th.createEl("span", {
-				text: `(${col.getStrType()}) (${col.getCnt()})`
+				text: `(${col.getStrType()})`
 			});
 			smallText.addClass("th-small-text"); // Classe CSS pour réduire la taille
 		});

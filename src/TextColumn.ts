@@ -37,8 +37,16 @@ export default class TextColumn extends Column {
         });
     }
     
+    public decodeEmojisInText(text: string): string {
+    return text.replace(/emoji\/\/([0-9a-fA-F-]+)/g, (_, hexCodes) => {
+        const unicodeChars = hexCodes.split("-").map(code => String.fromCodePoint(parseInt(code, 16)));
+        return unicodeChars.join("");
+    });
+}
+    
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null){
         let v2 = value != null ? String(value) : "";
+        v2 = this.decodeEmojisInText(v2);
 		const displayDiv = cell.createEl("div", { cls: "markdown-preview" });
 
 		const renderMarkdown = () => {
