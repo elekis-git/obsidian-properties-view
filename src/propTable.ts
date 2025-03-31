@@ -45,6 +45,29 @@ export class GlobalPropertiesView extends ItemView {
 		return "global properties view";
 	}
 
+//testonly
+/**
+ * Sauvegarde le contenu de la vue dans un fichier HTML dans le vault d'Obsidian
+ * @param {string} filePath - Le chemin du fichier dans le vault
+ */
+	async saveViewToFile(filePath: string) {
+		if (!this.contentEl) {
+			console.warn("Aucun contenu à sauvegarder.");
+			return;
+		}
+
+		const htmlContent = "<!DOCTYPE html>\n" + this.contentEl.outerHTML;
+
+		try {
+			await this.app.vault.adapter.write(filePath, htmlContent);
+			console.log(`Vue sauvegardée dans ${filePath}`);
+		} catch (err) {
+			console.error("Erreur lors de la sauvegarde du fichier :", err);
+		}
+	}
+
+	
+	
 	
 	private detectPropertyType(key: string, value: any, propertyMap: Map<string, string>): string {
 		
