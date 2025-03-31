@@ -19,6 +19,9 @@ export default class FileColumn extends Column {
     public getStrType():string {
         return "FILE";
     }
+     public isFiltering():boolean {
+        return false
+    }
     
     public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: Object|null):void{
         this.createHref(cell, file);

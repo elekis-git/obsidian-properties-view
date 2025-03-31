@@ -19,6 +19,9 @@ export default class DirColumn extends Column {
     public getStrType():string {
         return "DIR";
     }
+     public isFiltering():boolean {
+        return false
+    }
     
     
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value:Object|null){

@@ -4,9 +4,8 @@ import FileColumn from "./FileColumn"
 import DirColumn from "./DirColumn"
 import TextColumn from "./TextColumn"
 
-import BoolColumn from "./FileColumn"
-import DateTimeColumn from "./DirColumn"
-import DateColumn from "./TextColumn"
+import BoolColumn from "./BoolColumn"
+import DateTimeColumn from "./DateTimeColumn"
 
 import Column from "./Column"
 import IDColumn from "./IDColumn"
@@ -52,6 +51,7 @@ export class FilterModal extends Modal {
   }
 
   private createDateRangeFilter(contentEl: HTMLElement) {
+    console.log("createDateRangeFilter");
     const { allowedValues } = this;
     const validDates = allowedValues.map(date => new Date(date)).filter(date => !isNaN(date.getTime()));
 
@@ -123,8 +123,8 @@ export class FilterModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("h2", { text: `Filtrer ${this.col.getPropertyName()}` });
-
-    if (this.col instanceof DateTimeColumn || this.col instanceof DateTimeColumn) {
+    console.log("ici ",this.col, this.col instanceof DateTimeColumn);
+    if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
     } else {
       this.createDefaultFilter(contentEl);

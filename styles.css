@@ -116,3 +116,8 @@
     background-color: #f0f0f0 !important;
 }
 
+.th-small-text {
+    font-size: 0.8em; /* Taille plus petite */
+    color: gray; /* Optionnel : couleur plus discrète */
+}
+
