@@ -192,7 +192,7 @@ export default class Column implements IColumn {
     public sortRows(rows  : HTMLElement[]): HTMLElement[] {
         return rows.sort((a, b) => {
             console.log(this.columnIndex);
-            console.log(a, b.getElementsByTagName("td")[this.columnIndex]);
+            //console.log(a, b.getElementsByTagName("td")[this.columnIndex]);
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             return this.sortasc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);

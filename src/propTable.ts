@@ -128,8 +128,8 @@ export class GlobalPropertiesView extends ItemView {
 				this.fileProperties.push({ file, props: {} });
 			}
 		}
-		console.log(propertyMap);
-		return Array.from(new Set(Array.from(propertyMap.values())));
+		return Array.from(new Set(Array.from(propertyMap.values()))).sort((a, b) => {return a.getPropertyName().localeCompare(b.getPropertyName());});
+
 	}
 
 	private buildTableHeader() {
@@ -238,7 +238,7 @@ export class GlobalPropertiesView extends ItemView {
 	private buildTableBody() {
 		if (!this.table) return;
 		const tbody = this.table.createEl("tbody");
-		console.log(this.fileProperties);
+//		console.log(this.fileProperties);
 		for (const { file, props } of this.fileProperties) {
 			const tr = tbody.createEl("tr");
 		
@@ -252,7 +252,7 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	sortTable(columnIdx:number) {
-		console.log("->",columnIdx);
+//		console.log("->",columnIdx);
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
