@@ -115,7 +115,7 @@ export default class DateTimeColumn extends Column {
 			}
 			await this.updateYamlProperty(filep, propp, v2, "update");
 		});
-		input.focus();
+//		input.focus();
     }
     
     

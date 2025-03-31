@@ -35,7 +35,7 @@ export default class BoolColumn extends Column {
                 // Aucune action spécifique au blur, mais c'est là au cas où
             });
 
-            checkbox.focus();
+//            checkbox.focus();
         };
 
         if (value === null) {

@@ -119,8 +119,12 @@ export class GlobalPropertiesView extends ItemView {
 				for (const key in cache.frontmatter) {
 					const value = cache.frontmatter[key];
 					const detectedType = this.detectPropertyType(key, value, propertyMap);
-//					console.log(key, value, detectedType);
-					propertyMap.set(key, detectedType);
+					
+					if (!propertyMap.has(key)) 
+						propertyMap.set(key, detectedType);
+					else{
+						propertyMap.get(key)?.addCnt1();
+					}
 					props[key] = value;
 				}
 				this.fileProperties.push({ file, props });
@@ -128,7 +132,11 @@ export class GlobalPropertiesView extends ItemView {
 				this.fileProperties.push({ file, props: {} });
 			}
 		}
-		return Array.from(new Set(Array.from(propertyMap.values()))).sort((a, b) => {return a.getPropertyName().localeCompare(b.getPropertyName());});
+		let tmp = Array.from(new Set(Array.from(propertyMap.values())))	
+		if(true){ // if ordre alphabetique
+			return tmp.sort((a, b) => {return b.getCnt() - a.getCnt()  ;});
+		}else
+			return tmp.sort((a, b) => {return a.getPropertyName().localeCompare(b.getPropertyName());});
 
 	}
 
@@ -148,7 +156,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		this.columnsMapping.forEach(col => {
 			headerRow.createEl("th", 
-							   {text: col.getPropertyName()+"("+col.getStrType()+")",
+							   {text: col.getPropertyName()+"("+col.getStrType()+")"+"("+col.getCnt()+")",
 								cls: "th-j-container",
 							   attr:{columnIdx: col.getIndex()}
 							   });

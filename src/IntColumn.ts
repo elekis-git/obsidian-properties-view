@@ -3,6 +3,7 @@ import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, Works
 import Column from "./Column";
 
 export default class IntColumn extends Column {
+    
     constructor(pname:string, app:App) {
         super(pname, app);
     }
@@ -83,8 +84,6 @@ export default class IntColumn extends Column {
                     cell.empty();
                 }
             });
-
-            input.focus();
         };
 
         if (value == null || value === "" || value ===null) {

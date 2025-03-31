@@ -18,6 +18,7 @@ export interface IColumn {
     filter: string[];
     propertyName: string;
     columnId: string;
+    cnt : number;
 
     // Méthodes
     isFiltering(): boolean;
@@ -28,6 +29,10 @@ export interface IColumn {
     setPropertyName(a: string): void;
     getPropertyName(): string;
 
+    addCnt1():void;
+    getCnt():number;
+    setCnt(a:number):void;
+    
     setStrType(a:string):void
     getStrType():string
     
@@ -62,6 +67,7 @@ export default class Column implements IColumn {
     filter: string[];
     propertyName: string;
     columnId: string;
+    cnt : number;
     
     constructor(pname: string, app: App) {
         this.app = app;
@@ -71,11 +77,16 @@ export default class Column implements IColumn {
         this.filter = []
         this.propertyName = pname
         this.columnId = ""
+        this.cnt = 0;
     }
     public isFiltering() {
         return true
     }
 
+    public addCnt1(){this.cnt++;}
+    public setCnt(a:number){this.cnt = a;}
+    public getCnt():number{return this.cnt}
+    
     public setId(a:string) {
         this.columnId = a;
     }
