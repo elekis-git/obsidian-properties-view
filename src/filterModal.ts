@@ -1,5 +1,19 @@
 import { App, Modal } from "obsidian";
-import { Column, ListColumn, TextColumn, BoolColumn, DateTimeColumn, DateColumn, IDColumn,IntColumn} from "src/ColumnData";
+
+import FileColumn from "./FileColumn"
+import DirColumn from "./DirColumn"
+import TextColumn from "./TextColumn"
+
+import BoolColumn from "./FileColumn"
+import DateTimeColumn from "./DirColumn"
+import DateColumn from "./TextColumn"
+
+import Column from "./Column"
+import IDColumn from "./IDColumn"
+import ListColumn from "./ListColumn"
+import IntColumn from "./ColumnData"
+
+
 
 export class FilterModal extends Modal {
   col : Column;
