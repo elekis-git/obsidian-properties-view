@@ -162,7 +162,7 @@ export default class Column implements IColumn {
     }
 
 
-    async updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string) {
+    async updateYamlProperty(filePath: string, prop: string, value: string|string[], actiontype: string) {
         const fileOrAbstract = this.vault.getAbstractFileByPath(filePath);
         if (!(fileOrAbstract instanceof TFile)) return;
 
@@ -175,11 +175,8 @@ export default class Column implements IColumn {
         const yamlData = parseYaml(yamlContent);
 
         if (actiontype === "update") {
-            if (!value || (Array.isArray(value) && value.length === 0) || value === "") {
-                delete yamlData[prop];
-            } else {
-                yamlData[prop] = value;
-            }
+                console.log("value", value);
+                yamlData[prop]= value;
         } else if (actiontype === "delete") {
             if (Array.isArray(yamlData[prop])) {
                 yamlData[prop] = yamlData[prop].filter((item: any) => item !== value);
@@ -187,16 +184,8 @@ export default class Column implements IColumn {
             } else {
                 delete yamlData[prop];
             }
-        } else if (actiontype === "addingtolist") {
-            if (!Array.isArray(yamlData[prop])) {
-                yamlData[prop] = value.length > 0 ? [...new Set(value)] : undefined;
-            } else {
-                yamlData[prop] = [...new Set([...yamlData[prop], ...value])];
-            }
-            if (!yamlData[prop] || yamlData[prop].length === 0) {
-                delete yamlData[prop];
-            }
-        }
+        } 
+        
         const newYaml = stringifyYaml(yamlData);
         fileContent = match ?
             fileContent.replace(/^---\n[\s\S]*?\n---/, `---\n${newYaml}---`) :
