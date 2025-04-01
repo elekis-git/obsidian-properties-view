@@ -54,6 +54,10 @@ export interface IColumn {
     updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string): Promise<void>;
 
     sortRows(rows: HTMLElement[]): HTMLElement[];
+	
+	
+	
+	
 }
 
 
@@ -119,6 +123,7 @@ export default class Column implements IColumn {
     public getStrType():string {return "";}
 
 
+
     public createHref(elem: HTMLElement, fname: TFile | string) {
 		const fileLink = elem.createEl("a", {
 			text: fname instanceof TFile ? fname.basename : fname,
@@ -148,6 +153,7 @@ export default class Column implements IColumn {
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
             if (this.getFilter().length > 0) {
+				console.log("->",this.getFilter());
                 if (!this.getFilter().includes(cell?.textContent?.trim() ?? "")) {
                     row.style.display = "none";
                 }
@@ -202,7 +208,7 @@ export default class Column implements IColumn {
 
     public sortRows(rows  : HTMLElement[]): HTMLElement[] {
         return rows.sort((a, b) => {
-            console.log(this.columnIndex);
+//            console.log(this.columnIndex);
             //console.log(a, b.getElementsByTagName("td")[this.columnIndex]);
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";

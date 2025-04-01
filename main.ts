@@ -8,10 +8,10 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			(leaf: WorkspaceLeaf) => new GlobalPropertiesView(leaf)
 		);
 
-		this.addRibbonIcon("wrench", "Properties", () => {
+	/*	this.addRibbonIcon("wrench", "Properties", () => {
 			this.openTab(this.app.vault.getRoot());
 		});
-
+*/
 		// Écouteur sur le changement de tab
 		this.app.workspace.on("active-leaf-change", this.onActiveLeafChange.bind(this));
 
@@ -47,8 +47,6 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			state: { folderPath: fd.path }
 		});
 		
-		 // Attendre un peu que la vue soit bien initialisée
-    setTimeout(() => {
         const view = leaf.view;
         if (view instanceof GlobalPropertiesView) {
             console.log("Vue correctement récupérée :", view);
@@ -56,7 +54,6 @@ export default class GlobalPropertiesPlugin extends Plugin {
         } else {
             console.error("Vue non reconnue !");
         }
-    }, 100);
 		
 	}
 }

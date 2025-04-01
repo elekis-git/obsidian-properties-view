@@ -14,19 +14,21 @@ export default class IntColumn extends Column {
             const cell = cells[this.getIndex()];
             row.style.display = "";
             if (this.getFilter().length > 0) {
-                const selectEl = cell?.querySelector("input") as HTMLSelectElement | null;
-                if (selectEl) {
-                    const cellValue = Number(selectEl.value);
-                    const filterValues = this.getFilter().map((val: any) => Number(val));
-                    if (!filterValues.includes(cellValue)) {
-                        row.style.display = "none";
-                    }
-                } else {
-                    row.style.display = "none";
-                }
-            }
+                const selectEl = cell?.querySelector("input") as HTMLSelectElement | null;	
+				if(this.getFilter().includes('') && selectEl == null)return;	
+				else if(selectEl == null) row.style.display = "none";	
+				else{					
+					const cellValue = Number(selectEl.value);
+					let filtemp = this.getFilter().filter((item, index) => item !== "");
+					const filterValues = filtemp.map((val: any) => Number(val));
+					if (!filterValues.includes(cellValue)){
+						row.style.display = "none";		
+					}					
+				}
+			}
         });
     }
+	
 
     public getStrType():string {
         return "Int";
@@ -86,7 +88,7 @@ export default class IntColumn extends Column {
             });
         };
 
-        if (value == null || value === "" || value ===null) {
+        if (value == null || value === "" || value === null) {
             cell.empty();
             cell.addEventListener("click", () => createInput(null), { once: true });
         } else {

@@ -18,22 +18,37 @@ export default class ListColumn extends Column {
 
     public filterRows(rows:HTMLElement[]) {
         rows.forEach(row => {
-            const cells = row.querySelectorAll("td");
-            const cell = cells[this.getIndex()];
-            row.style.display = "";
-            if (this.getFilter().length > 0) {
+		const cells = row.querySelectorAll("td");
+		const cell = cells[this.getIndex()];
+		row.style.display = "";
 
-                let cellText = cell ? cell.textContent!.trim() : "";
-                cellText = cellText.toString();
-                if (
-                    !this.getFilter().some((filterValue: string) =>
-                        cellText.toLowerCase().includes(filterValue.toString().toLowerCase())
-                    )
-                ) {
-                    row.style.display = "none";
-                }
-            }
-        });
+		let cellText: string[] = [];
+		const listItems = cell.querySelectorAll("li");
+		cellText = Array.from(listItems).map(li => li.textContent?.trim() || "");
+
+		if (this.getFilter().length > 0) {
+			let isMatch = false;
+			for (const filterValue of this.getFilter()) {
+				if (filterValue === "") {
+					// Si le filtre contient une valeur vide, vérifier si cellText est vide
+					if (cellText.length === 0 || (cellText.length === 1 && cellText[0] === "")) {
+						isMatch = true;
+						break;
+					}
+				} else {
+					// Sinon, vérifier si le filtre est présent dans cellText
+					if (cellText.some(item => item.toLowerCase().includes(filterValue.toLowerCase()))) {
+						isMatch = true;
+						break;
+					}
+				}
+			}
+
+			if (!isMatch) {
+				row.style.display = "none";
+			}
+		}
+	});
     }
 
     public getStrType():string {

@@ -73,7 +73,6 @@ export class GlobalPropertiesView extends ItemView {
 
 	
     async setState(state: any, result: ViewStateResult): Promise<void> {
-        console.log("setState() appelé avec:", state);
         if (state.folderPath) {
             this.folderPath = state.folderPath;
         }
@@ -82,7 +81,6 @@ export class GlobalPropertiesView extends ItemView {
 
     getState(): any {
         const state = { folderPath: this.folderPath };
-        console.log("getState() retourne:", state);
         return state;
     }
 	
@@ -220,7 +218,9 @@ export class GlobalPropertiesView extends ItemView {
 				}
 			}
 		}
-		return Array.from(uniqueValues);
+		let a = Array.from(uniqueValues);
+		a.push(""); //add an empty one... assumption , there is always an empty one !!! Not good.
+		return a;
 	}
 
 	private updateFilterButtonStyles() {

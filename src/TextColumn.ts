@@ -30,8 +30,10 @@ export default class TextColumn extends Column {
             const cell = cells[this.getIndex()];
             if (this.getFilter().length > 0) {
                 const cellText = cell ? cell.textContent!.trim() : "";
-                const match = this.getFilter().some((filterValue: string) =>
-                    cellText.toLowerCase().includes(filterValue.toString().toLowerCase().replace("[[", "").replace("]]", "")));
+                const match = this.getFilter().some((filterValue: string) =>{		
+					 if (filterValue === "")return cellText === "";
+					 return cellText.toLowerCase().includes(filterValue.toString().toLowerCase().replace("[[", "").replace("]]", ""));
+				}); 
                 if (!match) row.style.display = "none";
             }
         });

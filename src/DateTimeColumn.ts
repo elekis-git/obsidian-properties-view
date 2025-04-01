@@ -24,7 +24,8 @@ export default class DateTimeColumn extends Column {
             row.style.display = ""
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
-            if (this.getFilter().length > 0) {
+	
+             if (this.getFilter().length > 0) {
 
                 const input = cell?.querySelector("input, select");
                 if (input) {
@@ -39,11 +40,12 @@ export default class DateTimeColumn extends Column {
                         if (cellDate && !isNaN(cellDate.getTime())) {
                             const fromDate = from ? new Date(from.trim()) : null;
                             const toDate = to ? new Date(to.trim()) : null;
-                            if ((fromDate && cellDate < fromDate) || (toDate && cellDate > toDate)) {
+                            if ((fromDate && cellDate < fromDate) || (toDate && cellDate.getTime() > (toDate.getTime() + 86400000))) {
                                 row.style.display = "none";
                             }
                         } else {
-                            row.style.display = "none";
+							if (Boolean(this.getFilter()[2]) != true)
+								row.style.display = "none";
                         }
                     } else {
                         row.style.display = "none";
@@ -90,7 +92,6 @@ export default class DateTimeColumn extends Column {
 		input.type = this.dtype == "DateTime" ? "datetime-local" : "date";
 		if (value != null && value !== "") {
 			let dd = new Date(value as string);
-			// Assurer qu'on travaille avec un objet Date
 			const dateValue = dd instanceof Date ? dd : new Date(dd);
 			if (this.dtype== "DateTime") input.value = dateValue.toISOString().split(".")[0];
 			else input.value = dateValue.toISOString().split("T")[0] + "T00:00";

@@ -47,7 +47,7 @@ export class FilterModal extends Modal {
         this.selectedValues.delete(value);
       }
     });
-    container.createEl("label", { text: String(value) });
+    container.createEl("label", { text: value === "" ? "Include Empty value" : String(value) });
   }
 
   private createDateRangeFilter(contentEl: HTMLElement) {
@@ -77,11 +77,18 @@ export class FilterModal extends Modal {
       () => { if (maxDate) toInput.value = maxDate.toISOString().split("T")[0]; }
     );
 
+
     const filterButton = contentEl.createEl("button", { text: "Filtrer" });
     filterButton.addEventListener("click", () => {
-      this.onSubmit([fromInput.value ? new Date(fromInput.value).toISOString() : null, toInput.value ? new Date(toInput.value).toISOString() : null]);
+      this.onSubmit([
+					fromInput.value ? new Date(fromInput.value).toISOString() : null, 
+					toInput.value ? new Date(toInput.value).toISOString() : null,
+					this.selectedValues.size == 1
+					]);
       this.close();
     });
+	
+
 
     const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "clear-filter-button" });
     clearButton.addEventListener("click", () => {
@@ -91,7 +98,8 @@ export class FilterModal extends Modal {
 
     contentEl.appendChild(fromInput.parentElement!);
     contentEl.appendChild(toInput.parentElement!);
-    contentEl.appendChild(filterButton);
+	this.createCheckbox("", contentEl);
+    contentEl.appendChild(filterButton);	
     contentEl.appendChild(clearButton);
   }
 
@@ -102,12 +110,14 @@ export class FilterModal extends Modal {
       const container = contentEl.createEl("div", { cls: "filter-value-container" });
       this.createCheckbox(value, container);
     });
+		
 
     const filterButton = contentEl.createEl("button", { text: "Filtrer" });
     filterButton.addEventListener("click", () => {
       this.onSubmit(Array.from(this.selectedValues));
       this.close();
     });
+	
 
     const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "clear-filter-button" });
     clearButton.addEventListener("click", () => {
@@ -123,7 +133,6 @@ export class FilterModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("h2", { text: `Filtrer ${this.col.getPropertyName()}` });
-    console.log("ici ",this.col, this.col instanceof DateTimeColumn);
     if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
     } else {
