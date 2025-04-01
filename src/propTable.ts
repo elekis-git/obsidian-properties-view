@@ -89,8 +89,9 @@ export class GlobalPropertiesView extends ItemView {
 		contentEl.empty();
 		contentEl.classList.add("modal-j-content");		
 		const title = contentEl.createEl("h1", {
-			text: "Tableau des propriétés des fichiers"
-		});
+    text: "Properties of " + this.folderPath,
+    cls: "custom-title"
+});
 		title.classList.add("modal-j-title");
 		IDColumn.counter =0;
 		this.columnsMapping = this.buildFileProperties();
@@ -271,7 +272,7 @@ export class GlobalPropertiesView extends ItemView {
 				let prop = col.getPropertyName();
 				const value = props[prop];
 				const td = tr.createEl("td", { cls: "td-j-container" });
-				col.fillCell(td, file, prop, value);
+				col.fillCell(td, file, prop, value);				
 			});
 		}
 	}

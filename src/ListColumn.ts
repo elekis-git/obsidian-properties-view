@@ -43,7 +43,6 @@ export default class ListColumn extends Column {
 					}
 				}
 			}
-
 			if (!isMatch) {
 				row.style.display = "none";
 			}
@@ -59,6 +58,7 @@ export default class ListColumn extends Column {
     }
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object|null){
+		console.log("la",cell, file, prop, value);
         cell.empty();
 		cell.setAttribute("filepath", file.path);
 		cell.setAttribute("prop", prop);
@@ -82,22 +82,6 @@ export default class ListColumn extends Column {
 			} else {
 				listItem.createEl("span", { text: v });
 			}
-
-			const delbutton = listItem.createEl("button", {
-				text: "-",
-				cls: "properties-del-elekis-divprop-button",
-				attr: { filepath: file.path, prop: prop, value: v }
-			});
-
-			delbutton.addEventListener("click", async (event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				const filep = delbutton.getAttribute("filepath")!;
-				const propAttr = delbutton.getAttribute("prop")!;
-				const valueAttr = delbutton.getAttribute("value")!;
-				await this.updateYamlProperty(filep, propAttr, valueAttr, "delete");
-				listItem.remove();
-			});
 		});
 
 		cell.appendChild(list);
@@ -118,6 +102,7 @@ export default class ListColumn extends Column {
 					.filter((v) => v !== "");
 				cell.empty();
 				await this.updateYamlProperty(file.path, prop, newValue, "update");
+				console.log("ici",cell, file, prop, newValue);
 				this.fillCell(cell, file, prop, newValue);
 			});
 		});

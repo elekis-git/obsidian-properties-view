@@ -132,7 +132,7 @@ export class FilterModal extends Modal {
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("h2", { text: `Filtrer ${this.col.getPropertyName()}` });
+    contentEl.createEl("h2", { text: `${this.col.getPropertyName()}` });
     if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
     } else {
