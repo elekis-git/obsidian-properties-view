@@ -39,7 +39,7 @@ export default class TextColumn extends Column {
     
     public decodeEmojisInText(text: string): string {
     return text.replace(/emoji\/\/([0-9a-fA-F-]+)/g, (_, hexCodes) => {
-        const unicodeChars = hexCodes.split("-").map(code => String.fromCodePoint(parseInt(code, 16)));
+        const unicodeChars = hexCodes.split("-").map(code:string => String.fromCodePoint(parseInt(code, 16)));
         return unicodeChars.join("");
     });
 }
