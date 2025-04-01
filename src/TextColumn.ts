@@ -85,7 +85,7 @@ export default class TextColumn extends Column {
 			value = input.value;
 			displayDiv.style.display = "block";
 			input.style.display = "none";
-			await this.updateYamlProperty(file.path, prop, value, "update");
+			await this.updateYamlProperty(file.path, prop, value == null ? "" : value.toString(), "update");
 			renderMarkdown();
 			this.fillCell(cell, file, prop, value);
 		});

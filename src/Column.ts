@@ -162,7 +162,7 @@ export default class Column implements IColumn {
     }
 
 
-    async updateYamlProperty(filePath: string, prop: string, value: string|string[], actiontype: string) {
+    async updateYamlProperty(filePath: string, prop: string, value: string|string[]|boolean|number, actiontype: string) {
         const fileOrAbstract = this.vault.getAbstractFileByPath(filePath);
         if (!(fileOrAbstract instanceof TFile)) return;
 
