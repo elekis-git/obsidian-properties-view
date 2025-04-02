@@ -56,7 +56,7 @@
   position: relative;
   text-align: center;
   white-space: nowrap;
-  min-width: 0; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
   max-width: 300px; /* Limite la largeur maximale à 300px */
   width: auto; /* Permet à la largeur de s'ajuster au contenu */
   overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
