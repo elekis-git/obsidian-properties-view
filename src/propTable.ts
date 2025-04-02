@@ -16,7 +16,6 @@ import IDColumn from "./IDColumn";
 import ListColumn from "./ListColumn";
 import IntColumn from "./IntColumn";
 
-
 export class GlobalPropertiesView extends ItemView {
 	fileProperties: any[] = [];
 	public static GLOBAL_PROPERTIES_VIEW = "glbVeID";
@@ -24,7 +23,7 @@ export class GlobalPropertiesView extends ItemView {
 	private propColStart = 3;
 	private scale = 1;
 	private columnsMapping: IColumn[] = [];
-	private folderPath:string = "/"
+	private folderPath: string = "/";
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
 	}
@@ -40,7 +39,6 @@ export class GlobalPropertiesView extends ItemView {
 	getDisplayText() {
 		return "global properties view";
 	}
-
 
 	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn>): IColumn {
 		const isDate = (value: string): boolean => {
@@ -71,44 +69,73 @@ export class GlobalPropertiesView extends ItemView {
 		return new TextColumn(key, this.app);
 	}
 
-	
-    async setState(state: any, result: ViewStateResult): Promise<void> {
-        if (state.folderPath) {
-            this.folderPath = state.folderPath;
-        }
-        await super.setState(state, result);
-    }
+	async setState(state: any, result: ViewStateResult): Promise<void> {
+		if (state.folderPath) {
+			this.folderPath = state.folderPath;
+		}
+		await super.setState(state, result);
+	}
 
-    getState(): any {
-        const state = { folderPath: this.folderPath };
-        return state;
-    }
-	
-	createTablePropView(){
+	getState(): any {
+		const state = { folderPath: this.folderPath };
+		return state;
+	}
+
+	createTablePropView() {
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.classList.add("modal-j-content");		
+		contentEl.classList.add("modal-j-content");
 		const title = contentEl.createEl("h1", {
-    text: "Properties of " + this.folderPath,
-    cls: "custom-title"
-});
+			text: "Properties of " + this.folderPath,
+			cls: "custom-title"
+		});
 		title.classList.add("modal-j-title");
-		IDColumn.counter =0;
+		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
-		this.table = contentEl.createEl("table", { cls: "properties-j-table" });		
+		this.table = contentEl.createEl("table", { cls: "properties-j-table" });
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
-		contentEl.scrollTop = 0;	
-	}
-	
-	async onOpen() {
-		console.log("onOpen");
+		contentEl.scrollTop = 0;
+		if (process.env.NODE_ENV === "development") {
+			console.log("Mode développement activé !");
+			contentEl.addEventListener("contextmenu", this.saveDomToMarkdown);
+		}
 	}
 
+	async onOpen() {
+		console.log("onOpen");
+		
+	}
+		
+	
+//only if devemement mode....//	
+	saveDomToMarkdown = async (event: MouseEvent): Promise<void> => {
+        event.preventDefault(); // Empêche le menu contextuel natif
+
+        const domContent = this.containerEl.innerHTML;
+        const markdownContent = `# DOM Snapshot\n\n\`\`\`html\n${domContent}\n\`\`\``;
+
+        const filePath = "dom_snapshot.md";
+        const vault: Vault = this.app.vault;
+
+        try {
+            let file = vault.getAbstractFileByPath(filePath);
+            if (file instanceof TFile) {
+                await vault.modify(file, markdownContent); // Écrase le fichier existant
+            } else {
+                await vault.create(filePath, markdownContent); // Crée le fichier s'il n'existe pas
+            }
+            console.log("✅ DOM sauvegardé dans Snapshots/dom_snapshot.md");
+        } catch (error) {
+            console.error("❌ Erreur lors de la sauvegarde du DOM :", error);
+        }
+    };
+//only if devemement mode....//	
+	
+	
 	private buildFileProperties(): IColumn[] {
-		const files = this.app.vault.getMarkdownFiles()
-				.filter(file => file.parent?.path.startsWith(this.folderPath));
+		const files = this.app.vault.getMarkdownFiles().filter((file) => file.parent?.path.startsWith(this.folderPath));
 		const propertyMap: Map<string, IColumn> = new Map();
 		this.fileProperties = [];
 
@@ -158,7 +185,6 @@ export class GlobalPropertiesView extends ItemView {
 		}
 
 		this.columnsMapping.forEach((col) => {
-			
 			const th = headerRow.createEl("th", {
 				cls: "th-j-container",
 				attr: { columnIdx: col.getIndex() }
@@ -174,7 +200,6 @@ export class GlobalPropertiesView extends ItemView {
 			});
 			smallText.addClass("th-small-text"); // Classe CSS pour réduire la taille
 		});
-
 
 		headerRow.querySelectorAll("th").forEach((h) => {
 			h.addEventListener("click", () => {
@@ -239,16 +264,11 @@ export class GlobalPropertiesView extends ItemView {
 	private openFilterModal(columnIdx: number) {
 		let col = this.columnsMapping[columnIdx];
 		const allowedValues = this.getAllUniqueValuesForProperty(this.columnsMapping[columnIdx].getPropertyName());
-		const modal = new FilterModal(
-			this.app,
-			col,
-			allowedValues,
-			(selectedValues: any[]) => {
-				this.columnsMapping[columnIdx].setFilter(selectedValues);
-				this.applyFilters(columnIdx);
-				this.updateFilterButtonStyles();
-			}
-		);
+		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
+			this.columnsMapping[columnIdx].setFilter(selectedValues);
+			this.applyFilters(columnIdx);
+			this.updateFilterButtonStyles();
+		});
 		modal.open();
 	}
 
@@ -272,7 +292,7 @@ export class GlobalPropertiesView extends ItemView {
 				let prop = col.getPropertyName();
 				const value = props[prop];
 				const td = tr.createEl("td", { cls: "td-j-container" });
-				col.fillCell(td, file, prop, value);				
+				col.fillCell(td, file, prop, value);
 			});
 		}
 	}

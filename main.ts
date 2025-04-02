@@ -8,10 +8,6 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			(leaf: WorkspaceLeaf) => new GlobalPropertiesView(leaf)
 		);
 
-	/*	this.addRibbonIcon("wrench", "Properties", () => {
-			this.openTab(this.app.vault.getRoot());
-		});
-*/
 		// Écouteur sur le changement de tab
 		this.app.workspace.on("active-leaf-change", this.onActiveLeafChange.bind(this));
 
@@ -30,7 +26,7 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			})
 		);
 	}
-
+	
 	// Méthode déclenchée lors du changement d'onglet actif
 	onActiveLeafChange() {
 		const activeLeaf = this.app.workspace.activeLeaf;
