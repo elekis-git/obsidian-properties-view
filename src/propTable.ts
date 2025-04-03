@@ -24,20 +24,25 @@ export class GlobalPropertiesView extends ItemView {
 	private scale = 1;
 	private columnsMapping: IColumn[] = [];
 	private folderPath: string = "/";
+	private tablecreated = false;
+	
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
 	}
 
 	public refreshView() {
+		this.createTablePropView();
 		console.log("refresh");
 	}
 
 	getViewType() {
 		return GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW;
 	}
+	
+	getIcon(){ return "wrench";}
 
 	getDisplayText() {
-		return "global properties view";
+		return this.folderPath;
 	}
 
 	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn>): IColumn {
@@ -47,7 +52,7 @@ export class GlobalPropertiesView extends ItemView {
 		const isDateTime = (value: string): boolean => {
 			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
 		};
-
+		console.log("detectPropertyType", key, value)
 		const isNumeric = (val: any) => !isNaN(val);
 		if (value == null || value === "") {
 			if (propertyMap.get(key) == null) return new TextColumn(key, this.app);
@@ -70,6 +75,7 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	async setState(state: any, result: ViewStateResult): Promise<void> {
+		console.log("setState");
 		if (state.folderPath) {
 			this.folderPath = state.folderPath;
 		}
@@ -77,11 +83,15 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	getState(): any {
+		console.log("getState");
 		const state = { folderPath: this.folderPath };
 		return state;
 	}
 
 	createTablePropView() {
+		if (this.tablecreated == true)return; 
+		this.tablecreated = true;
+		console.log("createTablePropView");
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.classList.add("modal-j-content");
@@ -96,43 +106,12 @@ export class GlobalPropertiesView extends ItemView {
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
-		contentEl.scrollTop = 0;
-		if (process.env.NODE_ENV === "development") {
-			console.log("Mode développement activé !");
-			contentEl.addEventListener("contextmenu", this.saveDomToMarkdown);
-		}
+		contentEl.scrollTop = 0;		
 	}
 
 	async onOpen() {
-		console.log("onOpen");
-		
+		console.log("onOpen");	
 	}
-		
-	
-//only if devemement mode....//	
-	saveDomToMarkdown = async (event: MouseEvent): Promise<void> => {
-        event.preventDefault(); // Empêche le menu contextuel natif
-
-        const domContent = this.containerEl.innerHTML;
-        const markdownContent = `# DOM Snapshot\n\n\`\`\`html\n${domContent}\n\`\`\``;
-
-        const filePath = "dom_snapshot.md";
-        const vault: Vault = this.app.vault;
-
-        try {
-            let file = vault.getAbstractFileByPath(filePath);
-            if (file instanceof TFile) {
-                await vault.modify(file, markdownContent); // Écrase le fichier existant
-            } else {
-                await vault.create(filePath, markdownContent); // Crée le fichier s'il n'existe pas
-            }
-            console.log("✅ DOM sauvegardé dans Snapshots/dom_snapshot.md");
-        } catch (error) {
-            console.error("❌ Erreur lors de la sauvegarde du DOM :", error);
-        }
-    };
-//only if devemement mode....//	
-	
 	
 	private buildFileProperties(): IColumn[] {
 		const files = this.app.vault.getMarkdownFiles().filter((file) => file.parent?.path.startsWith(this.folderPath));

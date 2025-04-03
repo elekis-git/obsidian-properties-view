@@ -15,35 +15,29 @@ export default class BoolColumn extends Column {
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null):void {
         cell.empty();
-        
-        const createCheckbox = (v: boolean | null): void => {
+        console.log(file.name, prop, value);
+        const createCheckbox = (v:string): void => {
             cell.empty();
             const checkbox = cell.createEl("input", { type: "checkbox" });
-            // Maintenant vous pouvez définir la propriété `checked` séparément
-            checkbox.checked = v ?? false;
+            if( v==="N"){
+                //bad, should be (-) like in obsidian.
+                checkbox.checked = false;
+            }else checkbox.checked = v ==="T";
+            
             checkbox.setAttribute("filepath", file.path);
             checkbox.setAttribute("prop", prop);
 
             checkbox.addEventListener("change", async () => {
                 const newValue = checkbox.checked; // true ou false selon l'état du checkbox
+                checkbox.style.backgroundColor = "" 
                 const filep = checkbox.getAttribute("filepath")!;
                 const propp = checkbox.getAttribute("prop")!;
                 await this.updateYamlProperty(filep, propp, newValue, "update");
             });
-
-            checkbox.addEventListener("blur", () => {
-                // Aucune action spécifique au blur, mais c'est là au cas où
-            });
-
-//            checkbox.focus();
         };
 
-        if (value === null) {
-            // Si la valeur actuelle est null ou undefined, on attend un clic pour créer le checkbox
-            cell.empty();
-            cell.addEventListener("click", () => createCheckbox(null), { once: true });
-        } else {
-            createCheckbox(Boolean(value)); // Crée la checkbox avec la valeur actuelle
-        }
+        if (value === undefined) cell.addEventListener("click", () => createCheckbox("F"), { once: true });
+        else if (value == null) createCheckbox("N")
+        else createCheckbox(Boolean(value) ? "T":"F"); // Crée la checkbox avec la valeur actuelle
     }
 }
