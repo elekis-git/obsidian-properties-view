@@ -35,6 +35,40 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			activeLeaf.view.refreshView();
 		}
 	}
+	
+	
+	async openTab(fd: TFolder) {
+		const leaves = this.app.workspace.getLeavesOfType(GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW);
+
+		// Vérifier si une leaf existe déjà pour ce dossier
+		for (const leaf of leaves) {
+			const view = leaf.view;
+			if (view instanceof GlobalPropertiesView && view.getFolderPath() === fd.path) {
+				this.app.workspace.setActiveLeaf(leaf);
+				return; // On arrête ici si l'onglet existe déjà
+			}
+		}
+
+		// Sinon, on ouvre une nouvelle vue
+		const newLeaf = this.app.workspace.getLeaf(true);
+		await newLeaf.setViewState({
+			type: GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW,
+			active: true,
+			state: { folderPath: fd.path }
+		});
+
+		const newView = newLeaf.view;
+		if (newView instanceof GlobalPropertiesView) {
+			console.log("Vue correctement récupérée :", newView);
+			newView.createTablePropView();
+		} else {
+			console.error("Vue non reconnue !");
+		}
+	}
+
+	
+	
+/*	
 	async openTab(fd: TFolder) {
 		const leaf = this.app.workspace.getLeaf(true);
 		await leaf.setViewState({
@@ -52,4 +86,5 @@ export default class GlobalPropertiesPlugin extends Plugin {
         }
 		
 	}
+*/
 }

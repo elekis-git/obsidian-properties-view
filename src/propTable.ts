@@ -44,6 +44,10 @@ export class GlobalPropertiesView extends ItemView {
 	getDisplayText() {
 		return this.folderPath;
 	}
+	
+	getFolderPath():string {
+		return this.folderPath;
+	}
 
 	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn>): IColumn {
 		const isDate = (value: string): boolean => {
