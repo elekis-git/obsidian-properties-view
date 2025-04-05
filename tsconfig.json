@@ -17,9 +17,16 @@
       "ES5",
       "ES6",
       "ES7"
+    ],
+    "types": [
+      "@wdio/globals/types",
+      "@wdio/mocha-framework",
+      "wdio-obsidian-service"
     ]
   },
   "include": [
     "**/*.ts"
-  ]
+  ],
+    "exclude": ["tests","test", "**/*.test.ts", "**/*.spec.ts", "__mocks__"]
+  
 }

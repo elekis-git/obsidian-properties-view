@@ -66,23 +66,26 @@ export default class ListColumn extends Column {
 		let cv = Array.isArray(value) ? value : [value];
 
 		const list = displayDiv.createEl("ul", { cls: "properties-list-elekis" });
+		if (cv.length == 1 && cv[0] == null) cell.classList.add("ptp-global-table-td-empty");
+		else{
+			cell.classList.remove("ptp-global-table-td-empty");
+			cv.forEach((v) => {
+				if (v == null) return;
+				const listItem = list.createEl("li", { cls: "properties-list-item" });
 
-		cv.forEach((v) => {
-			if (v == null) return;
-			const listItem = list.createEl("li", { cls: "properties-list-item" });
-
-			if (/^\[\[.*\]\]$/.test(v)) {
-				const fileName = v.replace(/^\[\[|\]\]$/g, ""); // Nettoyer [[ ]]
-				let tfile = this.app.metadataCache.getFirstLinkpathDest(fileName, "");
-				if (tfile == null) {
-					this.createHref(listItem, fileName);
+				if (/^\[\[.*\]\]$/.test(v)) {
+					const fileName = v.replace(/^\[\[|\]\]$/g, ""); // Nettoyer [[ ]]
+					let tfile = this.app.metadataCache.getFirstLinkpathDest(fileName, "");
+					if (tfile == null) {
+						this.createHref(listItem, fileName);
+					} else {
+						this.createHref(listItem, tfile);
+					}
 				} else {
-					this.createHref(listItem, tfile);
+					listItem.createEl("span", { text: v });
 				}
-			} else {
-				listItem.createEl("span", { text: v });
-			}
-		});
+			});
+		}
 		const textarea = cell.createEl("textarea", {
 				cls: "properties-markdown-textarea",
 				text: cv.join("\n")
@@ -99,6 +102,8 @@ export default class ListColumn extends Column {
 				displayDiv.style.display = "block";
 				textarea.style.display = "none";
 				let tt = textarea.value.trim().split("\n").filter((v) => v !== "")
+				if (tt.length == 0) cell.classList.add("ptp-global-table-td-empty");
+				else cell.classList.remove("ptp-global-table-td-empty");
 				await this.updateYamlProperty(file.path, prop,tt, "update");
 				this.fillCell(cell, file, prop, tt);
 			});

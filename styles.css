@@ -1,18 +1,40 @@
 /* styles.css */
-.full-j-modal {
+.ptp-global-container {
   width: 100vw;
   height: 100vh;
   position: fixed;
+  color: #555; 
 }
 
-.custom-title {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #33300;
-  margin-bottom: 16px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+
+.ptp-global-table {
+  width: 100%;
+  border-collapse: collapse;
 }
+
+.ptp-global-table-td-empty {
+  background-color: #f0f0f0; /* Gris clair */
+  color: #ccc; /* Texte gris très pâle */
+  font-style: italic;
+}
+
+.ptp-h1-title {
+  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 28px !important;
+  font-weight: bold !important;
+  text-align: left;
+  color: #007BFF !important; /* Bleu vif */
+  background: linear-gradient(to right, #007BFF, #00C6FF); /* Dégradé bleu */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Effet de texte en dégradé */
+  margin-top: 40px !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) !important;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(0, 123, 255, 0.5);
+}
+
+
 
 .modal-j-content {
   height: 100%;
@@ -26,34 +48,23 @@
   margin-bottom: 20px;
 }
 
-.scroll-j-container {
-  flex: 1;
-  overflow: auto;
-  border: 1px solid #ccc;
+
+.ptp-th-container {
   position: relative;
-  cursor: grab;
-}
-
-.scroll-j-container.dragging {
-  cursor: grabbing;
-}
-
-.properties-j-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.properties-j-table th, .properties-j-table td {
   border: 1px solid #ccc;
   padding: 8px;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+  max-width: 300px; /* Limite la largeur maximale à 300px */
+  width: auto; /* Permet à la largeur de s'ajuster au contenu */
+  overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
 }
 
-.a-j {
-  text-decoration: underline;
-}
-
-.th-j-container {
+.ptp-td-container {
   position: relative;
+  border: 1px solid #ccc;
+  padding: 8px;
   text-align: center;
   white-space: nowrap;
   min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
@@ -63,31 +74,8 @@
 }
 
 
-.button-j-container {
-  width: 16px; 
-  height: 16px; 
-  border-radius: 50%; 
-  background-color: deepskyblue; 
-  border: none;
-  font-size: 12px; 
-  text-align: center;
-  line-height: 16px;
-  cursor: pointer;
-}
-
-.button-j-container:hover {
-  background-color: deepskyblue; /* Bleu un peu plus foncé au survol */
-}
-
-/* Élément de filtre individuel */
-.properties-filter-elekis-divprop {
-    display: inline-flex;
-    align-items: right;
-    margin: 0px;
-}
-
 /* Bouton de suppression des filtres */
-.properties-filter-elekis-divprop-button {
+.ptp-filter-button{
     margin-left: 10px;
     cursor: pointer;
     display: inline-flex;
@@ -95,26 +83,17 @@
 }
 
 
-.filter-active {
+.ptp-filter-button-active {
     background-color: #ffcc00 !important; /* Jaune par exemple */
     color: black;
     font-weight: bold;
 }
 
-.clear-filter-button {
-    background-color: red;
-    color: white;
-    margin-left: 10px;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-}
-
-.clear-filter-button:hover {
+.ptp-filter-button-clear:hover {
     background-color: darkred;
 }
 
-.my-gray-input {
+.ptp-date-gray-input {
     background-color: #ffffff !important;
     color: #ffffff !important;
     border: 1px solid #ccc !important;
@@ -122,7 +101,7 @@
     border-radius: 4px !important;
 }
 
-.properties-add-elekis-date-button{
+.ptp-date-button{
     background-color: #f0f0f0 !important;
 }
 

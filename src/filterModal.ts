@@ -59,7 +59,7 @@ export class FilterModal extends Modal {
     const maxDate = validDates.length > 0 ? new Date(Math.max(...validDates.map(d => d.getTime()))) : null;
 
     const createDateInput = (label: string, value: string | null, onClick: () => void) => {
-      const container = contentEl.createEl("div", { cls: "filter-date-container" });
+      const container = contentEl.createEl("div", { cls: "ptp-filter-date-container" });
       container.createEl("label", { text: label });
       const input = container.createEl("input", { attr: { type: "date", value: value ? value.split("T")[0] : "" } });
       return { container, input };
@@ -78,7 +78,7 @@ export class FilterModal extends Modal {
     );
 
 
-    const filterButton = contentEl.createEl("button", { text: "Filtrer" });
+    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls:"ptp-filter-button" });
     filterButton.addEventListener("click", () => {
       this.onSubmit([
 					fromInput.value ? new Date(fromInput.value).toISOString() : null, 
@@ -90,7 +90,7 @@ export class FilterModal extends Modal {
 	
 
 
-    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "clear-filter-button" });
+    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
     clearButton.addEventListener("click", () => {
       this.onSubmit([]); 
       this.close();
@@ -107,19 +107,19 @@ export class FilterModal extends Modal {
 
   private createDefaultFilter(contentEl: HTMLElement) {
     this.allowedValues.sort().forEach((value) => {
-      const container = contentEl.createEl("div", { cls: "filter-value-container" });
+      const container = contentEl.createEl("div", { cls: "ptp-filter-value-container" });
       this.createCheckbox(value, container);
     });
 		
 
-    const filterButton = contentEl.createEl("button", { text: "Filtrer" });
+    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
     filterButton.addEventListener("click", () => {
       this.onSubmit(Array.from(this.selectedValues));
       this.close();
     });
 	
 
-    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "clear-filter-button" });
+    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
     clearButton.addEventListener("click", () => {
       this.onSubmit([]); 
       this.close();

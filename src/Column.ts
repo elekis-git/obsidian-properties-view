@@ -55,12 +55,7 @@ export interface IColumn {
 
     sortRows(rows: HTMLElement[]): HTMLElement[];
 	
-	
-	
-	
 }
-
-
 
 export default class Column implements IColumn {
 
@@ -75,6 +70,7 @@ export default class Column implements IColumn {
     
     constructor(pname: string, app: App) {
         this.app = app;
+        console.log("------>zz");
         this.vault = app.vault;
         this.sortasc = false;
         this.columnIndex = -1
@@ -162,8 +158,7 @@ export default class Column implements IColumn {
     }
 
 
-    async updateYamlProperty(filePath: string, prop: string, value: string|string[]|boolean|number, actiontype: string) {
-        console.log("UpdateYAML", prop, value, actiontype);
+    async updateYamlProperty(filePath: string, prop: string, value: string|string[]|boolean|number|null, actiontype: string) {
         const fileOrAbstract = this.vault.getAbstractFileByPath(filePath);
         if (!(fileOrAbstract instanceof TFile)) return;
 
@@ -176,7 +171,6 @@ export default class Column implements IColumn {
         const yamlData = parseYaml(yamlContent);
 
         if (actiontype === "update") {
-                console.log("value", value);
                 yamlData[prop]= value;
         } else if (actiontype === "delete") {
             if (Array.isArray(yamlData[prop])) {
@@ -186,13 +180,10 @@ export default class Column implements IColumn {
                 delete yamlData[prop];
             }
         } 
-        
         const newYaml = stringifyYaml(yamlData);
         fileContent = match ?
             fileContent.replace(/^---\n[\s\S]*?\n---/, `---\n${newYaml}---`) :
             `---\n${newYaml}---\n${fileContent}`;
-
-        //console.log("Updated YAML:", newYaml);
         await this.vault.modify(fileOrAbstract, fileContent);
     }
 

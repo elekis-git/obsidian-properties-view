@@ -25,7 +25,7 @@ export class GlobalPropertiesView extends ItemView {
 	private columnsMapping: IColumn[] = [];
 	private folderPath: string = "/";
 	private tablecreated = false;
-	
+
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
 	}
@@ -38,44 +38,17 @@ export class GlobalPropertiesView extends ItemView {
 	getViewType() {
 		return GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW;
 	}
-	
-	getIcon(){ return "wrench";}
+
+	getIcon() {
+		return "wrench";
+	}
 
 	getDisplayText() {
 		return this.folderPath;
 	}
-	
-	getFolderPath():string {
+
+	getFolderPath(): string {
 		return this.folderPath;
-	}
-
-	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn>): IColumn {
-		const isDate = (value: string): boolean => {
-			return /^\d{4}-\d{2}-\d{2}$/.test(value);
-		};
-		const isDateTime = (value: string): boolean => {
-			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
-		};
-		console.log("detectPropertyType", key, value)
-		const isNumeric = (val: any) => !isNaN(val);
-		if (value == null || value === "") {
-			if (propertyMap.get(key) == null) return new TextColumn(key, this.app);
-		}
-		if (propertyMap.get(key) instanceof ListColumn) return new ListColumn(key, this.app);
-		if (propertyMap.get(key) instanceof DateTimeColumn) return new DateTimeColumn(key, this.app, "DateTime");
-
-		if (Array.isArray(value)) {
-			return new ListColumn(key, this.app);
-		} else if (typeof value === "string") {
-			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
-			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
-			return new TextColumn(key, this.app);
-		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
-			return propertyMap.get(key) || new IntColumn(key, this.app);
-		} else if (typeof value === "boolean") {
-			return new BoolColumn(key, this.app);
-		}
-		return new TextColumn(key, this.app);
 	}
 
 	async setState(state: any, result: ViewStateResult): Promise<void> {
@@ -93,33 +66,62 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	createTablePropView() {
-		if (this.tablecreated == true)return; 
+		if (this.tablecreated == true) return;
 		this.tablecreated = true;
 		console.log("createTablePropView");
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.classList.add("modal-j-content");
+		contentEl.classList.add("ptp-global-container");
 		const title = contentEl.createEl("h1", {
 			text: "Properties of " + this.folderPath,
-			cls: "custom-title"
+			cls: "ptp-h1-title"
 		});
-		title.classList.add("modal-j-title");
 		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
-		this.table = contentEl.createEl("table", { cls: "properties-j-table" });
+		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
-		contentEl.scrollTop = 0;		
+		contentEl.scrollTop = 0;
 	}
 
 	async onOpen() {
-		console.log("onOpen");	
+		console.log("onOpen");
 	}
-	
+
+	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn|null>): IColumn | null {
+		const isDate = (value: string): boolean => {
+			return /^\d{4}-\d{2}-\d{2}$/.test(value);
+		};
+		const isDateTime = (value: string): boolean => {
+			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
+		};
+		
+		const existingV = propertyMap.get(key);
+		
+		const isNumeric = (val: any) => !isNaN(val);
+		if (value == null || value === "") {
+			if (existingV == null) return null;
+		}
+		if (propertyMap.get(key) instanceof ListColumn) return new ListColumn(key, this.app);
+
+		if (Array.isArray(value)) {
+			return new ListColumn(key, this.app);
+		} else if (typeof value === "string") {
+			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
+			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
+			return new TextColumn(key, this.app);
+		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
+			return existingV == null ? new IntColumn(key, this.app) : existingV;
+		} else if (typeof value === "boolean") {
+			return existingV == null ? new BoolColumn(key, this.app) : existingV;
+		}
+		return new TextColumn(key, this.app);
+	}
+
 	private buildFileProperties(): IColumn[] {
 		const files = this.app.vault.getMarkdownFiles().filter((file) => file.parent?.path.startsWith(this.folderPath));
-		const propertyMap: Map<string, IColumn> = new Map();
+		const propertyMap: Map<string, IColumn|null> = new Map();
 		this.fileProperties = [];
 
 		for (const file of files) {
@@ -129,11 +131,9 @@ export class GlobalPropertiesView extends ItemView {
 				for (const key in cache.frontmatter) {
 					const value = cache.frontmatter[key];
 					const detectedType = this.detectPropertyType(key, value, propertyMap);
-
-					if (!propertyMap.has(key)) propertyMap.set(key, detectedType);
-					else {
-						propertyMap.get(key)?.addCnt1();
-					}
+					console.log("detectPropertyType", key, value, detectedType);
+					propertyMap.set(key, detectedType);
+					if (detectedType != null) detectedType.addCnt1();
 					props[key] = value;
 				}
 				this.fileProperties.push({ file, props });
@@ -141,21 +141,21 @@ export class GlobalPropertiesView extends ItemView {
 				this.fileProperties.push({ file, props: {} });
 			}
 		}
+		propertyMap.forEach((value : IColumn|null, key : string) => {
+			if (value === null) {
+				propertyMap.set(key, new TextColumn(key, this.app)); // Remplace la valeur null par la valeur par défaut
+			}
+		});
+		console.log(propertyMap);
+
 		let tmp = Array.from(new Set(Array.from(propertyMap.values())));
-		if (true) {
-			// if ordre alphabetique
-			return tmp.sort((a, b) => {
-				return b.getCnt() - a.getCnt();
-			});
-		} else
-			return tmp.sort((a, b) => {
-				return a.getPropertyName().localeCompare(b.getPropertyName());
-			});
+		return tmp.filter((col): col is IColumn => col !== null).sort((a, b) => b.getCnt() - a.getCnt()); // Tri en fonction de getCnt()
+
 	}
 
 	private buildTableHeader() {
 		if (!this.table) return;
-		const thead = this.table.createEl("thead", { cls: "th-j-container" });
+		const thead = this.table.createEl("thead", { cls: "ptp-th-container" });
 		const headerRow = thead.createEl("tr");
 
 		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
@@ -169,7 +169,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		this.columnsMapping.forEach((col) => {
 			const th = headerRow.createEl("th", {
-				cls: "th-j-container",
+				cls: "ptp-th-container",
 				attr: { columnIdx: col.getIndex() }
 			});
 
@@ -194,12 +194,12 @@ export class GlobalPropertiesView extends ItemView {
 
 		const filterRow = thead.createEl("tr");
 		Object.entries(this.columnsMapping).forEach(([key, col]) => {
-			const th = filterRow.createEl("th", { cls: "th-j-container" });
+			const th = filterRow.createEl("th", { cls: "ptp-th-container" });
 			if (!col.isFiltering()) return;
 
 			const filterButton = th.createEl("button", {
 				text: "+",
-				cls: "properties-filter-elekis-divprop-button"
+				cls: "ptp-filter-button"
 			});
 			filterButton.setAttribute("columnIdx", col.getIndex().toString());
 
@@ -233,13 +233,13 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	private updateFilterButtonStyles() {
-		const filterButtons = document.querySelectorAll(".properties-filter-elekis-divprop-button");
+		const filterButtons = document.querySelectorAll(".ptp-filter-button");
 		filterButtons.forEach((button) => {
 			const col = this.columnsMapping[Number(button.getAttribute("columnIdx"))];
 			if (col.getFilter().length > 0) {
-				button.classList.add("filter-active");
+				button.classList.add("ptp-filter-button-active");
 			} else {
-				button.classList.remove("filter-active");
+				button.classList.remove("ptp-filter-button-active");
 			}
 		});
 	}
@@ -266,7 +266,7 @@ export class GlobalPropertiesView extends ItemView {
 
 	private buildTableBody() {
 		if (!this.table) return;
-		const tbody = this.table.createEl("tbody");
+		const tbody = this.table.createEl("tbody", { cls: "ptp-tbody-container" });
 		//		console.log(this.fileProperties);
 		for (const { file, props } of this.fileProperties) {
 			const tr = tbody.createEl("tr");
@@ -274,7 +274,7 @@ export class GlobalPropertiesView extends ItemView {
 			this.columnsMapping.forEach((col) => {
 				let prop = col.getPropertyName();
 				const value = props[prop];
-				const td = tr.createEl("td", { cls: "td-j-container" });
+				const td = tr.createEl("td", { cls: "ptp-td-container" });
 				col.fillCell(td, file, prop, value);
 			});
 		}
@@ -294,7 +294,7 @@ export class GlobalPropertiesView extends ItemView {
 	private addZoomFeature() {
 		if (!this.table) return;
 		this.table.style.transform = `scale(${this.scale})`;
-		this.table.style.transformOrigin = "top center";
+		this.table.style.transformOrigin = "top left";
 
 		this.table.addEventListener("wheel", (event) => {
 			if (!event.ctrlKey) return;
@@ -307,7 +307,7 @@ export class GlobalPropertiesView extends ItemView {
 			}
 			if (this.table) {
 				this.table.style.transform = `scale(${this.scale})`;
-				this.table.style.transformOrigin = "top center";
+				this.table.style.transformOrigin = "top left";
 			}
 		});
 	}

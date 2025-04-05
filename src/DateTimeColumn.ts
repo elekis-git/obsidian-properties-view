@@ -88,17 +88,16 @@ export default class DateTimeColumn extends Column {
     
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {
         cell.empty();
-        const input = cell.createEl("input", { cls: "properties-add-elekis-date-button" });
+        const input = cell.createEl("input", { cls: "ptp-date-button" });
         input.setAttribute("filepath", file.path);
         input.setAttribute("prop", prop);
         input.type = this.dtype == "DateTime" ? "datetime-local" : "date";
         if (value != null && value !== "") {
-            console.log("value", value);
             let dd = new Date(value as string);
             if (this.dtype == "DateTime") input.value = this.getCorrectDateTime(dd);
             else input.value = dd.toISOString().split("T")[0];
         } else {
-            input.classList.add("my-gray-input");
+            input.classList.add("ptp-date-gray-input");
         }
 
         input.addEventListener("change", async () => {
@@ -112,9 +111,9 @@ export default class DateTimeColumn extends Column {
                     input.type === "datetime-local"
                         ?this.getCorrectDateTime(dateValue)
                         : dateValue.toISOString().split("T")[0];
-                input.classList.remove("my-gray-input");
+                input.classList.remove("ptp-date-gray-input");
             } else {
-                input.classList.add("my-gray-input");
+                input.classList.add("ptp-date-gray-input");
             }
             await this.updateYamlProperty(filep, propp, v2, "update");
         });
