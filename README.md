@@ -1,4 +1,4 @@
-# Obsidian obsidian-properties-view
+# Obsidian Plugin: obsidian-properties-view
 
 ## EN DEVELOPPEMENT...
 ![matrix property view](sc1.png)
