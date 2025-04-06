@@ -30,9 +30,13 @@ export class GlobalPropertiesView extends ItemView {
 		super(leaf);
 	}
 
+	public rebuildTheView() {
+		this.tablecreated = false;
+		this.createTablePropView();
+	}
+	
 	public refreshView() {
 		this.createTablePropView();
-		console.log("refresh");
 	}
 
 	getViewType() {
@@ -83,9 +87,8 @@ export class GlobalPropertiesView extends ItemView {
 		cls: "refresh-button"
 	});
     buttonR.addEventListener("click", async (event) => {
-        event.preventDefault();
-		this.tablecreated = false;
-        await this.refreshView();
+        event.preventDefault();		
+        await this.rebuildTheView();
     });
 		
     const button = contentEl.createEl("a", {

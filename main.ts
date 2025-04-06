@@ -8,10 +8,8 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			(leaf: WorkspaceLeaf) => new GlobalPropertiesView(leaf)
 		);
 
-		// Écouteur sur le changement de tab
-		this.app.workspace.on("active-leaf-change", this.onActiveLeafChange.bind(this));
-
-		// Ajout du menu contextuel pour les dossiers
+		this.app.workspace.on("active-leaf-change", this.refreshView.bind(this));
+		
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu: Menu, file) => {
 				if (file instanceof TFolder) {
@@ -25,22 +23,36 @@ export default class GlobalPropertiesPlugin extends Plugin {
 				}
 			})
 		);
+	
+		this.app.vault.on("create", (file: TFile) => {this.refreshAllView()});
+		this.app.vault.on("rename", (file: TFile) => {this.refreshAllView()});
+		this.app.vault.on("delete", (file: TFile) => {this.refreshAllView()});
+		this.app.vault.on("modify", (file: TFile) => {this.refreshAllView()});
+		this.app.vault.on("create-folder", (file: TFile) => {this.refreshAllView()});
+		this.app.vault.on("move", (file: TFile) => {this.refreshAllView()});
+		
 	}
 	
-	// Méthode déclenchée lors du changement d'onglet actif
-	onActiveLeafChange() {
+	refreshAllView(){
+		const leaves = this.app.workspace.getLeavesOfType(GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW);
+		for (const leaf of leaves) {
+			const view = leaf.view;
+			if (view instanceof GlobalPropertiesView)
+				view.rebuildTheView();
+		}
+	}
+	
+	refreshView() {
+		console.log("refresh the view");
 		const activeLeaf = this.app.workspace.activeLeaf;
-		// Utilisation de refreshView() car onOpen() est protégé
 		if (activeLeaf && activeLeaf.view instanceof GlobalPropertiesView) {
-			activeLeaf.view.refreshView();
+			activeLeaf.view.rebuildTheView();
 		}
 	}
 	
 	
 	async openTab(fd: TFolder) {
 		const leaves = this.app.workspace.getLeavesOfType(GlobalPropertiesView.GLOBAL_PROPERTIES_VIEW);
-
-		// Vérifier si une leaf existe déjà pour ce dossier
 		for (const leaf of leaves) {
 			const view = leaf.view;
 			if (view instanceof GlobalPropertiesView && view.getFolderPath() === fd.path) {
