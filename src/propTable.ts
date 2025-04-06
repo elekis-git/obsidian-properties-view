@@ -76,9 +76,20 @@ export class GlobalPropertiesView extends ItemView {
 			text: "Properties of " + this.folderPath,
 			cls: "ptp-h1-title"
 		});
+	
+	const buttonR = contentEl.createEl("a", {
+		text: "🔄", 
+		attr: { href: "#" },
+		cls: "refresh-button"
+	});
+    buttonR.addEventListener("click", async (event) => {
+        event.preventDefault();
+		this.tablecreated = false;
+        await this.refreshView();
+    });
 		
     const button = contentEl.createEl("a", {
-        text: "new file",
+        text: "create new file",
         cls: "create-file-button",
         attr: { href: "#" }
     });
@@ -146,7 +157,7 @@ export class GlobalPropertiesView extends ItemView {
 				for (const key in cache.frontmatter) {
 					const value = cache.frontmatter[key];
 					const detectedType = this.detectPropertyType(key, value, propertyMap);
-					console.log("detectPropertyType", key, value, detectedType);
+//					console.log("detectPropertyType", key, value, detectedType);
 					propertyMap.set(key, detectedType);
 					if (detectedType != null) detectedType.addCnt1();
 					props[key] = value;
@@ -327,22 +338,17 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 	
-	
 	async  createFileWithProperties() {
     try {
-		console.log("ici");
         const fileName = `new_file_${Date.now()}.md`;
         const filePath = `${this.folderPath}/${fileName}`;
 		
 		let yamlContent ='---\n'
         for (const col of this.columnsMapping.splice(3)) {
-			console.log(col);
             yamlContent += col.getPropertyName()+":\n";
         }
 		yamlContent +='---\n'		
-		console.log(yamlContent);
         const newFile :TFile = await this.app.vault.create(filePath, yamlContent);
-		console.log("ici3");
         console.log(`Fichier créé : ${filePath}`);
     } catch (error) {
         console.error("Erreur lors de la création du fichier :", error);

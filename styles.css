@@ -48,6 +48,10 @@
   margin-bottom: 20px;
 }
 
+.refresh-button {
+    margin-right: 10px;  /* Ajuste la valeur selon tes besoins */
+}
+
 
 .ptp-th-container {
   position: relative;
