@@ -25,16 +25,18 @@ export class GlobalPropertiesView extends ItemView {
 	private columnsMapping: IColumn[] = [];
 	private folderPath: string = "/";
 	private tablecreated = false;
+	private settings;
 
-	constructor(leaf: WorkspaceLeaf) {
+	constructor(leaf: WorkspaceLeaf, setting: GlobalPropertiesSettings) {
 		super(leaf);
+		this.settings = setting;
 	}
 
 	public rebuildTheView() {
 		this.tablecreated = false;
 		this.createTablePropView();
 	}
-	
+
 	public refreshView() {
 		this.createTablePropView();
 	}
@@ -80,54 +82,51 @@ export class GlobalPropertiesView extends ItemView {
 			text: "Properties of " + this.folderPath,
 			cls: "ptp-h1-title"
 		});
-	
-	const buttonR = contentEl.createEl("a", {
-		text: "🔄", 
-		attr: { href: "#" },
-		cls: "refresh-button"
-	});
-    buttonR.addEventListener("click", async (event) => {
-        event.preventDefault();		
-        await this.rebuildTheView();
-    });
-		
-    const button = contentEl.createEl("a", {
-        text: "create new file",
-        cls: "create-file-button",
-        attr: { href: "#" }
-    });
-    button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        await this.createFileWithProperties();
-    });
-    contentEl.appendChild(button);
-		
-		
+
+		const buttonR = contentEl.createEl("a", {
+			text: "🔄",
+			attr: { href: "#" },
+			cls: "refresh-button"
+		});
+		buttonR.addEventListener("click", async (event) => {
+			event.preventDefault();
+			await this.rebuildTheView();
+		});
+
+		const button = contentEl.createEl("a", {
+			text: "create new file",
+			cls: "create-file-button",
+			attr: { href: "#" }
+		});
+		button.addEventListener("click", async (event) => {
+			event.preventDefault();
+			await this.addANewFile();
+		});
+		contentEl.appendChild(button);
+
 		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
-		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });	
+		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
 		contentEl.scrollTop = 0;
 	}
 
-	
-	
 	async onOpen() {
 		console.log("onOpen");
 	}
 
-	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn|null>): IColumn | null {
+	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn | null>): IColumn | null {
 		const isDate = (value: string): boolean => {
 			return /^\d{4}-\d{2}-\d{2}$/.test(value);
 		};
 		const isDateTime = (value: string): boolean => {
 			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
 		};
-		
+
 		const existingV = propertyMap.get(key);
-		
+
 		const isNumeric = (val: any) => !isNaN(val);
 		if (value == null || value === "") {
 			if (existingV == null) return null;
@@ -150,7 +149,7 @@ export class GlobalPropertiesView extends ItemView {
 
 	private buildFileProperties(): IColumn[] {
 		const files = this.app.vault.getMarkdownFiles().filter((file) => file.parent?.path.startsWith(this.folderPath));
-		const propertyMap: Map<string, IColumn|null> = new Map();
+		const propertyMap: Map<string, IColumn | null> = new Map();
 		this.fileProperties = [];
 
 		for (const file of files) {
@@ -160,7 +159,7 @@ export class GlobalPropertiesView extends ItemView {
 				for (const key in cache.frontmatter) {
 					const value = cache.frontmatter[key];
 					const detectedType = this.detectPropertyType(key, value, propertyMap);
-//					console.log("detectPropertyType", key, value, detectedType);
+					//					console.log("detectPropertyType", key, value, detectedType);
 					propertyMap.set(key, detectedType);
 					if (detectedType != null) detectedType.addCnt1();
 					props[key] = value;
@@ -170,7 +169,7 @@ export class GlobalPropertiesView extends ItemView {
 				this.fileProperties.push({ file, props: {} });
 			}
 		}
-		propertyMap.forEach((value : IColumn|null, key : string) => {
+		propertyMap.forEach((value: IColumn | null, key: string) => {
 			if (value === null) {
 				propertyMap.set(key, new TextColumn(key, this.app)); // Remplace la valeur null par la valeur par défaut
 			}
@@ -179,7 +178,6 @@ export class GlobalPropertiesView extends ItemView {
 
 		let tmp = Array.from(new Set(Array.from(propertyMap.values())));
 		return tmp.filter((col): col is IColumn => col !== null).sort((a, b) => b.getCnt() - a.getCnt()); // Tri en fonction de getCnt()
-
 	}
 
 	private buildTableHeader() {
@@ -340,23 +338,25 @@ export class GlobalPropertiesView extends ItemView {
 			}
 		});
 	}
-	
-	async  createFileWithProperties() {
-    try {
-        const fileName = `new_file_${Date.now()}.md`;
-        const filePath = `${this.folderPath}/${fileName}`;
-		
-		let yamlContent ='---\n'
-        for (const col of this.columnsMapping.splice(3)) {
-            yamlContent += col.getPropertyName()+":\n";
-        }
-		yamlContent +='---\n'		
-        const newFile :TFile = await this.app.vault.create(filePath, yamlContent);
-        console.log(`Fichier créé : ${filePath}`);
-    } catch (error) {
-        console.error("Erreur lors de la création du fichier :", error);
-    }
-}
+
+	async addANewFile() {
+		try {
+			const fileName = `new_file_${Date.now()}.md`;
+			const filePath = `${this.folderPath}/${fileName}`;
+			let yamlContent = "";
+			if (this.settings.shouldAddFullProperties) {
+				yamlContent = "---\n";
+				for (const col of this.columnsMapping.splice(3)) {
+					yamlContent += col.getPropertyName() + ":\n";
+				}
+				yamlContent += "---\n";
+			}
+			const newFile: TFile = await this.app.vault.create(filePath, yamlContent);
+			console.log(`Fichier créé : ${filePath}`);
+		} catch (error) {
+			console.error("Erreur lors de la création du fichier :", error);
+		}
+	}
 
 	getAllValuesForProperty(property: string) {
 		const values: Set<any> = new Set();

@@ -1,23 +1,28 @@
 import { browser } from "@wdio/globals";
 import fs from "fs";
-import { Key } from 'webdriverio'
+import { Key } from "webdriverio";
+import fs from "fs-extra";
+import path from "path";
 
 describe("Test my plugin", function () {
     before(async function () {
-        // You can create test vaults and open them with reloadObsidian
-        // Alternatively if all your tests use the same vault, you can
-        // set the default vault in the wdio.conf.ts.
-        //await browser.reloadObsidian({vault: "../../../"});
+        const vaultTest = path.resolve(__dirname, "../../vaultTest");
+        const vaultTestFile = path.resolve(__dirname, "../../vaultTestFiles");
+        const pluginsDir = path.join(vaultTest, ".obsidian", "plugins","properties-global-view");
+
+        try {
+            await fs.emptyDir(vaultTest);
+            await fs.copy(vaultTestFile, vaultTest);
+            console.log("vaultTest a été réinitialisé avec le contenu de vaultTestFile");
+        } catch (error) {
+            console.error("Erreur lors de la préparation du test :", error);
+        }
+        await browser.reloadObsidian({ vault: "./vaultTest" });
     });
 
     it("test filter", async () => {
-        await browser.execute(() => {window.focus();});
         await browser.pause(500); // Petite pause avant d'envoyer les touches
-        await browser.keys([Key.Ctrl, 'w']);
 
-
-        
-        // Localiser l'élément du dossier
         const folderElement = await browser.$(
             '//div[@class="tree-item-inner nav-folder-title-content" and text()="TEST_20_a"]'
         );
@@ -35,7 +40,7 @@ describe("Test my plugin", function () {
         await browser.pause(500);
         const rows = await table.$$("tbody tr"); // Récupérer toutes les lignes du tableau dans <tbody>
         const columnValues = [];
-        await browser.pause(500);        
+        await browser.pause(500);
         for (let i = 0; i < rows.length; i++) {
             // Accéder à la première cellule de chaque ligne (colonne 1)
             const firstColumn = await rows[i].$$("td")[0];

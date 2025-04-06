@@ -30,13 +30,11 @@ export default class ListColumn extends Column {
 			let isMatch = false;
 			for (const filterValue of this.getFilter()) {
 				if (filterValue === "") {
-					// Si le filtre contient une valeur vide, vérifier si cellText est vide
 					if (cellText.length === 0 || (cellText.length === 1 && cellText[0] === "")) {
 						isMatch = true;
 						break;
 					}
 				} else {
-					// Sinon, vérifier si le filtre est présent dans cellText
 					if (cellText.some(item => item.toLowerCase().includes(filterValue.toLowerCase()))) {
 						isMatch = true;
 						break;
@@ -61,17 +59,17 @@ export default class ListColumn extends Column {
         cell.empty();
 		cell.setAttribute("filepath", file.path);
 		cell.setAttribute("prop", prop);
-		const displayDiv = cell.createEl("div", { cls: "markdown-preview" });
+		const displayDiv = cell.createEl("div", { cls: "ptp-markdown-preview" });
 
 		let cv = Array.isArray(value) ? value : [value];
 
-		const list = displayDiv.createEl("ul", { cls: "properties-list-elekis" });
+		const list = displayDiv.createEl("ul", { cls: "ptp-list-ul" });
 		if (cv.length == 1 && cv[0] == null) cell.classList.add("ptp-global-table-td-empty");
 		else{
 			cell.classList.remove("ptp-global-table-td-empty");
 			cv.forEach((v) => {
 				if (v == null) return;
-				const listItem = list.createEl("li", { cls: "properties-list-item" });
+				const listItem = list.createEl("li", { cls: "ptp-list-il" });
 
 				if (/^\[\[.*\]\]$/.test(v)) {
 					const fileName = v.replace(/^\[\[|\]\]$/g, ""); // Nettoyer [[ ]]
@@ -87,7 +85,7 @@ export default class ListColumn extends Column {
 			});
 		}
 		const textarea = cell.createEl("textarea", {
-				cls: "properties-markdown-textarea",
+				cls: "ptp-textarea",
 				text: cv.join("\n")
 			});
 		textarea.style.display = "none"

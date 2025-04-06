@@ -6,7 +6,6 @@
   color: #555; 
 }
 
-
 .ptp-global-table {
   width: 100%;
   border-collapse: collapse;
@@ -63,8 +62,8 @@
   padding: 8px;
   text-align: center;
   white-space: nowrap;
-  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
-  max-width: 300px; /* Limite la largeur maximale à 300px */
+/*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+/*  max-width: 300px; /* Limite la largeur maximale à 300px */
   width: auto; /* Permet à la largeur de s'ajuster au contenu */
   overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
 }
@@ -74,13 +73,13 @@
   border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
-  white-space: nowrap;
-  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+  overflow-wrap: break-word; /* Alternative pour la compatibilité */
+  word-wrap: break-word; /* Force le retour à la ligne si nécessaire */
+/*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
   max-width: 300px; /* Limite la largeur maximale à 300px */
   width: auto; /* Permet à la largeur de s'ajuster au contenu */
   overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
 }
-
 
 /* Bouton de suppression des filtres */
 .ptp-filter-button{

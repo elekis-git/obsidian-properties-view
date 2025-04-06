@@ -21,7 +21,7 @@ export const config: WebdriverIO.Config = {
             plugins: ["."],
             // If you need to switch between multiple vaults, you can omit
             // this and use reloadObsidian to open vaults during the tests
-            vault: "../../../",
+            //vault: "../../../",
         },
     }],
 
