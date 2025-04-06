@@ -70,7 +70,6 @@ export default class Column implements IColumn {
     
     constructor(pname: string, app: App) {
         this.app = app;
-        console.log("------>zz");
         this.vault = app.vault;
         this.sortasc = false;
         this.columnIndex = -1

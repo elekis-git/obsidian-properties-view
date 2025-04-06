@@ -1,5 +1,6 @@
 import { browser } from "@wdio/globals";
 import fs from "fs";
+import { Key } from 'webdriverio'
 
 describe("Test my plugin", function () {
     before(async function () {
@@ -10,6 +11,12 @@ describe("Test my plugin", function () {
     });
 
     it("test filter", async () => {
+        await browser.execute(() => {window.focus();});
+        await browser.pause(500); // Petite pause avant d'envoyer les touches
+        await browser.keys([Key.Ctrl, 'w']);
+
+
+        
         // Localiser l'élément du dossier
         const folderElement = await browser.$(
             '//div[@class="tree-item-inner nav-folder-title-content" and text()="TEST_20_a"]'

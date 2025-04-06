@@ -76,15 +76,30 @@ export class GlobalPropertiesView extends ItemView {
 			text: "Properties of " + this.folderPath,
 			cls: "ptp-h1-title"
 		});
+		
+    const button = contentEl.createEl("a", {
+        text: "new file",
+        cls: "create-file-button",
+        attr: { href: "#" }
+    });
+    button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await this.createFileWithProperties();
+    });
+    contentEl.appendChild(button);
+		
+		
 		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
-		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });
+		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });	
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
 		contentEl.scrollTop = 0;
 	}
 
+	
+	
 	async onOpen() {
 		console.log("onOpen");
 	}
@@ -311,6 +326,28 @@ export class GlobalPropertiesView extends ItemView {
 			}
 		});
 	}
+	
+	
+	async  createFileWithProperties() {
+    try {
+		console.log("ici");
+        const fileName = `new_file_${Date.now()}.md`;
+        const filePath = `${this.folderPath}/${fileName}`;
+		
+		let yamlContent ='---\n'
+        for (const col of this.columnsMapping.splice(3)) {
+			console.log(col);
+            yamlContent += col.getPropertyName()+":\n";
+        }
+		yamlContent +='---\n'		
+		console.log(yamlContent);
+        const newFile :TFile = await this.app.vault.create(filePath, yamlContent);
+		console.log("ici3");
+        console.log(`Fichier créé : ${filePath}`);
+    } catch (error) {
+        console.error("Erreur lors de la création du fichier :", error);
+    }
+}
 
 	getAllValuesForProperty(property: string) {
 		const values: Set<any> = new Set();
