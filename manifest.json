@@ -1,7 +1,7 @@
 {
 	"id": "proptable",
 	"name": "global propertie view",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"minAppVersion": "0.0.1",
 	"description": "Manage Properties in a global Way",
 	"author": "elekis",
