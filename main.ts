@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, Menu, TFolder } from "obsidian";
+import { Plugin, WorkspaceLeaf, Menu, TFolder, TFile } from "obsidian";
 import { GlobalPropertiesView } from "src/propTable";
 
 export default class GlobalPropertiesPlugin extends Plugin {
@@ -23,14 +23,9 @@ export default class GlobalPropertiesPlugin extends Plugin {
 				}
 			})
 		);
-	
 		this.app.vault.on("create", (file: TFile) => {this.refreshAllView()});
 		this.app.vault.on("rename", (file: TFile) => {this.refreshAllView()});
-		this.app.vault.on("delete", (file: TFile) => {this.refreshAllView()});
-		this.app.vault.on("modify", (file: TFile) => {this.refreshAllView()});
-		this.app.vault.on("create-folder", (file: TFile) => {this.refreshAllView()});
-		this.app.vault.on("move", (file: TFile) => {this.refreshAllView()});
-		
+		this.app.vault.on("delete", (file: TFile) => {this.refreshAllView()});	
 	}
 	
 	refreshAllView(){

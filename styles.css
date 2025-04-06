@@ -52,6 +52,10 @@
     margin-right: 10px;  /* Ajuste la valeur selon tes besoins */
 }
 
+.ptp-global-table td:first-child {  /*colonne ID */
+    min-width: 0; /* Assure qu'il n'y a pas de largeur minimale */
+    width: 1%;     /* Laisse la colonne s'ajuster à la taille de son contenu */
+}
 
 .ptp-th-container {
   position: relative;
