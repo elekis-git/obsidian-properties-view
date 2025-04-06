@@ -1,9 +1,9 @@
 {
 	"id": "proptable",
-	"name": "global propertie view",
+	"name": "Folder Property Manager",
 	"version": "0.0.5",
 	"minAppVersion": "0.0.1",
-	"description": "Manage Properties in a global Way",
+	"description": "Manage Properties per folder",
 	"author": "elekis",
 	"authorUrl": "https://www.elekis.net",
 	"fundingUrl": "na",
