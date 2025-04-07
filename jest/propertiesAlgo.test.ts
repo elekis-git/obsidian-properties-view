@@ -23,146 +23,146 @@ describe("PropertyAlgo", () => {
     propertyMap = new Map();
   });
 
-  //private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn | null>): IColumn | null {
 
-  it("null with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", null, propertyMap);
-    expect(col).toBeNull();
+  const testCases = [
+    { value: null,                    expected: null },
+    { value: 52,                      expected: IntColumn },
+    { value: "text",                  expected: TextColumn },
+    { value: true,                    expected: BoolColumn },
+    { value: "2025-03-05",            expected: DateTimeColumn },
+    { value: "2025-03-05T08:02:56",   expected: DateTimeColumn },
+    { value: ["item1", "item2"],      expected: ListColumn }
+  ];
 
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", 52, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(IntColumn);
+  testCases.forEach(({ value, expected }) => {
+    it(`detects ${expected ? expected.name : "null"} for value: ${JSON.stringify(value)}`, () => {
+      let col = gpv.detectPropertyType("key_test", value, propertyMap);
+      if (expected === null) {
+        expect(col).toBeNull();
+      } else {
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+      }
+    });
+  });
+  
+  it("Text followed by ...", async () => {    
+    const txtC = new TextColumn("k5", { vault: mockVault } as any);
+    const testCases = [
+        { value: null,                      expected: TextColumn },
+        { value: ["fdsfs", "fdsf", "fsdf"], expected: ListColumn },
+        { value: true,                      expected: TextColumn },
+        { value: false,                     expected: TextColumn },
+        { value: "2025-03-05T08:02:56",     expected: TextColumn },
+        { value: "2025-03-05",              expected: TextColumn },
+        { value: null,                      expected: TextColumn }
+    ];
 
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", "fdk", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
-
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", true, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(BoolColumn);
-
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", "2525-25-05", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(DateTimeColumn);
-
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", ["dd", "ddd", "oziuer"], propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
+    testCases.forEach(({ value, expected }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+    });
   });
 
-  it("Text with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", "textValue", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
+  it("List followed by ...", async () => {    
+    const txtC = new ListColumn("LR", { vault: mockVault } as any);
+    const testCases = [
+        { value: null,                      expected: ListColumn },
+        { value: ["fdsfs", "fdsf", "fsdf"], expected: ListColumn },
+        { value: true,                      expected: ListColumn },
+        { value: false,                     expected: ListColumn },
+        { value: "2025-03-05T08:02:56",     expected: ListColumn },
+        { value: "2025-03-05",              expected: ListColumn },
+        { value: null,                      expected: ListColumn }
+    ];
 
-    let txtC = new TextColumn("k5", { vault: mockVault } as any);
-
-    propertyMap.set("key_test", txtC);
-    col = gpv.detectPropertyType("key_test", ["fdsfs", "fdsf", "fsdf"], propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtC);
-    col = gpv.detectPropertyType("key_test", true, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
-
-  //  not working -> should work when have time. 
-    propertyMap.set("key_test", txtC);
-    col = gpv.detectPropertyType("key_test", "2025-03-05T08:02:56", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
-
-    propertyMap.set("key_test", txtC);
-    col = gpv.detectPropertyType("key_test", "2025-03-05", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
-
-    propertyMap.set("key_test", txtC);
-    col = gpv.detectPropertyType("key_test", null, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(TextColumn);
+    testCases.forEach(({ value, expected }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+    });
   });
 
-  it("List with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", ["L1", "L2", "L3"], propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    let txtL = new ListColumn("k5", { vault: mockVault } as any);
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", ["fdsfs", "fdsf", "fsdf"], propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", null, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", "sfdsf", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", true, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", "2025-03-05T08:02:56", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
-
-    propertyMap.set("key_test", txtL);
-    col = gpv.detectPropertyType("key_test", "2025-03-05", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(ListColumn);
+  it("Bool followed by", async () => {    
+    const txtC = new BoolColumn("LR", { vault: mockVault } as any);
+    const testCases = [
+        { value: null,                      expected: BoolColumn },
+        { value: ["fdsfs", "fdsf", "fsdf"], expected: ListColumn },
+        { value: true,                      expected: BoolColumn },
+        { value: false,                     expected: BoolColumn },
+        { value: "2025-03-05T08:02:56",     expected: TextColumn },
+        { value: "2025-03-05",              expected: TextColumn },
+        { value: null,                      expected: BoolColumn }
+    ];
+    testCases.forEach(({ value, expected }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+    });
   });
-
-  it("Bool with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", true, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(BoolColumn);
+  
+  it("Date followed by ...", async () => {    
+    const txtC = new DateTimeColumn("LR", { vault: mockVault } as any);
+    const testCases = [
+        { value: null,                        expected:   DateTimeColumn, type : "date" },
+        { value: ["fdsfs", "fdsf", "fsdf"],   expected:   ListColumn},
+        { value: true,                        expected:   TextColumn},
+        { value: false,                       expected:   TextColumn},
+        { value: "2025-03-05T08:02:56",       expected:   DateTimeColumn, type : "datetime-local" },
+        { value: "2025-03-05",                expected:   DateTimeColumn, type : "date" },
+        { value: null,                        expected:   DateTimeColumn}
+    ];
+    testCases.forEach(({ value, expected, type }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+       if (type)
+          expect(col.getDType()).toBe(type);
+    });
   });
-
-  it("Date with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", "2025-03-05", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(DateTimeColumn);
+  
+    it("DateTime followed by ...", async () => {    
+    const txtC = new DateTimeColumn("LR", { vault: mockVault } as any, "datetime-local");
+    const testCases = [
+        { value: null,                        expected:   DateTimeColumn, type : "date" },
+        { value: ["fdsfs", "fdsf", "fsdf"],   expected:   ListColumn},
+        { value: true,                        expected:   TextColumn},
+        { value: false,                       expected:   TextColumn},
+        { value: "2025-03-05T08:02:56",       expected:   DateTimeColumn, type : "datetime-local" },
+        { value: "2025-03-05",                expected:   DateTimeColumn, type : "datetime-local" },
+        { value: null,                        expected:   DateTimeColumn, type : "datetime-local" }
+    ];
+    testCases.forEach(({ value, expected, type }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+        if (type)
+          expect(col.getDType()).toBe(type);
+    });
   });
-
-  it("DateTime with empty Map ", async () => {
-    let col = gpv.detectPropertyType("key_test", "2025-03-05T08:02:56", propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(DateTimeColumn);
-  });
-
-  it("Int with empty Map ", async () => {
-    let col;
-    col = gpv.detectPropertyType("key_test", 52, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(IntColumn);
-
-    propertyMap.set("key_test", null);
-    col = gpv.detectPropertyType("key_test", 52, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(IntColumn);
-
-    propertyMap.set("key_test", new IntColumn("k5", { vault: mockVault } as any));
-    col = gpv.detectPropertyType("key_test", 52, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(IntColumn);
-
-    propertyMap.set("key_test", new IntColumn("k5", { vault: mockVault } as any));
-    col = gpv.detectPropertyType("key_test", null, propertyMap);
-    expect(col).not.toBeNull();
-    expect(col).toBeInstanceOf(IntColumn);
+  
+    it("Int followed by ...", async () => {    
+    const txtC = new IntColumn("LR", { vault: mockVault } as any);
+    const testCases = [
+        { value: null,                        expected:   IntColumn},
+        { value: ["fdsfs", "fdsf", "fsdf"],   expected:   ListColumn},
+        { value: true,                        expected:   TextColumn},
+        { value: false,                       expected:   TextColumn},
+        { value: "2025-03-05T08:02:56",       expected:   TextColumn},
+        { value: "2025-03-05",                expected:   TextColumn},
+        { value: null,                        expected:   IntColumn}
+    ];
+    testCases.forEach(({ value, expected }) => {
+        propertyMap.set("key_test", txtC);
+        const col = gpv.detectPropertyType("key_test", value, propertyMap);
+        expect(col).not.toBeNull();
+        expect(col).toBeInstanceOf(expected);
+    });
   });
 });

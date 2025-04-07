@@ -5,11 +5,13 @@ import Column from "./Column";
 export default class DateTimeColumn extends Column {
     private dtype: string;
 
-    constructor(pname: string, app: App, dtype: string) {
+    constructor(pname: string, app: App, dtype: string = "date") {
         super(pname, app);
         this.dtype = dtype;
     }
 
+    public getDType():string{return this.dtype};
+    
     public filterRows(rows: HTMLElement[]) {
         rows.forEach((row) => {
             row.style.display = "";

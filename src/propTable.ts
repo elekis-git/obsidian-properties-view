@@ -1,6 +1,14 @@
-import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf,ViewStateResult } from "obsidian";
+import {
+	App,
+	MarkdownRenderer,
+	TFile,
+	parseYaml,
+	stringifyYaml,
+	ItemView,
+	WorkspaceLeaf,
+	ViewStateResult
+} from "obsidian";
 import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS } from "src/Settings";
-
 
 import { FilterModal } from "./filterModal";
 
@@ -132,20 +140,27 @@ export class GlobalPropertiesView extends ItemView {
 		if (value == null || value === "") {
 			if (existingV == null) return null;
 		}
-		if (pMap.get(key) instanceof ListColumn) return new ListColumn(key, this.app);
 
-		if (Array.isArray(value)) {
+		if (existingV instanceof ListColumn || Array.isArray(value)) {
 			return new ListColumn(key, this.app);
-		} else if (typeof value === "string") {
-			if (existingV instanceof TextColumn) return new TextColumn(key, this.app);
+		}
+
+		if (typeof value === "string") {
+			if (existingV instanceof TextColumn || existingV instanceof BoolColumn || existingV instanceof IntColumn)
+				return new TextColumn(key, this.app);
 			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
 			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
 			return new TextColumn(key, this.app);
-		} else if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
+		}
+		if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {
 			return existingV == null ? new IntColumn(key, this.app) : existingV;
-		} else if (typeof value === "boolean") {
+		}
+		if (typeof value === "boolean") {
+			if (existingV instanceof IntColumn || existingV instanceof DateTimeColumn)
+				return new TextColumn(key, this.app);
 			return existingV == null ? new BoolColumn(key, this.app) : existingV;
 		}
+
 		return new TextColumn(key, this.app);
 	}
 
