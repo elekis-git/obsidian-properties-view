@@ -1,5 +1,6 @@
-import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf } from "obsidian";
-import { ViewStateResult } from "obsidian";
+import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf,ViewStateResult } from "obsidian";
+import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS } from "src/Settings";
+
 
 import { FilterModal } from "./filterModal";
 
