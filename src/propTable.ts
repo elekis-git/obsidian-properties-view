@@ -117,7 +117,7 @@ export class GlobalPropertiesView extends ItemView {
 		console.log("onOpen");
 	}
 
-	private detectPropertyType(key: string, value: any, propertyMap: Map<string, IColumn | null>): IColumn | null {
+	private detectPropertyType(key: string, value: any, pMap: Map<string, IColumn | null>): IColumn | null {
 		const isDate = (value: string): boolean => {
 			return /^\d{4}-\d{2}-\d{2}$/.test(value);
 		};
@@ -125,13 +125,13 @@ export class GlobalPropertiesView extends ItemView {
 			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
 		};
 
-		const existingV = propertyMap.get(key);
+		const existingV = pMap.get(key);
 
 		const isNumeric = (val: any) => !isNaN(val);
 		if (value == null || value === "") {
 			if (existingV == null) return null;
 		}
-		if (propertyMap.get(key) instanceof ListColumn) return new ListColumn(key, this.app);
+		if (pMap.get(key) instanceof ListColumn) return new ListColumn(key, this.app);
 
 		if (Array.isArray(value)) {
 			return new ListColumn(key, this.app);
@@ -159,7 +159,6 @@ export class GlobalPropertiesView extends ItemView {
 				for (const key in cache.frontmatter) {
 					const value = cache.frontmatter[key];
 					const detectedType = this.detectPropertyType(key, value, propertyMap);
-					//					console.log("detectPropertyType", key, value, detectedType);
 					propertyMap.set(key, detectedType);
 					if (detectedType != null) detectedType.addCnt1();
 					props[key] = value;

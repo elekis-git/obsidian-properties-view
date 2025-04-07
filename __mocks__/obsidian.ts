@@ -24,7 +24,10 @@ export class TFile {
 }
 
 
-export class ItemView {}
+export class ItemView {
+  app: App
+  constructor() { this.app = new App(); }
+}
 export class Modal {}
 export class Notice {}
 export class Plugin {
