@@ -1,7 +1,7 @@
 import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf } from "obsidian";
 import { ViewStateResult } from "obsidian";
 
-import { FilterModal } from "src/filterModal";
+import { FilterModal } from "./filterModal";
 
 import FileColumn from "./FileColumn";
 import DirColumn from "./DirColumn";
@@ -174,8 +174,6 @@ export class GlobalPropertiesView extends ItemView {
 				propertyMap.set(key, new TextColumn(key, this.app)); // Remplace la valeur null par la valeur par défaut
 			}
 		});
-		console.log(propertyMap);
-
 		let tmp = Array.from(new Set(Array.from(propertyMap.values())));
 		return tmp.filter((col): col is IColumn => col !== null).sort((a, b) => b.getCnt() - a.getCnt()); // Tri en fonction de getCnt()
 	}

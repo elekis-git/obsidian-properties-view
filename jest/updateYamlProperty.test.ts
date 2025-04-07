@@ -3,10 +3,10 @@ import { TFile, Vault } from 'obsidian';
 import fs from 'fs';  
 import yaml from "js-yaml";
 
-let dirTest = "./tests/testfiles/"
+let dirTest = "./jest/"
 
 
-describe('Column', () => {
+describe('PropertyAlgo', () => {
   let column: Column;
   let mockVault: any;
 

@@ -24,6 +24,7 @@ export class TFile {
 }
 
 
+export class ItemView {}
 export class Modal {}
 export class Notice {}
 export class Plugin {
