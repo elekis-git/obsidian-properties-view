@@ -137,6 +137,7 @@ export class GlobalPropertiesView extends ItemView {
 		if (Array.isArray(value)) {
 			return new ListColumn(key, this.app);
 		} else if (typeof value === "string") {
+			if (existingV instanceof TextColumn) return new TextColumn(key, this.app);
 			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
 			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
 			return new TextColumn(key, this.app);

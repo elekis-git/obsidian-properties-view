@@ -72,7 +72,7 @@ describe("PropertyAlgo", () => {
     expect(col).not.toBeNull();
     expect(col).toBeInstanceOf(TextColumn);
 
-   /* not working -> should work when have time. 
+  //  not working -> should work when have time. 
     propertyMap.set("key_test", txtC);
     col = gpv.detectPropertyType("key_test", "2025-03-05T08:02:56", propertyMap);
     expect(col).not.toBeNull();
@@ -82,7 +82,7 @@ describe("PropertyAlgo", () => {
     col = gpv.detectPropertyType("key_test", "2025-03-05", propertyMap);
     expect(col).not.toBeNull();
     expect(col).toBeInstanceOf(TextColumn);
-*/
+
     propertyMap.set("key_test", txtC);
     col = gpv.detectPropertyType("key_test", null, propertyMap);
     expect(col).not.toBeNull();
