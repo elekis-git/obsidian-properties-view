@@ -71,7 +71,7 @@ export default class Column implements IColumn {
     constructor(pname: string, app: App) {
         this.app = app;
         this.vault = app.vault;
-        this.sortasc = false;
+        this.sortasc = true;
         this.columnIndex = -1
         this.filter = []
         this.propertyName = pname
