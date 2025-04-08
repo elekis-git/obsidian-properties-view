@@ -28,7 +28,7 @@ import IntColumn from "./IntColumn";
 export class GlobalPropertiesView extends ItemView {
 	fileProperties: any[] = [];
 	public static GLOBAL_PROPERTIES_VIEW = "glbVeID";
-	private table: HTMLElement | null = null;
+	private table!: HTMLElement;
 	private propColStart = 3;
 	private scale = 1;
 	private columnsMapping: IColumn[] = [];
@@ -150,7 +150,7 @@ export class GlobalPropertiesView extends ItemView {
 				return new TextColumn(key, this.app);
 			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "datetime-local");
 			if (isDate(value)) {
-				if (existingV != null && existingV.getDType() == "datetime-local") return existingV; 
+				if (existingV != null && (existingV as DateTimeColumn).getDType() == "datetime-local") return existingV;
 				else return new DateTimeColumn(key, this.app, "date");
 			}
 			return new TextColumn(key, this.app);
@@ -336,20 +336,32 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	private addZoomFeature() {
-		if (!this.table) return;
+		const container = this.table.parentElement; 
+		if (!container) return;
+		container.style.overflow = "auto";
+		container.style.overflowX = "auto"; // Assurer que le scroll horizontal est activé
+		container.style.whiteSpace = "nowrap"; // Empêcher le retour à la ligne
+		container.style.maxWidth = "100%"; // Éviter que le conteneur soit plus petit que la table
+
+		
+		// Appliquer le zoom
 		this.table.style.transform = `scale(${this.scale})`;
 		this.table.style.transformOrigin = "top left";
 
 		this.table.addEventListener("wheel", (event) => {
-			if (!event.ctrlKey) return;
-			event.preventDefault();
-			const zoomFactor = 0.1;
-			if (event.deltaY < 0) {
-				this.scale += zoomFactor;
-			} else {
-				this.scale = Math.max(0.5, this.scale - zoomFactor);
-			}
-			if (this.table) {
+			if (event.shiftKey) {
+				// Empêcher le comportement par défaut et activer le scroll horizontal
+				event.preventDefault();
+				container.scrollLeft += event.deltaY; // Défilement horizontal avec la molette
+			} else if (event.ctrlKey) {
+				// Gestion du zoom
+				event.preventDefault();
+				const zoomFactor = 0.1;
+				if (event.deltaY < 0) {
+					this.scale += zoomFactor;
+				} else {
+					this.scale = Math.max(0.5, this.scale - zoomFactor);
+				}
 				this.table.style.transform = `scale(${this.scale})`;
 				this.table.style.transformOrigin = "top left";
 			}
