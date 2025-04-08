@@ -148,7 +148,6 @@ export default class Column implements IColumn {
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
             if (this.getFilter().length > 0) {
-				console.log("->",this.getFilter());
                 if (!this.getFilter().includes(cell?.textContent?.trim() ?? "")) {
                     row.style.display = "none";
                 }

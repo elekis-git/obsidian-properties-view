@@ -49,3 +49,40 @@ export class Plugin {
 
 export class MarkdownView {}
 export class Editor {}
+
+class HTMLElement {
+  constructor() {
+    this.style = { display: "" };
+    this.children = [];
+    this.attributes = {};
+  }
+
+  appendChild(child) {
+    this.children.push(child);
+  }
+
+  querySelectorAll(selector) {
+    const result = [];
+    this.children.forEach(child => {
+      if (child.matchesSelector(selector)) {
+        result.push(child);
+      }
+    });
+    return result;
+  }
+
+  setAttribute(name, value) {
+    this.attributes[name] = value;
+  }
+
+  getAttribute(name) {
+    return this.attributes[name] || null;
+  }
+
+  matchesSelector(selector) {
+    // Simple simulation, only supports "td" and input/select for simplicity.
+    const tagName = selector.replace(/^[^a-zA-Z]*/, '');
+    return this.constructor.name.toLowerCase() === tagName;
+  }
+}
+

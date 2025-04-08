@@ -17,7 +17,6 @@ export default class DateTimeColumn extends Column {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
-
             if (this.getFilter().length > 0) {
                 const input = cell?.querySelector("input, select");
                 if (input) {
@@ -25,10 +24,11 @@ export default class DateTimeColumn extends Column {
                     if (from || to) {
                         let cellDate: Date | null = null;
                         if (input instanceof HTMLInputElement && input.value.includes("T")) {
-                            cellDate = new Date(input.value.trim());
+							cellDate = new Date(input.value.trim());
                         } else if (input instanceof HTMLInputElement) {
                             cellDate = new Date(input.value.trim() + "T00:00:00");
                         }
+						
                         if (cellDate && !isNaN(cellDate.getTime())) {
                             const fromDate = from ? new Date(from.trim()) : null;
                             const toDate = to ? new Date(to.trim()) : null;
