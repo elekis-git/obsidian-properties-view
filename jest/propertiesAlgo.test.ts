@@ -129,13 +129,12 @@ describe("PropertyAlgo", () => {
     it("DateTime followed by ...", async () => {    
     const txtC = new DateTimeColumn("LR", { vault: mockVault } as any, "datetime-local");
     const testCases = [
-        { value: null,                        expected:   DateTimeColumn, type : "date" },
+        { value: null,                        expected:   DateTimeColumn, type : "datetime-local" },
         { value: ["fdsfs", "fdsf", "fsdf"],   expected:   ListColumn},
         { value: true,                        expected:   TextColumn},
         { value: false,                       expected:   TextColumn},
         { value: "2025-03-05T08:02:56",       expected:   DateTimeColumn, type : "datetime-local" },
-        { value: "2025-03-05",                expected:   DateTimeColumn, type : "datetime-local" },
-        { value: null,                        expected:   DateTimeColumn, type : "datetime-local" }
+        { value: "2025-03-05",                expected:   DateTimeColumn, type : "datetime-local" }
     ];
     testCases.forEach(({ value, expected, type }) => {
         propertyMap.set("key_test", txtC);

@@ -148,8 +148,11 @@ export class GlobalPropertiesView extends ItemView {
 		if (typeof value === "string") {
 			if (existingV instanceof TextColumn || existingV instanceof BoolColumn || existingV instanceof IntColumn)
 				return new TextColumn(key, this.app);
-			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "DateTime");
-			if (isDate(value)) return new DateTimeColumn(key, this.app, "Date");
+			if (isDateTime(value)) return new DateTimeColumn(key, this.app, "datetime-local");
+			if (isDate(value)) {
+				if (existingV != null && existingV.getDType() == "datetime-local") return existingV; 
+				else return new DateTimeColumn(key, this.app, "date");
+			}
 			return new TextColumn(key, this.app);
 		}
 		if (typeof value === "number" || (typeof value !== "boolean" && isNumeric(value))) {

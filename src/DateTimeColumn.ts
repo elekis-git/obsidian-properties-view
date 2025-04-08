@@ -93,10 +93,10 @@ export default class DateTimeColumn extends Column {
         const input = cell.createEl("input", { cls: "ptp-date-button" });
         input.setAttribute("filepath", file.path);
         input.setAttribute("prop", prop);
-        input.type = this.dtype == "DateTime" ? "datetime-local" : "date";
+        input.type = this.dtype;
         if (value != null && value !== "") {
             let dd = new Date(value as string);
-            if (this.dtype == "DateTime") input.value = this.getCorrectDateTime(dd);
+            if (this.dtype == "datetime-local") input.value = this.getCorrectDateTime(dd);
             else input.value = dd.toISOString().split("T")[0];
         } else {
             input.classList.add("ptp-date-gray-input");
