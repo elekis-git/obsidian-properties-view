@@ -51,8 +51,8 @@ export default class ListColumn extends Column {
     public getStrType():string {
         return "List";
     }
-    public sortRows(rows:HTMLElement[]):HTMLElement[] {
-        return super.sortRows(rows);
+    public sortRows(rows:HTMLElement[], asc:boolean):HTMLElement[] {
+        return super.sortRows(rows, asc);
     }
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object|null){

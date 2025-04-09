@@ -7,7 +7,7 @@ import TextColumn from "./TextColumn"
 import BoolColumn from "./BoolColumn"
 import DateTimeColumn from "./DateTimeColumn"
 
-import Column from "./Column"
+import IColumn from "./Column"
 import IDColumn from "./IDColumn"
 import ListColumn from "./ListColumn"
 import IntColumn from "./IntColumn"
@@ -15,14 +15,14 @@ import IntColumn from "./IntColumn"
 
 
 export class FilterModal extends Modal {
-  col : Column;
+  col : IColumn;
   allowedValues: any[];
   onSubmit: (selectedValues: any[]) => void;
   selectedValues: Set<any>;
 
   constructor(
     app: App,
-    col: Column,
+    col: IColumn,
     allowedValues: any[],
     onSubmit: (selectedValues: any[]) => void
   ) {

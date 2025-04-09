@@ -49,7 +49,6 @@ export default class GlobalPropertiesPlugin extends Plugin {
 	}
 
 	refreshView() {
-		console.log("refresh the view");
 		const activeLeaf = this.app.workspace.activeLeaf;
 		if (activeLeaf && activeLeaf.view instanceof GlobalPropertiesView) {
 			activeLeaf.view.rebuildTheView();

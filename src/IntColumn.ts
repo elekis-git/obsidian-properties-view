@@ -32,22 +32,22 @@ export default class IntColumn extends Column {
         return "Int";
     }
 
-    public sortRows(rows: HTMLElement[]): HTMLElement[] {
+    public sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[] {       
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];
-            const selectA = cellA?.querySelector("select") as HTMLSelectElement | null;
-            const selectB = cellB?.querySelector("select") as HTMLSelectElement | null;
+            const selectA = cellA?.querySelector("input") as HTMLSelectElement | null;
+            const selectB = cellB?.querySelector("input") as HTMLSelectElement | null;
             const isNumericA = selectA && !isNaN(parseInt(selectA.value));
             const isNumericB = selectB && !isNaN(parseInt(selectB.value));
             if (isNumericA && isNumericB) {
                 const cA = parseInt(selectA!.value);
                 const cB = parseInt(selectB!.value);
-                return this.sortasc ? cA - cB : cB - cA;
+                return asc ? cA - cB : cB - cA;
             } else if (isNumericA) {
-                return this.sortasc ? -1 : 1;
+                return asc ? -1 : 1;
             } else if (isNumericB) {
-                return this.sortasc ? 1 : -1;
+                return asc ? 1 : -1;
             } else {
                 return 0;
             }

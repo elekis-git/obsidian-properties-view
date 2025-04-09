@@ -55,7 +55,7 @@ export default class DateTimeColumn extends Column {
         return this.dtype;
     }
 
-    public sortRows(rows: HTMLElement[]) {
+    public sortRows(rows: HTMLElement[], asc:boolean) {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];
@@ -66,11 +66,11 @@ export default class DateTimeColumn extends Column {
             if (isValidA && isValidB) {
                 const cA = new Date(inputA.value.trim()).getTime();
                 const cB = new Date(inputB.value.trim()).getTime();
-                return this.sortasc ? cA - cB : cB - cA;
+                return asc ? cA - cB : cB - cA;
             } else if (isValidA) {
-                return this.sortasc ? -1 : 1;
+                return asc ? -1 : 1;
             } else if (isValidB) {
-                return this.sortasc ? 1 : -1;
+                return asc ? 1 : -1;
             } else {
                 return 0;
             }

@@ -95,27 +95,37 @@ export class GlobalPropertiesView extends ItemView {
 			cls: "ptp-h1-title"
 		});
 
-		const buttonR = contentEl.createEl("a", {
-			text: "🔄",
-			attr: { href: "#" },
-			cls: "refresh-button"
+		
+		//global button
+		const buttonListGlobal = contentEl.createEl("div", {
+			cls: "ptp-button-list-g"
 		});
-		buttonR.addEventListener("click", async (event) => {
+		
+		const buttonfr = buttonListGlobal.createEl("a", {
+			cls: "create-refresh-button",
+			attr: { href: "#" }
+		});
+		const icon2Container = document.createElement("div");
+		setIcon(icon2Container, "refresh-cw");
+		buttonfr.appendChild(icon2Container);
+		buttonfr.addEventListener("click", async (event) => {
 			event.preventDefault();
 			await this.rebuildTheView();
 		});
 
-		const button = contentEl.createEl("a", {
-			text: "create new file",
+		/*******/
+		const buttonf = buttonListGlobal.createEl("a", {
 			cls: "create-file-button",
 			attr: { href: "#" }
 		});
-		button.addEventListener("click", async (event) => {
+		const iconContainer = document.createElement("div");
+		setIcon(iconContainer, "file-plus-2");
+		buttonf.appendChild(iconContainer);
+		buttonf.addEventListener("click", async (event) => {
 			event.preventDefault();
 			await this.addANewFile();
 		});
-		contentEl.appendChild(button);
-
+		/********************************************/
 		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
 		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });
@@ -219,44 +229,73 @@ export class GlobalPropertiesView extends ItemView {
 				cls: "ptp-th-container",
 				attr: { columnIdx: col.getIndex() }
 			});
-
-			// Création du texte principal
-			th.createEl("span", { text: col.getPropertyName() });
-			if (!col.isFiltering()) return;
-			// Ajout du texte entre parenthèses sur une nouvelle ligne avec une classe
-			th.createEl("br"); // Saut de ligne
-			const smallText = th.createEl("span", {
-				text: `(${col.getStrType()})`
+			const container = th.createEl("div", { cls: "ptp-th-content" });
+			const textSpan = container.createEl("span", { text: col.getPropertyName(), cls: "ptp-th-text" });
+			const actionButton = container.createEl("button", { cls: "ptp-th-action" });
+			actionButton.textContent = "⋮"; // Trois points verticaux, style Excel
+			actionButton.addEventListener("click", (event) => {
+				event.stopPropagation(); // Évite de déclencher d'autres événements
+				this.showContextMenu(event, col);
 			});
-			smallText.addClass("th-small-text"); // Classe CSS pour réduire la taille
-		});
-
-		headerRow.querySelectorAll("th").forEach((h) => {
-			h.addEventListener("click", () => {
-				const columnIdx = Number(h.getAttribute("columnIdx"));
-				this.sortTable(columnIdx);
-				this.columnsMapping[columnIdx].setSortAsc(!this.columnsMapping[columnIdx].getSortAsc());
-			});
-		});
-
-		const filterRow = thead.createEl("tr");
-		Object.entries(this.columnsMapping).forEach(([key, col]) => {
-			const th = filterRow.createEl("th", { cls: "ptp-th-container" });
-			if (!col.isFiltering()) return;
-
-			const filterButton = th.createEl("button", {
-				cls: "ptp-filter-button"
-			});
-			setIcon(filterButton, "filter");
-			filterButton.setAttribute("columnIdx", col.getIndex().toString());
-
-			filterButton.addEventListener("click", () => {
-				const columnIdx = Number(filterButton.getAttribute("columnIdx"));
-				this.openFilterModal(columnIdx);
-			});
+			th.appendChild(container);
 		});
 	}
+	/**************************************************/
+	private showContextMenu(event: MouseEvent, col: IColumn) {
+		document.querySelector(".ptp-context-menu")?.remove();
 
+		const menu = document.createElement("div");
+		menu.classList.add("ptp-context-menu");
+
+		// Création du type de colonne en haut du menu
+		const typeOption = document.createElement("div");
+		typeOption.textContent = "col type : " + col.getStrType();
+		menu.appendChild(typeOption);
+
+		const createMenuOption = (icon: string | null, onClick: () => void) => {
+			const option = document.createElement("div");
+			option.classList.add("ptp-menu-option-button");
+
+			if (icon) {
+				const iconContainer = document.createElement("div");
+				setIcon(iconContainer, icon);
+				option.appendChild(iconContainer);
+			}
+
+			option.addEventListener("click", () => {
+				onClick();
+				menu.remove();
+			});
+			return option;
+		};
+
+		const buttonlist = document.createElement("div");
+		typeOption.classList.add("ptp-menu-option-button-div");
+
+		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
+		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
+		buttonlist.appendChild(createMenuOption("scan-line", () => this.sortTable(this.columnsMapping[0], true))); // Réinitialiser le tri
+		buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
+		buttonlist.appendChild(
+			createMenuOption("filter-x", () => {
+				col.setFilter([]);
+				this.applyFilters(col);
+				this.updateFilterButtonStyles();
+			})
+		);
+
+		menu.appendChild(buttonlist);
+		document.body.appendChild(menu);
+		menu.style.top = `${event.clientY}px`;
+		menu.style.left = `${event.clientX}px`;
+
+		// Fermer le menu en cliquant ailleurs
+		setTimeout(() => {
+			document.addEventListener("click", () => menu.remove(), { once: true });
+		}, 10);
+	}
+
+	/**************************************************/
 	private getAllUniqueValuesForProperty(propName: string): any[] {
 		//	console.log("dsd",propName);
 		const uniqueValues = new Set<any>();
@@ -279,37 +318,37 @@ export class GlobalPropertiesView extends ItemView {
 		return a;
 	}
 
-	private updateFilterButtonStyles() {
-		const filterButtons = document.querySelectorAll(".ptp-filter-button");
-		filterButtons.forEach((button) => {
-			const col = this.columnsMapping[Number(button.getAttribute("columnIdx"))];
-			console.log(col);
-			if (col.getFilter().length > 0) {
-				button.classList.add("ptp-filter-button-active");
-			} else {
-				button.classList.remove("ptp-filter-button-active");
-			}
-		});
-	}
+private updateFilterButtonStyles() {
+    const filterHeader = document.querySelectorAll(".ptp-th-container");	
+    filterHeader.forEach((cell) => {
+        const col = this.columnsMapping[Number(cell.getAttribute("columnIdx"))];
+//		console.log("->",col.getFilter(),'ff',cell.getAttribute("columnIdx"));
+        if (col.getFilter().length > 0) {
+			console.log(col.getPropertyName())
+            cell.classList.add("ptp-filter-button-active");
+        } else {
+            cell.classList.remove("ptp-filter-button-active");
+        }
+    });
+}
+
 
 	//issue with multiple filter.
-	private openFilterModal(columnIdx: number) {
-		let col = this.columnsMapping[columnIdx];
-		const allowedValues = this.getAllUniqueValuesForProperty(this.columnsMapping[columnIdx].getPropertyName());
+	private openFilterModal(col: IColumn) {
+		const allowedValues = this.getAllUniqueValuesForProperty(col.getPropertyName());
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
-			this.columnsMapping[columnIdx].setFilter(selectedValues);
-			this.applyFilters(columnIdx);
+			col.setFilter(selectedValues);
+			this.applyFilters(col);
 			this.updateFilterButtonStyles();
 		});
 		modal.open();
 	}
 
-	private applyFilters(columnIdx: number): void {
+	private applyFilters(col: IColumn): void {
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
 		const rows = Array.from(tbody.querySelectorAll("tr"));
-		let col = this.columnsMapping[columnIdx];
 		col.filterRows(rows);
 	}
 
@@ -329,15 +368,14 @@ export class GlobalPropertiesView extends ItemView {
 		}
 	}
 
-	sortTable(columnIdx: number) {
-		//		console.log("->",columnIdx);
+	sortTable(col: IColumn, asc: boolean) {
+		console.log("->", col, asc);
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
 		const rows = Array.from(tbody.getElementsByTagName("tr"));
-		let columnIndex = columnIdx;
-		let col = this.columnsMapping[columnIdx];
-		tbody.append(...col.sortRows(rows));
+		tbody.append(...col.sortRows(rows, asc));
+		console.log("dslkdjsl");
 	}
 
 	private addZoomFeature() {

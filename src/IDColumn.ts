@@ -27,13 +27,13 @@ export default class IDColumn extends Column {
     public getStrType():string {
         return "ID";
     }
-    public sortRows(rows : HTMLElement[]) : HTMLElement[] {
+    public sortRows(rows : HTMLElement[], asc:boolean) : HTMLElement[] {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cA = parseInt(cellA);
             const cB = parseInt(cellB);
-            return this.sortasc ? cA - cB : cB - cA;
+            return asc ? cA - cB : cB - cA;
 
         });
         return rows;

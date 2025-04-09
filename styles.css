@@ -3,7 +3,7 @@
   width: 100vw;
   height: 100vh;
   position: fixed;
-  color: #555; 
+  color: #555;
 }
 
 .ptp-global-table {
@@ -18,12 +18,12 @@
 }
 
 .ptp-h1-title {
-  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 28px !important;
   font-weight: bold !important;
   text-align: left;
-  color: #007BFF !important; /* Bleu vif */
-  background: linear-gradient(to right, #007BFF, #00C6FF); /* Dégradé bleu */
+  color: #007bff !important; /* Bleu vif */
+  background: linear-gradient(to right, #007bff, #00c6ff); /* Dégradé bleu */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent; /* Effet de texte en dégradé */
   margin-top: 40px !important;
@@ -32,8 +32,6 @@
   padding-bottom: 10px;
   border-bottom: 2px solid rgba(0, 123, 255, 0.5);
 }
-
-
 
 .modal-j-content {
   height: 100%;
@@ -48,12 +46,13 @@
 }
 
 .refresh-button {
-    margin-right: 10px;  /* Ajuste la valeur selon tes besoins */
+  margin-right: 10px; /* Ajuste la valeur selon tes besoins */
 }
 
-.ptp-global-table td:first-child {  /*colonne ID */
-    min-width: 0; /* Assure qu'il n'y a pas de largeur minimale */
-    width: 1%;     /* Laisse la colonne s'ajuster à la taille de son contenu */
+.ptp-global-table td:first-child {
+  /*colonne ID */
+  min-width: 0; /* Assure qu'il n'y a pas de largeur minimale */
+  width: 1%; /* Laisse la colonne s'ajuster à la taille de son contenu */
 }
 
 .ptp-th-container {
@@ -62,8 +61,8 @@
   padding: 8px;
   text-align: center;
   white-space: nowrap;
-/*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
-/*  max-width: 300px; /* Limite la largeur maximale à 300px */
+  /*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+  /*  max-width: 300px; /* Limite la largeur maximale à 300px */
   width: auto; /* Permet à la largeur de s'ajuster au contenu */
   overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
 }
@@ -75,45 +74,159 @@
   text-align: center;
   overflow-wrap: break-word; /* Alternative pour la compatibilité */
   word-wrap: break-word; /* Force le retour à la ligne si nécessaire */
-/*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
+  /*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
   max-width: 300px; /* Limite la largeur maximale à 300px */
   width: auto; /* Permet à la largeur de s'ajuster au contenu */
   overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
 }
 
 /* Bouton de suppression des filtres */
-.ptp-filter-button{
-    margin-left: 10px;
-    cursor: pointer;
-    display: inline-flex;
-    background-color: #ffcc00; /* Jaune par exemple */
+.ptp-filter-button {
+  margin-left: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  background-color: #f1eacf; /* Jaune par exemple */
 }
-
 
 .ptp-filter-button-active {
-    background-color: #ffcc00 !important; /* Jaune par exemple */
-    color: black;
-    font-weight: bold;
-}
-
-.ptp-filter-button-clear:hover {
-    background-color: darkred;
+  background-color: #f1eacf !important; /* Jaune par exemple */
+  color: black;
 }
 
 .ptp-date-gray-input {
-    background-color: #ffffff !important;
-    color: #ffffff !important;
-    border: 1px solid #ccc !important;
-    padding: 5px !important;
-    border-radius: 4px !important;
+  background-color: #ffffff !important;
+  color: #ffffff !important;
+  border: 1px solid #ccc !important;
+  padding: 5px !important;
+  border-radius: 4px !important;
 }
 
-.ptp-date-button{
-    background-color: #f0f0f0 !important;
+.ptp-date-button {
+  background-color: #f0f0f0 !important;
 }
 
 .th-small-text {
-    font-size: 0.8em; /* Taille plus petite */
-    color: gray; /* Optionnel : couleur plus discrète */
+  font-size: 0.8em; /* Taille plus petite */
+  color: gray; /* Optionnel : couleur plus discrète */
 }
 
+/* Style pour le bouton rond */
+.ptp-th-action {
+    width: 10px;             /* Taille du bouton */
+    height: 10px;            /* Taille du bouton */
+    border-radius: 50%;      /* Pour rendre le bouton rond */
+    background-color: #f0f0f0; /* Couleur de fond du bouton */
+    border: 1px solid #ccc;  /* Bordure autour du bouton */
+    display: inline-flex;           /* Utiliser flexbox pour centrer le contenu */
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center;     /* Centrer verticalement */
+    cursor: pointer;        /* Curseur pointer au survol */
+    font-size: 18px;         /* Taille du texte (symbole ⋮) */
+    padding: 0;              /* Aucun padding autour du texte */
+  margin-left: 10px;
+}
+
+/* Ajouter un effet au survol */
+.ptp-th-action:hover {
+    background-color: #ddd;  /* Changer la couleur de fond au survol */
+}
+
+/* Pour éviter que le bouton soit trop grand si le texte est long */
+.ptp-th-action span {
+    display: none; /* Cacher le texte à l'intérieur du bouton */
+}
+
+
+/************menu*************/
+
+/* Menu contextuel */
+.ptp-context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  z-index: 1000;
+  min-width: 120px;
+  border-radius: 5px;
+  gap: 10px; /* Un peu d'espace entre les options */
+}
+
+/* Option du menu */
+.ptp-menu-option-button {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Espacement entre l'icône et le texte */
+}
+
+/* Liste des boutons */
+.ptp-menu-option-button-div {
+  display: inline-flex;
+  justify-content: space-between; /* Aligner les boutons sur toute la largeur disponible */
+  gap: 10px; /* Un peu d'espace entre les boutons */
+  margin-top: 10px; /* Espacement au-dessus des boutons */
+}
+
+/* Forcer l'alignement horizontal des icônes dans chaque option */
+.ptp-menu-option-button > div {
+  display: inline-flex;
+  flex-direction: row; /* Assurer que les icônes soient alignées horizontalement */
+}
+
+/* Option survolée */
+.ptp-menu-option-button:hover {
+  background: #f0f0f0;
+}
+
+/* Ajuster la taille des icônes */
+.ptp-menu-option-button div svg {
+  width: 20px; /* Taille des icônes */
+  height: 20px;
+}
+
+/* Divider horizontal entre les options */
+.ptp-menu-divider {
+  margin: 8px 0;
+  width: 100%;
+  border-top: 1px solid #ccc;
+}
+
+/* Si nécessaire, ajuster la taille de l'option 'col type' */
+.ptp-menu-option-button:first-child {
+  font-weight: bold; /* Mettre en avant 'col type' */
+  margin-bottom: 10px; /* Un peu d'espace sous 'col type' */
+}
+/* Conteneur des boutons */
+.ptp-button-list-g {
+  display: flex; /* Aligne les éléments horizontalement */
+  gap: 10px; /* Espacement entre les boutons */
+  flex-wrap: wrap; /* Si l'espace est insuffisant, les boutons passent à la ligne suivante */
+  justify-content: flex-start; /* Aligne les boutons au début du conteneur */
+}
+
+/* Style pour les boutons */
+.create-refresh-button,
+.create-file-button {
+  display: inline-flex; /* Assure que les boutons sont alignés avec leurs icônes */
+  align-items: center; /* Aligne l'icône au centre du bouton */
+  justify-content: center;
+  padding: 8px 12px; /* Un peu de padding autour de l'icône */
+  cursor: pointer; /* Curseur au survol */
+  text-decoration: none; /* Supprime le soulignement des liens */
+}
+
+.create-refresh-button svg,
+.create-file-button svg {
+  width: 16px; /* Taille de l'icône */
+  height: 16px;
+}
+
+/* Effet au survol */
+.create-refresh-button:hover,
+.create-file-button:hover {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}

@@ -9,9 +9,27 @@ export default class BoolColumn extends Column {
     public getStrType() {
         return "Bool";
     }
-    public sortRows(row: HTMLElement[]): HTMLElement[] {
-        return super.sortRows(row);
-    }
+   public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
+    return rows.sort((a, b) => {
+        // Récupère les cases à cocher (checkbox) dans les cellules
+        const cellA = a.getElementsByTagName("td")[this.columnIndex];
+        const cellB = b.getElementsByTagName("td")[this.columnIndex];
+        
+        const checkboxA = cellA?.querySelector("input[type='checkbox']") as HTMLInputElement | null;
+        const checkboxB = cellB?.querySelector("input[type='checkbox']") as HTMLInputElement | null;
+
+        if (checkboxA && checkboxB) {
+            const valueA = checkboxA.checked;
+            const valueB = checkboxB.checked;
+            if (valueA === valueB) {
+                return 0; // Si les valeurs sont identiques, ne change pas l'ordre
+            }
+            return asc ? (valueA ? -1 : 1) : (valueA ? 1 : -1);
+        }
+        return 0; // Si une des checkboxes est manquante, on ne trie pas
+    });
+}
+
     
     public filterRows(rows : HTMLElement[]) {
         rows.forEach(row => {

@@ -13,7 +13,6 @@ export interface IColumn {
     // Propriétés
     app: App;
     vault: Vault; 
-    sortasc: boolean;
     columnIndex: number;
     filter: string[];
     propertyName: string;
@@ -36,9 +35,6 @@ export interface IColumn {
     setStrType(a:string):void
     getStrType():string
     
-    setSortAsc(a: boolean): void;
-    getSortAsc(): boolean;
-
     setIndex(a: number): void;
     getIndex(): number;
 
@@ -53,15 +49,14 @@ export interface IColumn {
 
     updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string): Promise<void>;
 
-    sortRows(rows: HTMLElement[]): HTMLElement[];
+    sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[];
 	
 }
 
 export default class Column implements IColumn {
-
+ 
     app: App;
     vault: any;
-    sortasc: boolean;
     columnIndex: number;
     filter: string[];
     propertyName: string;
@@ -71,7 +66,6 @@ export default class Column implements IColumn {
     constructor(pname: string, app: App) {
         this.app = app;
         this.vault = app.vault;
-        this.sortasc = true;
         this.columnIndex = -1
         this.filter = []
         this.propertyName = pname
@@ -100,12 +94,6 @@ export default class Column implements IColumn {
         return this.propertyName;
     }
 
-    public setSortAsc(a:boolean) {
-        this.sortasc = a;
-    }
-    public getSortAsc():boolean {
-        return this.sortasc;
-    }
 
     public setIndex(a:number) {
         this.columnIndex = a
@@ -185,13 +173,12 @@ export default class Column implements IColumn {
         await this.vault.modify(fileOrAbstract, fileContent);
     }
 
-    public sortRows(rows  : HTMLElement[]): HTMLElement[] {
+    public sortRows(rows  : HTMLElement[], asc:boolean): HTMLElement[] {
         return rows.sort((a, b) => {
-//            console.log(this.columnIndex);
-            //console.log(a, b.getElementsByTagName("td")[this.columnIndex]);
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
-            return this.sortasc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            console.log("->",cellA, cellB, cellA.localeCompare(cellB), cellB.localeCompare(cellA));
+            return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
         });
     }
 }

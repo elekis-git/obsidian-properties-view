@@ -19,8 +19,8 @@ export default class TextColumn extends Column {
         return "Text";
     }
 
-    public sortRows(rows: HTMLElement[]): HTMLElement[] {
-        return super.sortRows(rows);
+    public sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[] {
+        return super.sortRows(rows, asc);
     }
 
     public filterRows(rows: HTMLElement[]) {
