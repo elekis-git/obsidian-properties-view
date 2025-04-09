@@ -12,6 +12,22 @@ export default class BoolColumn extends Column {
     public sortRows(row: HTMLElement[]): HTMLElement[] {
         return super.sortRows(row);
     }
+    
+    public filterRows(rows : HTMLElement[]) {
+        rows.forEach(row => {
+            row.style.display = "";
+            const cells = row.querySelectorAll("td");
+            const cell = cells[this.getIndex()];
+            if (this.getFilter().length > 0) {
+                const selectEl = cell?.querySelector("input") as HTMLInputElement | null;
+                if (!this.getFilter().map(a => a.toString()).includes( selectEl ? selectEl.checked.toString() : '' )) {
+                    row.style.display = "none";
+                }
+            }
+        });
+    }
+    
+    
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void {
         cell.empty();

@@ -6,7 +6,8 @@ import {
 	stringifyYaml,
 	ItemView,
 	WorkspaceLeaf,
-	ViewStateResult
+	ViewStateResult,
+	setIcon
 } from "obsidian";
 import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS } from "src/Settings";
 
@@ -242,9 +243,9 @@ export class GlobalPropertiesView extends ItemView {
 			if (!col.isFiltering()) return;
 
 			const filterButton = th.createEl("button", {
-				text: "+",
 				cls: "ptp-filter-button"
 			});
+			setIcon(filterButton, "filter");
 			filterButton.setAttribute("columnIdx", col.getIndex().toString());
 
 			filterButton.addEventListener("click", () => {
@@ -280,6 +281,7 @@ export class GlobalPropertiesView extends ItemView {
 		const filterButtons = document.querySelectorAll(".ptp-filter-button");
 		filterButtons.forEach((button) => {
 			const col = this.columnsMapping[Number(button.getAttribute("columnIdx"))];
+			console.log(col);
 			if (col.getFilter().length > 0) {
 				button.classList.add("ptp-filter-button-active");
 			} else {

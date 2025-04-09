@@ -51,7 +51,6 @@ export class FilterModal extends Modal {
   }
 
   private createDateRangeFilter(contentEl: HTMLElement) {
-    console.log("createDateRangeFilter");
     const { allowedValues } = this;
     const validDates = allowedValues.map(date => new Date(date)).filter(date => !isNaN(date.getTime()));
 
