@@ -6,12 +6,14 @@ import {
 	stringifyYaml,
 	ItemView,
 	WorkspaceLeaf,
+	Notice,
 	ViewStateResult,
 	setIcon
 } from "obsidian";
 import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS } from "src/Settings";
 
 import { FilterModal } from "./filterModal";
+import { FileNameModal } from "./newFileModal";
 
 import FileColumn from "./FileColumn";
 import DirColumn from "./DirColumn";
@@ -290,6 +292,7 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 
+	//issue with multiple filter.
 	private openFilterModal(columnIdx: number) {
 		let col = this.columnsMapping[columnIdx];
 		const allowedValues = this.getAllUniqueValuesForProperty(this.columnsMapping[columnIdx].getPropertyName());
@@ -338,14 +341,13 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	private addZoomFeature() {
-		const container = this.table.parentElement; 
+		const container = this.table.parentElement;
 		if (!container) return;
 		container.style.overflow = "auto";
 		container.style.overflowX = "auto"; // Assurer que le scroll horizontal est activé
 		container.style.whiteSpace = "nowrap"; // Empêcher le retour à la ligne
 		container.style.maxWidth = "100%"; // Éviter que le conteneur soit plus petit que la table
 
-		
 		// Appliquer le zoom
 		this.table.style.transform = `scale(${this.scale})`;
 		this.table.style.transformOrigin = "top left";
@@ -370,7 +372,35 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 
-	async addANewFile() {
+	addANewFile() {
+		new FileNameModal(this.app, async (newFileName: string) => {
+			const fileName = newFileName.endsWith(".md") ? newFileName : `${newFileName}.md`;
+			const filePath = `${this.folderPath}/${fileName}`;
+
+			if (this.app.vault.getAbstractFileByPath(filePath)) {
+				new Notice("Un fichier avec ce nom existe déjà !");
+				return;
+			}
+			try {
+				let yamlContent = "";
+				if (this.settings.shouldAddFullProperties) {
+					yamlContent = "---\n";
+					for (const col of this.columnsMapping.splice(3)) {
+						yamlContent += col.getPropertyName() + ":\n";
+					}
+					yamlContent += "---\n";
+				}
+				const newFile: TFile = await this.app.vault.create(filePath, yamlContent);
+
+				new Notice(`Fichier "${filePath}" créé avec succès !`);
+			} catch (error) {
+				new Notice("Erreur lors de la création du fichier.");
+				console.error(error);
+			}
+		}).open();
+	}
+
+	async addANewFile0() {
 		try {
 			const fileName = `new_file_${Date.now()}.md`;
 			const filePath = `${this.folderPath}/${fileName}`;
