@@ -275,7 +275,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
 		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
-		if (col.getStrType() !== "ID") {
+		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) {
 			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {
@@ -298,7 +298,7 @@ export class GlobalPropertiesView extends ItemView {
 
 	/**************************************************/
 	private getAllUniqueValuesForProperty(propName: string): any[] {
-		//	console.log("dsd",propName);
+	//	console.log("dsd",propName);
 		const uniqueValues = new Set<any>();
 		for (const { props } of this.fileProperties) {
 			const val = props[propName];
@@ -323,9 +323,7 @@ export class GlobalPropertiesView extends ItemView {
 		const filterHeader = document.querySelectorAll(".ptp-th-container");
 		filterHeader.forEach((cell) => {
 			const col = this.columnsMapping[Number(cell.getAttribute("columnIdx"))];
-			//		console.log("->",col.getFilter(),'ff',cell.getAttribute("columnIdx"));
 			if (col.getFilter().length > 0) {
-				//console.log(col.getPropertyName());
 				cell.classList.add("ptp-filter-button-active");
 			} else {
 				cell.classList.remove("ptp-filter-button-active");

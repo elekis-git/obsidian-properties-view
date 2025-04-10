@@ -13,6 +13,7 @@ import Column from "./Column"
 export default class IDColumn extends Column {
     
     static counter:number=0
+
     
     constructor(pname:string, app:App) {
         super(pname, app);
@@ -24,7 +25,7 @@ export default class IDColumn extends Column {
     }
 
 
-    public getStrType():string {
+    public static getStrType():string {
         return "ID";
     }
     public sortRows(rows : HTMLElement[], asc:boolean) : HTMLElement[] {
