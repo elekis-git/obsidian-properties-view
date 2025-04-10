@@ -10,9 +10,10 @@ import {
 
 import Column from "./Column"
 import TextColumn from "./TextColumn"
+import BasedTextColumn from "./BasedTextColumn"
 
 
-export default class DirColumn extends Column {
+export default class DirColumn extends BasedTextColumn {
     constructor(pname:string, app:App) {
         super(pname, app);
     }

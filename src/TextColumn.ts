@@ -10,8 +10,9 @@ import {
 } from "obsidian";
 
 import Column from "./Column";
+import BasedTextColumn from "./BasedTextColumn"
 
-export default class TextColumn extends Column {
+export default class TextColumn extends BasedTextColumn {
     constructor(pname: string, app: App) {
         super(pname, app);
     }
@@ -21,24 +22,6 @@ export default class TextColumn extends Column {
 
     public sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[] {
         return super.sortRows(rows, asc);
-    }
-
-    public filterRows(rows: HTMLElement[]) {
-        rows.forEach((row) => {
-            row.style.display = "";
-            const cells = row.querySelectorAll("td");
-            const cell = cells[this.getIndex()];
-            if (this.getFilter().length > 0) {
-                const cellText = cell ? cell.textContent!.trim() : "";
-                const match = this.getFilter().some((filterValue: string) => {
-                    if (filterValue === "") return cellText === "";
-                    return cellText
-                        .toLowerCase()
-                        .includes(filterValue.toString().toLowerCase().replace("[[", "").replace("]]", ""));
-                });
-                if (!match) row.style.display = "none";
-            }
-        });
     }
 
     public decodeEmojisInText(text: string): string {

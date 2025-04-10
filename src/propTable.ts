@@ -86,7 +86,6 @@ export class GlobalPropertiesView extends ItemView {
 	createTablePropView() {
 		if (this.tablecreated == true) return;
 		this.tablecreated = true;
-		console.log("createTablePropView");
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.classList.add("ptp-global-container");
@@ -95,12 +94,11 @@ export class GlobalPropertiesView extends ItemView {
 			cls: "ptp-h1-title"
 		});
 
-		
 		//global button
 		const buttonListGlobal = contentEl.createEl("div", {
 			cls: "ptp-button-list-g"
 		});
-		
+
 		const buttonfr = buttonListGlobal.createEl("a", {
 			cls: "create-refresh-button",
 			attr: { href: "#" }
@@ -181,7 +179,10 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	private buildFileProperties(): IColumn[] {
-		const files = this.app.vault.getMarkdownFiles().filter((file) => file.parent?.path.startsWith(this.folderPath));
+		const files = this.app.vault.getMarkdownFiles().filter((file) => {
+			if (this.folderPath ==="/") {return true;}
+			return file.parent?.path === this.folderPath || file.parent?.path.startsWith(this.folderPath + "/");
+		});
 		const propertyMap: Map<string, IColumn | null> = new Map();
 		this.fileProperties = [];
 
@@ -274,16 +275,16 @@ export class GlobalPropertiesView extends ItemView {
 
 		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
 		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
-		buttonlist.appendChild(createMenuOption("scan-line", () => this.sortTable(this.columnsMapping[0], true))); // Réinitialiser le tri
-		buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
-		buttonlist.appendChild(
-			createMenuOption("filter-x", () => {
-				col.setFilter([]);
-				this.applyFilters(col);
-				this.updateFilterButtonStyles();
-			})
-		);
-
+		if (col.getStrType() !== "ID") {
+			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
+			buttonlist.appendChild(
+				createMenuOption("filter-x", () => {
+					col.setFilter([]);
+					this.applyFilters(col);
+					this.updateFilterButtonStyles();
+				})
+			);
+		}
 		menu.appendChild(buttonlist);
 		document.body.appendChild(menu);
 		menu.style.top = `${event.clientY}px`;
@@ -318,25 +319,25 @@ export class GlobalPropertiesView extends ItemView {
 		return a;
 	}
 
-private updateFilterButtonStyles() {
-    const filterHeader = document.querySelectorAll(".ptp-th-container");	
-    filterHeader.forEach((cell) => {
-        const col = this.columnsMapping[Number(cell.getAttribute("columnIdx"))];
-//		console.log("->",col.getFilter(),'ff',cell.getAttribute("columnIdx"));
-        if (col.getFilter().length > 0) {
-			console.log(col.getPropertyName())
-            cell.classList.add("ptp-filter-button-active");
-        } else {
-            cell.classList.remove("ptp-filter-button-active");
-        }
-    });
-}
-
+	private updateFilterButtonStyles() {
+		const filterHeader = document.querySelectorAll(".ptp-th-container");
+		filterHeader.forEach((cell) => {
+			const col = this.columnsMapping[Number(cell.getAttribute("columnIdx"))];
+			//		console.log("->",col.getFilter(),'ff',cell.getAttribute("columnIdx"));
+			if (col.getFilter().length > 0) {
+				//console.log(col.getPropertyName());
+				cell.classList.add("ptp-filter-button-active");
+			} else {
+				cell.classList.remove("ptp-filter-button-active");
+			}
+		});
+	}
 
 	//issue with multiple filter.
 	private openFilterModal(col: IColumn) {
 		const allowedValues = this.getAllUniqueValuesForProperty(col.getPropertyName());
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
+			console.log("filter", selectedValues);
 			col.setFilter(selectedValues);
 			this.applyFilters(col);
 			this.updateFilterButtonStyles();
@@ -369,13 +370,11 @@ private updateFilterButtonStyles() {
 	}
 
 	sortTable(col: IColumn, asc: boolean) {
-		console.log("->", col, asc);
 		if (!this.table) return;
 		const tbody = this.table.querySelector("tbody");
 		if (!tbody) return;
 		const rows = Array.from(tbody.getElementsByTagName("tr"));
 		tbody.append(...col.sortRows(rows, asc));
-		console.log("dslkdjsl");
 	}
 
 	private addZoomFeature() {
@@ -436,25 +435,6 @@ private updateFilterButtonStyles() {
 				console.error(error);
 			}
 		}).open();
-	}
-
-	async addANewFile0() {
-		try {
-			const fileName = `new_file_${Date.now()}.md`;
-			const filePath = `${this.folderPath}/${fileName}`;
-			let yamlContent = "";
-			if (this.settings.shouldAddFullProperties) {
-				yamlContent = "---\n";
-				for (const col of this.columnsMapping.splice(3)) {
-					yamlContent += col.getPropertyName() + ":\n";
-				}
-				yamlContent += "---\n";
-			}
-			const newFile: TFile = await this.app.vault.create(filePath, yamlContent);
-			console.log(`Fichier créé : ${filePath}`);
-		} catch (error) {
-			console.error("Erreur lors de la création du fichier :", error);
-		}
 	}
 
 	getAllValuesForProperty(property: string) {

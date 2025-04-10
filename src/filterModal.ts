@@ -1,31 +1,24 @@
 import { App, Modal } from "obsidian";
 
-import FileColumn from "./FileColumn"
-import DirColumn from "./DirColumn"
-import TextColumn from "./TextColumn"
+import FileColumn from "./FileColumn";
+import DirColumn from "./DirColumn";
+import TextColumn from "./TextColumn";
 
-import BoolColumn from "./BoolColumn"
-import DateTimeColumn from "./DateTimeColumn"
+import BoolColumn from "./BoolColumn";
+import DateTimeColumn from "./DateTimeColumn";
 
-import IColumn from "./Column"
-import IDColumn from "./IDColumn"
-import ListColumn from "./ListColumn"
-import IntColumn from "./IntColumn"
-
-
+import IColumn from "./Column";
+import IDColumn from "./IDColumn";
+import ListColumn from "./ListColumn";
+import IntColumn from "./IntColumn";
 
 export class FilterModal extends Modal {
-  col : IColumn;
+  col: IColumn;
   allowedValues: any[];
   onSubmit: (selectedValues: any[]) => void;
   selectedValues: Set<any>;
 
-  constructor(
-    app: App,
-    col: IColumn,
-    allowedValues: any[],
-    onSubmit: (selectedValues: any[]) => void
-  ) {
+  constructor(app: App, col: IColumn, allowedValues: any[], onSubmit: (selectedValues: any[]) => void) {
     super(app);
     this.col = col;
     this.allowedValues = allowedValues;
@@ -52,10 +45,10 @@ export class FilterModal extends Modal {
 
   private createDateRangeFilter(contentEl: HTMLElement) {
     const { allowedValues } = this;
-    const validDates = allowedValues.map(date => new Date(date)).filter(date => !isNaN(date.getTime()));
+    const validDates = allowedValues.map((date) => new Date(date)).filter((date) => !isNaN(date.getTime()));
 
-    const minDate = validDates.length > 0 ? new Date(Math.min(...validDates.map(d => d.getTime()))) : null;
-    const maxDate = validDates.length > 0 ? new Date(Math.max(...validDates.map(d => d.getTime()))) : null;
+    const minDate = validDates.length > 0 ? new Date(Math.min(...validDates.map((d) => d.getTime()))) : null;
+    const maxDate = validDates.length > 0 ? new Date(Math.max(...validDates.map((d) => d.getTime()))) : null;
 
     const createDateInput = (label: string, value: string | null, onClick: () => void) => {
       const container = contentEl.createEl("div", { cls: "ptp-filter-date-container" });
@@ -64,66 +57,76 @@ export class FilterModal extends Modal {
       return { container, input };
     };
 
-    const { input: fromInput } = createDateInput(
-      "From : ",
-      minDate ? minDate.toISOString() : null,
-      () => { if (minDate) fromInput.value = minDate.toISOString().split("T")[0]; }
-    );
+    const { input: fromInput } = createDateInput("From : ", minDate ? minDate.toISOString() : null, () => {
+      if (minDate) fromInput.value = minDate.toISOString().split("T")[0];
+    });
 
-    const { input: toInput } = createDateInput(
-      "To : ",
-      maxDate ? maxDate.toISOString() : null,
-      () => { if (maxDate) toInput.value = maxDate.toISOString().split("T")[0]; }
-    );
+    const { input: toInput } = createDateInput("To : ", maxDate ? maxDate.toISOString() : null, () => {
+      if (maxDate) toInput.value = maxDate.toISOString().split("T")[0];
+    });
 
-
-    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls:"ptp-filter-button" });
+    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
     filterButton.addEventListener("click", () => {
       this.onSubmit([
-					fromInput.value ? new Date(fromInput.value).toISOString() : null, 
-					toInput.value ? new Date(toInput.value).toISOString() : null,
-					this.selectedValues.size == 1
-					]);
+        fromInput.value ? new Date(fromInput.value).toISOString() : null,
+        toInput.value ? new Date(toInput.value).toISOString() : null,
+        this.selectedValues.size == 1
+      ]);
       this.close();
     });
-	
-
 
     const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
     clearButton.addEventListener("click", () => {
-      this.onSubmit([]); 
+      this.onSubmit([]);
       this.close();
     });
 
     contentEl.appendChild(fromInput.parentElement!);
     contentEl.appendChild(toInput.parentElement!);
-	this.createCheckbox("", contentEl);
-    contentEl.appendChild(filterButton);	
+    this.createCheckbox("", contentEl);
+    contentEl.appendChild(filterButton);
     contentEl.appendChild(clearButton);
   }
-
-
 
   private createDefaultFilter(contentEl: HTMLElement) {
     this.allowedValues.sort().forEach((value) => {
       const container = contentEl.createEl("div", { cls: "ptp-filter-value-container" });
       this.createCheckbox(value, container);
     });
-		
 
     const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
     filterButton.addEventListener("click", () => {
       this.onSubmit(Array.from(this.selectedValues));
       this.close();
     });
-	
 
     const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
     clearButton.addEventListener("click", () => {
-      this.onSubmit([]); 
+      this.onSubmit([]);
       this.close();
     });
 
+    contentEl.appendChild(filterButton);
+    contentEl.appendChild(clearButton);
+  }
+
+  private createRegexFilter(contentEl: HTMLElement) {
+    const container = contentEl.createEl("div", { cls: "ptp-filter-regex-container" });
+    container.createEl("label", { text: "Contain : " });
+    console.log(this.allowedValues);
+    const regexInput = container.createEl("input", { attr: { type: "text", placeholder: this.col.getFilter()[0] ?? ""  } });
+    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
+    filterButton.addEventListener("click", () => {
+      this.onSubmit([regexInput.value.trim() || regexInput.getAttribute("placeholder")]);
+      this.close();
+    });
+    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
+    clearButton.addEventListener("click", () => {
+      this.onSubmit([]);
+      this.close();
+    });
+    
+    contentEl.appendChild(container);
     contentEl.appendChild(filterButton);
     contentEl.appendChild(clearButton);
   }
@@ -132,8 +135,11 @@ export class FilterModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("h2", { text: `${this.col.getPropertyName()}` });
+
     if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
+    } else if (this.col instanceof FileColumn || this.col instanceof DirColumn || this.col instanceof TextColumn) {
+      this.createRegexFilter(contentEl);
     } else {
       this.createDefaultFilter(contentEl);
     }
@@ -144,4 +150,3 @@ export class FilterModal extends Modal {
     contentEl.empty();
   }
 }
-

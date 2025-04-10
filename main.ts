@@ -1,11 +1,30 @@
-import { Plugin, WorkspaceLeaf, Menu, TFolder, TFile,PluginSettingTab, Setting } from "obsidian";
+import { Plugin, WorkspaceLeaf, Menu, TFolder, TFile, PluginSettingTab, Setting } from "obsidian";
 import { GlobalPropertiesView } from "src/propTable";
 import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS } from "src/Settings";
 
-
 export default class GlobalPropertiesPlugin extends Plugin {
-	settings: GlobalPropertiesSettings; 
+	settings: GlobalPropertiesSettings;
+	ribbonIconEl: HTMLElement | null = null; // Stocker l'élément du ribbon :
 	
+	async updateRibbon() {
+		if (this.settings.shouldAddRibbon) {
+			if (!this.ribbonIconEl) {
+				this.ribbonIconEl = this.addRibbonIcon(
+					"wrench", // Icône, tu peux la changer
+					"Global Properties",
+					(evt: MouseEvent) => {
+						this.openTab(this.app.vault.getRoot());
+					}
+				);
+			}
+		} else {
+			if (this.ribbonIconEl) {
+				this.ribbonIconEl.remove();
+				this.ribbonIconEl = null;
+			}
+		}
+	}
+
 	async onload() {
 		await this.loadSettings();
 

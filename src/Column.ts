@@ -19,9 +19,6 @@ export interface IColumn {
     columnId: string;
     cnt : number;
 
-    // Méthodes
-    isFiltering(): boolean;
-
     setId(a: string): void;
     getId(): string;
 
@@ -71,9 +68,6 @@ export default class Column implements IColumn {
         this.propertyName = pname
         this.columnId = ""
         this.cnt = 0;
-    }
-    public isFiltering() {
-        return true
     }
 
     public addCnt1(){this.cnt++;}

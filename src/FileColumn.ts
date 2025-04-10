@@ -11,8 +11,9 @@ import {
 
 import Column from "./Column"
 import TextColumn from "./TextColumn"
+import BasedTextColumn from "./BasedTextColumn"
 
-export default class FileColumn extends Column {
+export default class FileColumn extends BasedTextColumn {
     constructor(pname:string, app:App) {
         super(pname, app);
     }
@@ -26,5 +27,8 @@ export default class FileColumn extends Column {
     public fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: Object|null):void{
         this.createHref(cell, file);
     }
+    
+
+    
     
 }

@@ -2,9 +2,15 @@ import { Plugin, WorkspaceLeaf, Menu, TFolder, TFile,PluginSettingTab, Setting }
 import { GlobalPropertiesView } from "src/propTable";
 import GlobalPropertiesPlugin from "main";
 
-export interface GlobalPropertiesSettings {shouldAddFullProperties: boolean;}
+export interface GlobalPropertiesSettings {
+	shouldAddFullProperties: boolean;
+	shouldAddRibbon : boolean;
+}
 
-export const DEFAULT_SETTINGS: GlobalPropertiesSettings = {shouldAddFullProperties: false,};
+export const DEFAULT_SETTINGS: GlobalPropertiesSettings = {
+	shouldAddFullProperties: false,
+	shouldAddRibbon : false
+};
 
 export class GlobalPropertiesSettingTab extends PluginSettingTab {
 	plugin: GlobalPropertiesPlugin;
@@ -27,6 +33,18 @@ export class GlobalPropertiesSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+		
+		new Setting(containerEl)
+		.setName("Show ribbon icon")
+		.setDesc("Toggle the ribbon icon in the sidebar. (Allow table properties of the entire Vault). Warning can be slow")
+		.addToggle((toggle) =>
+			toggle.setValue(this.plugin.settings.shouldAddRibbon).onChange(async (value) => {
+				this.plugin.settings.shouldAddRibbon = value;
+				await this.plugin.updateRibbon(); // <-- On met à jour le ribbon
+				await this.plugin.saveSettings();
+			})
+		);
+		
 	}
 }
 
