@@ -24,6 +24,8 @@ export default class IDColumn extends Column {
         return false
     }
 
+    getUniqDisplayValues(rows: HTMLElement[]): any[]{return []} //never used as no filter on ID column
+
 
     public static getStrType():string {
         return "ID";

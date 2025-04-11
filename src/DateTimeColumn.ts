@@ -10,8 +10,10 @@ export default class DateTimeColumn extends Column {
         this.dtype = dtype;
     }
 
-    public getDType():string{return this.dtype};
-    
+    public getDType(): string {
+        return this.dtype;
+    }
+
     public filterRows(rows: HTMLElement[]) {
         rows.forEach((row) => {
             row.style.display = "";
@@ -24,11 +26,11 @@ export default class DateTimeColumn extends Column {
                     if (from || to) {
                         let cellDate: Date | null = null;
                         if (input instanceof HTMLInputElement && input.value.includes("T")) {
-							cellDate = new Date(input.value.trim());
+                            cellDate = new Date(input.value.trim());
                         } else if (input instanceof HTMLInputElement) {
                             cellDate = new Date(input.value.trim() + "T00:00:00");
                         }
-						
+
                         if (cellDate && !isNaN(cellDate.getTime())) {
                             const fromDate = from ? new Date(from.trim()) : null;
                             const toDate = to ? new Date(to.trim()) : null;
@@ -55,9 +57,34 @@ export default class DateTimeColumn extends Column {
         return this.dtype;
     }
 
+    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+        let minDate: Date | null = null;
+        let maxDate: Date | null = null;
 
-    
-    public sortRows(rows: HTMLElement[], asc:boolean) {
+        rows.forEach((row) => {
+            const cell = row.getElementsByTagName("td")[this.columnIndex];
+            const input = cell?.querySelector("input, select") as HTMLInputElement | null;
+
+            // Vérification de la validité de la date
+            if (input && !isNaN(new Date(input.value.trim()).getTime())) {
+                const currentDate = new Date(input.value.trim());
+
+                // Calcul de la date minimale
+                if (minDate === null || currentDate < minDate) {
+                    minDate = currentDate;
+                }
+
+                // Calcul de la date maximale
+                if (maxDate === null || currentDate > maxDate) {
+                    maxDate = currentDate;
+                }
+            }
+        });
+
+        return [minDate, maxDate, ""];
+    }
+
+    public sortRows(rows: HTMLElement[], asc: boolean) {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];
@@ -80,16 +107,15 @@ export default class DateTimeColumn extends Column {
         return rows;
     }
 
-    public getCorrectDateTime(dd : Date){
-         const year = dd.getFullYear();
+    public getCorrectDateTime(dd: Date) {
+        const year = dd.getFullYear();
         const month = (dd.getMonth() + 1).toString().padStart(2, "0");
         const day = dd.getDate().toString().padStart(2, "0");
         const hours = dd.getHours().toString().padStart(2, "0");
         const minutes = dd.getMinutes().toString().padStart(2, "0");
         return `${year}-${month}-${day}T${hours}:${minutes}`;
-        
-    }    
-    
+    }
+
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {
         cell.empty();
         const input = cell.createEl("input", { cls: "ptp-date-button" });
@@ -113,7 +139,7 @@ export default class DateTimeColumn extends Column {
             if (rawVal !== "") {
                 v2 =
                     input.type === "datetime-local"
-                        ?this.getCorrectDateTime(dateValue)
+                        ? this.getCorrectDateTime(dateValue)
                         : dateValue.toISOString().split("T")[0];
                 input.classList.remove("ptp-date-gray-input");
             } else {

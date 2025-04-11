@@ -83,6 +83,48 @@ export class GlobalPropertiesView extends ItemView {
 		return state;
 	}
 
+	buildButtonHeader() {
+		//global button
+		const buttonListGlobal = this.contentEl.createEl("div", {
+			cls: "ptp-button-list-g"
+		});
+		const buttonfr = buttonListGlobal.createEl("a", {
+			cls: "ptp-global-button",
+			attr: { href: "#" }
+		});
+		const icon1Container = document.createElement("div");
+		setIcon(icon1Container, "refresh-cw");
+		buttonfr.appendChild(icon1Container);
+		buttonfr.addEventListener("click", async (event) => {
+			event.preventDefault();
+			await this.rebuildTheView();
+		});
+		/****************************************************************************/
+		const buttonGlobF = buttonListGlobal.createEl("a", {
+			cls: "ptp-global-button",
+			attr: { href: "#" }
+		});
+		const icon2Container = document.createElement("div");
+		setIcon(icon2Container, "filter-x");
+		buttonGlobF.appendChild(icon2Container);
+		buttonGlobF.addEventListener("click", async (event) => {
+			event.preventDefault();
+			this.clearAllFilters();
+		});
+		/******************************************************/
+		const buttonf = buttonListGlobal.createEl("a", {
+			cls: "ptp-global-button",
+			attr: { href: "#" }
+		});
+		const icon3Container = document.createElement("div");
+		setIcon(icon3Container, "file-plus-2");
+		buttonf.appendChild(icon3Container);
+		buttonf.addEventListener("click", async (event) => {
+			event.preventDefault();
+			await this.addANewFile();
+		});
+	}
+
 	createTablePropView() {
 		if (this.tablecreated == true) return;
 		this.tablecreated = true;
@@ -93,36 +135,7 @@ export class GlobalPropertiesView extends ItemView {
 			text: "Properties of " + this.folderPath,
 			cls: "ptp-h1-title"
 		});
-
-		//global button
-		const buttonListGlobal = contentEl.createEl("div", {
-			cls: "ptp-button-list-g"
-		});
-
-		const buttonfr = buttonListGlobal.createEl("a", {
-			cls: "create-refresh-button",
-			attr: { href: "#" }
-		});
-		const icon2Container = document.createElement("div");
-		setIcon(icon2Container, "refresh-cw");
-		buttonfr.appendChild(icon2Container);
-		buttonfr.addEventListener("click", async (event) => {
-			event.preventDefault();
-			await this.rebuildTheView();
-		});
-
-		/*******/
-		const buttonf = buttonListGlobal.createEl("a", {
-			cls: "create-file-button",
-			attr: { href: "#" }
-		});
-		const iconContainer = document.createElement("div");
-		setIcon(iconContainer, "file-plus-2");
-		buttonf.appendChild(iconContainer);
-		buttonf.addEventListener("click", async (event) => {
-			event.preventDefault();
-			await this.addANewFile();
-		});
+		this.buildButtonHeader();
 		/********************************************/
 		IDColumn.counter = 0;
 		this.columnsMapping = this.buildFileProperties();
@@ -130,7 +143,14 @@ export class GlobalPropertiesView extends ItemView {
 		this.buildTableHeader();
 		this.buildTableBody();
 		this.addZoomFeature();
+		this.upgradeBehavior();
 		contentEl.scrollTop = 0;
+	}
+
+	upgradeBehavior() {
+		//bugged.
+			return;
+	
 	}
 
 	async onOpen() {
@@ -180,7 +200,9 @@ export class GlobalPropertiesView extends ItemView {
 
 	private buildFileProperties(): IColumn[] {
 		const files = this.app.vault.getMarkdownFiles().filter((file) => {
-			if (this.folderPath ==="/") {return true;}
+			if (this.folderPath === "/") {
+				return true;
+			}
 			return file.parent?.path === this.folderPath || file.parent?.path.startsWith(this.folderPath + "/");
 		});
 		const propertyMap: Map<string, IColumn | null> = new Map();
@@ -275,13 +297,12 @@ export class GlobalPropertiesView extends ItemView {
 
 		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
 		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
-		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) { // need to refactor filterModal first
+		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) {
+			// need to refactor filterModal first
 			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {
-					col.setFilter([]);
-					this.applyFilters(col);
-					this.updateFilterButtonStyles();
+					this.clearAllFilters();
 				})
 			);
 		}
@@ -294,29 +315,6 @@ export class GlobalPropertiesView extends ItemView {
 		setTimeout(() => {
 			document.addEventListener("click", () => menu.remove(), { once: true });
 		}, 10);
-	}
-
-	/**************************************************/
-	private getAllUniqueValuesForProperty(propName: string): any[] {
-	//	console.log("dsd",propName);
-		const uniqueValues = new Set<any>();
-		for (const { props } of this.fileProperties) {
-			const val = props[propName];
-			if (val !== undefined && val !== null) {
-				if (Array.isArray(val)) {
-					for (const item of val) {
-						if (item !== null && item !== undefined) {
-							uniqueValues.add(item.replaceAll("[", "").replaceAll("]", ""));
-						}
-					}
-				} else {
-					uniqueValues.add(val);
-				}
-			}
-		}
-		let a = Array.from(uniqueValues);
-		a.push(""); //add an empty one... assumption , there is always an empty one !!! Not good.
-		return a;
 	}
 
 	private updateFilterButtonStyles() {
@@ -333,22 +331,29 @@ export class GlobalPropertiesView extends ItemView {
 
 	//issue with multiple filter.
 	private openFilterModal(col: IColumn) {
-		const allowedValues = this.getAllUniqueValuesForProperty(col.getPropertyName());
+		let allowedValues = col.getUniqDisplayValues(this.getRows());
+
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
-			console.log("filter", selectedValues);
+			this.clearAllFilters();
 			col.setFilter(selectedValues);
-			this.applyFilters(col);
+			col.filterRows(this.getRows());
 			this.updateFilterButtonStyles();
 		});
 		modal.open();
 	}
 
-	private applyFilters(col: IColumn): void {
-		if (!this.table) return;
-		const tbody = this.table.querySelector("tbody");
-		if (!tbody) return;
-		const rows = Array.from(tbody.querySelectorAll("tr"));
-		col.filterRows(rows);
+	private clearAllFilters() {
+		this.columnsMapping.forEach((col) => {
+			col.setFilter([]);
+			col.filterRows(this.getRows());
+			this.updateFilterButtonStyles();
+		});
+	}
+
+	private getRows(): HTMLElement[] {
+		const tbody = this.table!.querySelector("tbody");
+		const rows = Array.from(tbody!.querySelectorAll("tr"));
+		return rows;
 	}
 
 	private buildTableBody() {

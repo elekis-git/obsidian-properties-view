@@ -10,7 +10,7 @@ import {
 } from "obsidian";
 
 import Column from "./Column";
-import BasedTextColumn from "./BasedTextColumn"
+import BasedTextColumn from "./BasedTextColumn";
 
 export default class TextColumn extends BasedTextColumn {
     constructor(pname: string, app: App) {
@@ -20,7 +20,7 @@ export default class TextColumn extends BasedTextColumn {
         return "Text";
     }
 
-    public sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[] {
+    public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
         return super.sortRows(rows, asc);
     }
 
@@ -68,13 +68,20 @@ export default class TextColumn extends BasedTextColumn {
             input.focus();
         });
 
+        input.addEventListener("focus", () => {
+            input.dataset.oldValue = input.value; // Stocke l'ancienne valeur
+        });
+
         input.addEventListener("blur", async () => {
             value = input.value;
+            let oldValue = input.dataset.oldValue; // Récupère l'ancienne valeur
             displayDiv.style.display = "block";
             input.style.display = "none";
-            await this.updateYamlProperty(file.path, prop, value == null ? "" : value.toString(), "update");
             renderMarkdown();
             this.fillCell(cell, file, prop, value);
+            if (oldValue !== value)
+                await this.updateYamlProperty(file.path, prop, value == null ? "" : value.toString(), "update");
+            
         });
         cell.appendChild(input);
     }

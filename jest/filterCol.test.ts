@@ -147,6 +147,22 @@ describe("FilterAlgo", () => {
     expect(visibleRows.length).toBe(6);
     expect(hiddenRows.length).toBe(4);
   });
+  
+  
+  it("MultipleFilter", async () => {
+    column = new BoolColumn("testProperty", { vault: mockVault });
+    column.setFilter(["true", ""]);
+    column.setIndex(4);
+    column.filterRows(rows);
+    
+    let column2 = new IntColumn("testProperty2", { vault: mockVault });
+    column2.setFilter([42]);
+    column2.setIndex(5);
+    column2.filterRows(rows);
+    
+  });
+  
+  
 
   function createMockTableRows() {
     const data = [

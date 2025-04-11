@@ -13,6 +13,7 @@ The Usual.
 
 ## 📌 Usage
 - **Right clic on a directory -> Properties that folder.
+- **Click on 3 dots next to property column
 
 
 ## 📝 Contributing

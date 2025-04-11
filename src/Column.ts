@@ -28,21 +28,20 @@ export interface IColumn {
 
     fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void;
 
-    createModalFilter(contentEl: HTMLElement): void;
-
     createHref(elem: HTMLElement, fname: TFile | string): void;
 
     setFilter(a: string[]): void;
     getFilter(): string[];
 
     filterRows(rows: HTMLElement[]): void;
+    getUniqDisplayValues(rows: HTMLElement[]): any[];
 
     updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string): Promise<void>;
 
     sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[];
 }
 
-export default class Column implements IColumn {
+export default abstract class Column implements IColumn {
     app: App;
     vault: any;
     columnIndex: number;
@@ -60,6 +59,9 @@ export default class Column implements IColumn {
         this.columnId = "";
         this.cnt = 0;
     }
+
+    abstract getUniqDisplayValues(rows: HTMLElement[]): any[];
+    abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
 
     public addCnt1() {
         this.cnt++;
@@ -97,7 +99,6 @@ export default class Column implements IColumn {
         return "";
     }
 
-
     public createHref(elem: HTMLElement, fname: TFile | string) {
         const fileLink = elem.createEl("a", {
             text: fname instanceof TFile ? fname.basename : fname,
@@ -110,8 +111,6 @@ export default class Column implements IColumn {
             this.app.workspace.openLinkText(fname instanceof TFile ? fname.path : "/" + fname, "", false);
         });
     }
-
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {}
 
     public setFilter(a: string[]) {
         this.filter = a;
@@ -151,7 +150,8 @@ export default class Column implements IColumn {
         const yamlData = parseYaml(yamlContent);
 
         if (actiontype === "update") {
-            yamlData[prop] = value;
+            if (yamlData[prop] == value) return;
+            else yamlData[prop] = value;
         } else if (actiontype === "delete") {
             if (Array.isArray(yamlData[prop])) {
                 yamlData[prop] = yamlData[prop].filter((item: any) => item !== value);

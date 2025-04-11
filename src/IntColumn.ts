@@ -14,10 +14,10 @@ export default class IntColumn extends Column {
             row.style.display = "";
             if (this.getFilter().length > 0) {
                 const selectEl = cell?.querySelector("input") as HTMLSelectElement | null;
-                if (this.getFilter().includes("") && selectEl.value == '') row.style.display = "";
-                else if (selectEl.value =='')row.style.display = "none";
+                if (this.getFilter().includes("") && selectEl?.value == "") row.style.display = "";
+                else if (selectEl?.value == "") row.style.display = "none";
                 else {
-                    const cellValue = Number(selectEl.value);
+                    const cellValue = Number(selectEl?.value);
                     let filtemp = this.getFilter().filter((item, index) => item !== "");
                     const filterValues = filtemp.map((val: any) => Number(val));
                     if (!filterValues.includes(cellValue)) {
@@ -27,6 +27,29 @@ export default class IntColumn extends Column {
             }
         });
     }
+
+   public getUniqDisplayValues(rows: HTMLElement[]) {
+    let values: (number|null)[] = [];
+    rows.forEach((row) => {
+        if (row.style.display === "") { // Vérifie si la ligne est visible
+            let cells = row.querySelectorAll("td");
+            let targetCell = cells[this.getIndex()]; // Colonne 7 (index 6)
+
+            if (targetCell) {
+                let input = targetCell.querySelector("input");
+                if (input && input.value != "") {
+                    let value = Number(input.value);
+                    if (!isNaN(value) && !values.includes(value)) {
+                        values.push(value); // Ajoute uniquement des valeurs uniques
+                    }
+                }
+            }
+        }
+    });
+    values.push(null);
+    return values;
+}
+
 
     public getStrType(): string {
         return "Int";
@@ -87,12 +110,16 @@ export default class IntColumn extends Column {
             input.focus();
         });
 
+        input.addEventListener("focus", () => {
+            input.dataset.oldValue = input.value; // Stocke l'ancienne valeur
+        });
+
         input.addEventListener("blur", async () => {
             let v = input.value;
+            let oldValue = input.dataset.oldValue; // Récupère l'ancienne valeur
             input.style.display = "none";
-            console.log("value-blur", v, typeof v, v === "");
-            await this.updateYamlProperty(file.path, prop, v === "" ? null : Number(v), "update");
             this.fillCell(cell, file, prop, v);
+            if (v !== oldValue) await this.updateYamlProperty(file.path, prop, v === "" ? null : Number(v), "update");
         });
     }
 }

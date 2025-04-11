@@ -206,10 +206,13 @@
   flex-wrap: wrap; /* Si l'espace est insuffisant, les boutons passent à la ligne suivante */
   justify-content: flex-start; /* Aligne les boutons au début du conteneur */
 }
+.selected-cell {
+    background-color: rgba(0, 123, 255, 0.3); /* Bleu clair semi-transparent */
+    outline: 2px solid #bdddff; /* Bordure bleue */
+}
 
 /* Style pour les boutons */
-.create-refresh-button,
-.create-file-button {
+.ptp-global-button {
   display: inline-flex; /* Assure que les boutons sont alignés avec leurs icônes */
   align-items: center; /* Aligne l'icône au centre du bouton */
   justify-content: center;
@@ -218,15 +221,13 @@
   text-decoration: none; /* Supprime le soulignement des liens */
 }
 
-.create-refresh-button svg,
-.create-file-button svg {
+.ptp-global-button svg {
   width: 16px; /* Taille de l'icône */
   height: 16px;
 }
 
 /* Effet au survol */
-.create-refresh-button:hover,
-.create-file-button:hover {
+.ptp-global-button:hover {
   background-color: #f0f0f0;
   border-radius: 5px;
 }
