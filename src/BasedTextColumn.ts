@@ -8,19 +8,19 @@ export default abstract class BasedTextColumn extends Column {
     }
 
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
-    
-    
-    public getUniqDisplayValues(rows: HTMLElement[]):any[] {
-        let values: string[] = [];
-        rows.forEach((row) => {
-            if (row.style.display === "") {
-                let cells = row.querySelectorAll("td");
-                let targetCell = cells[this.getIndex()];
-                if (targetCell) {
-                    let input = targetCell.querySelector("input");
-                    if (input && input.value != "") {
-                        values.push(input.value); // Ajoute uniquement des valeurs uniques
-                    }
+
+    public getUniqDisplayValuesBasedOnSelector(rows: HTMLElement[], sQuerry: string): any[] {
+        let values: (string | null)[] = [];
+        let cells = this.extractCells(rows);
+        cells.forEach((cell) => {
+            let input = cell.querySelector(sQuerry);
+            if (input) {
+                if (input instanceof HTMLInputElement && input.value.trim() !== "") {
+                    values.push(input.value.trim());
+                } else if (input instanceof HTMLSelectElement && input.value.trim() !== "") {
+                    values.push(input.value.trim());
+                } else if (input.textContent?.trim() !== "") {
+                    values.push(input.textContent?.trim() || "");
                 }
             }
         });

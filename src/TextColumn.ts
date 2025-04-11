@@ -20,6 +20,11 @@ export default class TextColumn extends BasedTextColumn {
         return "Text";
     }
 
+    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+        return super.getUniqDisplayValuesBasedOnSelector(rows, "input");
+    }
+    
+    
     public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
         return super.sortRows(rows, asc);
     }
@@ -62,7 +67,7 @@ export default class TextColumn extends BasedTextColumn {
         input.value = v2;
         input.style.display = "none";
 
-        cell.addEventListener("click", () => {
+        cell.addEventListener("dblclick", () => {
             displayDiv.style.display = "none";
             input.style.display = "block";
             input.focus();

@@ -7,27 +7,24 @@ export default class ListColumn extends Column {
 		super(pname, app);
 	}
 
+
 	public getUniqDisplayValues(rows: HTMLElement[]) {
 		let values: string[] = [];
-		rows.forEach((row) => {
-			if (row.style.display === "") {
-				let cells = row.querySelectorAll("td");
-				let targetCell = cells[this.getIndex()];
-				if (targetCell) {
-					let input = targetCell.querySelector("textarea");
-					if (input && input.value != "") {
-						let tt = input.value
-							.trim()
-							.split("\n")
-							.filter((v) => v !== "");
-						values.push(...tt); // Ajoute uniquement des valeurs uniques
-					}
-				}
+		let cells = this.extractCells(rows);
+		cells.forEach((cell) => {
+			let e = cell.querySelector("textarea");
+			if (e && e.value != "") {
+				let tt = e.value
+					.trim()
+					.split("\n")
+					.filter((v) => v !== "");
+				values.push(...tt); // Ajoute uniquement des valeurs uniques
 			}
 		});
 		values.push("");
 		return [...new Set(values)];
 	}
+
 
 	public filterRows(rows: HTMLElement[]) {
 		rows.forEach((row) => {
@@ -103,7 +100,7 @@ export default class ListColumn extends Column {
 		});
 		textarea.style.display = "none";
 
-		cell.addEventListener("click", () => {
+		cell.addEventListener("dblclick", () => {
 			displayDiv.style.display = "none";
 			textarea.style.display = "block";
 			textarea.focus();

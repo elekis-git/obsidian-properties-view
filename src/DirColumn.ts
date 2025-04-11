@@ -5,14 +5,17 @@ import TextColumn from "./TextColumn";
 import BasedTextColumn from "./BasedTextColumn";
 
 export default class DirColumn extends BasedTextColumn {
+
+    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+        let a= super.getUniqDisplayValuesBasedOnSelector(rows, "div");
+        return a.filter(b => b!="");
+    }
+
     constructor(pname: string, app: App) {
         super(pname, app);
     }
     public static getStrType(): string {
         return "DIR";
-    }
-    public isFiltering(): boolean {
-        return false;
     }
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {

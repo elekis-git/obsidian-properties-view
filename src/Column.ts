@@ -26,6 +26,7 @@ export interface IColumn {
     setIndex(a: number): void;
     getIndex(): number;
 
+    extractCells(rows: HTMLElement[]): HTMLElement[];
     fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void;
 
     createHref(elem: HTMLElement, fname: TFile | string): void;
@@ -58,6 +59,20 @@ export default abstract class Column implements IColumn {
         this.propertyName = pname;
         this.columnId = "";
         this.cnt = 0;
+    }
+
+    public extractCells(rows: HTMLElement[]): HTMLElement[] {
+        let values: HTMLElement[] = [];
+        rows.forEach((row) => {
+            let cells = row.querySelectorAll("td");
+            let cell = cells[this.getIndex()]; // Récupère la cellule à l'index spécifié
+            if (this.getFilter().length != 0) {
+                if (cell) values.push(cell);
+            } else if (this.getFilter().length == 0 && row.style.display === "") {
+                if (cell) values.push(cell);
+            }
+        });
+        return values;
     }
 
     abstract getUniqDisplayValues(rows: HTMLElement[]): any[];

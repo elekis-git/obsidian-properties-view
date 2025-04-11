@@ -28,24 +28,17 @@ export default class IntColumn extends Column {
         });
     }
 
-    public getUniqDisplayValues(rows: HTMLElement[]) {
-        let values: (number | null)[] = [];
-        rows.forEach((row) => {
-            if (row.style.display === "") {
-                let cells = row.querySelectorAll("td");
-                let targetCell = cells[this.getIndex()]; // Colonne 7 (index 6)
-                if (targetCell) {
-                    let input = targetCell.querySelector("input");
-                    if (input && input.value != "") {
-                        let value = Number(input.value);
-                        if (!isNaN(value) && !values.includes(value)) {
-                            values.push(value); // Ajoute uniquement des valeurs uniques
-                        }
-                    }
-                }
+    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+        let values: (number|string)[] = [];
+        let cells = this.extractCells(rows);
+        cells.forEach((cell) => {
+            let input = cell.querySelector("input");
+            if (input && input.value != "") {
+                let value = Number(input.value);
+                if (!isNaN(value) && !values.includes(value)) values.push(value);
             }
         });
-        values.push(null);
+        values.push("");
         return [...new Set(values)];
     }
 

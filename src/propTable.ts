@@ -162,7 +162,7 @@ export class GlobalPropertiesView extends ItemView {
 			return /^\d{4}-\d{2}-\d{2}$/.test(value);
 		};
 		const isDateTime = (value: string): boolean => {
-			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value);
+			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(value);
 		};
 
 		const existingV = pMap.get(key);
@@ -297,8 +297,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
 		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
-		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) {
-			// need to refactor filterModal first
+		if (!(col instanceof IDColumn)) {
 			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {
