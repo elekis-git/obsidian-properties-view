@@ -26,7 +26,7 @@ export default class ListColumn extends Column {
 			}
 		});
 		values.push("");
-		return [...new Set(values)];;
+		return [...new Set(values)];
 	}
 
 	public filterRows(rows: HTMLElement[]) {

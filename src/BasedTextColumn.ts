@@ -25,7 +25,7 @@ export default abstract class BasedTextColumn extends Column {
             }
         });
         values.push("");
-        return values;
+        return [...new Set(values)];
     }
 
     public filterRows(rows: HTMLElement[]) {
