@@ -55,6 +55,8 @@ export default class DateTimeColumn extends Column {
         return this.dtype;
     }
 
+
+    
     public sortRows(rows: HTMLElement[], asc:boolean) {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];

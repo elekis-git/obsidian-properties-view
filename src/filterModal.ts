@@ -43,6 +43,32 @@ export class FilterModal extends Modal {
     container.createEl("label", { text: value === "" ? "Include Empty value" : String(value) });
   }
 
+  private createBoolFilter(contentEl: HTMLElement) {
+    const container = contentEl.createEl("div", { cls: "ptp-filter-value-container" });
+    this.createCheckbox(true, container);
+    const container2 = contentEl.createEl("div", { cls: "ptp-filter-value-container" });
+    this.createCheckbox(false, container2);
+    const container3 = contentEl.createEl("div", { cls: "ptp-filter-value-container" });
+    this.createCheckbox("", container3);
+
+    const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
+    filterButton.addEventListener("click", () => {
+      this.onSubmit(Array.from(this.selectedValues));
+      this.close();
+    });
+
+    const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
+    clearButton.addEventListener("click", () => {
+      this.onSubmit([]);
+      this.close();
+    });
+    contentEl.appendChild(container);
+    contentEl.appendChild(container2);
+    contentEl.appendChild(container3);
+    contentEl.appendChild(filterButton);
+    contentEl.appendChild(clearButton);
+  }
+
   private createDateRangeFilter(contentEl: HTMLElement) {
     const { allowedValues } = this;
     const validDates = allowedValues.map((date) => new Date(date)).filter((date) => !isNaN(date.getTime()));
@@ -109,7 +135,7 @@ export class FilterModal extends Modal {
     contentEl.appendChild(filterButton);
     contentEl.appendChild(clearButton);
   }
-  
+
   /****useless*
 private createRegexFilter(contentEl: HTMLElement) {
     const container = contentEl.createEl("div", { cls: "ptp-filter-regex-container" });
@@ -148,8 +174,10 @@ private createRegexFilter(contentEl: HTMLElement) {
 
     if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
-//    } else if (this.col instanceof FileColumn || this.col instanceof DirColumn || this.col instanceof TextColumn) {
-  //    this.createDefaultFilter(contentEl);
+    } else if (this.col instanceof BoolColumn) {
+      this.createBoolFilter(contentEl);
+      //    } else if (this.col instanceof FileColumn || this.col instanceof DirColumn || this.col instanceof TextColumn) {
+      //    this.createDefaultFilter(contentEl);
     } else {
       this.createDefaultFilter(contentEl);
     }

@@ -275,7 +275,7 @@ export class GlobalPropertiesView extends ItemView {
 
 		buttonlist.appendChild(createMenuOption("arrow-down-narrow-wide", () => this.sortTable(col, true)));
 		buttonlist.appendChild(createMenuOption("arrow-up-narrow-wide", () => this.sortTable(col, false)));
-		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) {
+		if (!(col instanceof IDColumn || col instanceof DirColumn || col instanceof FileColumn)) { // need to refactor filterModal first
 			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {

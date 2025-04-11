@@ -3,8 +3,6 @@ import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, Works
 import Column from "./Column";
 
 export default class IntColumn extends Column {
-    
-    
     constructor(pname: string, app: App) {
         super(pname, app);
     }
@@ -16,8 +14,8 @@ export default class IntColumn extends Column {
             row.style.display = "";
             if (this.getFilter().length > 0) {
                 const selectEl = cell?.querySelector("input") as HTMLSelectElement | null;
-                if (this.getFilter().includes("") && selectEl == null) return;
-                else if (selectEl == null) row.style.display = "none";
+                if (this.getFilter().includes("") && selectEl.value == '') row.style.display = "";
+                else if (selectEl.value =='')row.style.display = "none";
                 else {
                     const cellValue = Number(selectEl.value);
                     let filtemp = this.getFilter().filter((item, index) => item !== "");
@@ -34,7 +32,7 @@ export default class IntColumn extends Column {
         return "Int";
     }
 
-    public sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[] {       
+    public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];

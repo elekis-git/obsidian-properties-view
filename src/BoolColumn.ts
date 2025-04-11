@@ -29,9 +29,7 @@ export default class BoolColumn extends Column {
         return 0; // Si une des checkboxes est manquante, on ne trie pas
     });
 }
-
-    
-    public filterRows(rows : HTMLElement[]) {
+ public filterRows(rows : HTMLElement[]) {
         rows.forEach(row => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
@@ -49,7 +47,6 @@ export default class BoolColumn extends Column {
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void {
         cell.empty();
-
         const createCheckbox = (v: string): void => {
             cell.empty();
             const checkbox = cell.createEl("input", { type: "checkbox" });
@@ -57,10 +54,8 @@ export default class BoolColumn extends Column {
                 //bad, should be (-) like in obsidian.
                 checkbox.checked = false;
             } else checkbox.checked = v === "T";
-
             checkbox.setAttribute("filepath", file.path);
             checkbox.setAttribute("prop", prop);
-
             checkbox.addEventListener("change", async () => {
                 const newValue = checkbox.checked; // true ou false selon l'état du checkbox
                 checkbox.style.backgroundColor = "";

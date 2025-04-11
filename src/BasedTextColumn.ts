@@ -11,10 +11,13 @@ export default class BasedTextColumn extends Column {
         rows.forEach((row) => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
-            const cell = cells[this.getIndex()];
-            if (this.getFilter().length > 0) {
-                const cellText = cell ? cell.textContent!.trim() : "";
-                const match = this.getFilter().some((filterValue: string) => {
+            const cell = cells[this.getIndex()];     
+            let filT = this.getFilter();
+            if (filT.length > 0) {
+                const cellText = cell ? cell.textContent!.trim() : "";                
+                const match = filT.some((filterValue: string) => {
+                    if (filterValue == '')
+                        return cellText == ''; 
                     return cellText
                         .toLowerCase()
                         .includes(filterValue.toString().toLowerCase().replace("[[", "").replace("]]", ""));

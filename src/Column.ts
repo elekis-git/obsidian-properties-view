@@ -1,23 +1,14 @@
-import {
-    App,
-    MarkdownRenderer,
-    TFile,
-    parseYaml,
-    stringifyYaml,
-    ItemView,
-    WorkspaceLeaf,
-    Vault,
-} from "obsidian";
+import { App, MarkdownRenderer, TFile, parseYaml, stringifyYaml, ItemView, WorkspaceLeaf, Vault } from "obsidian";
 
 export interface IColumn {
     // Propriétés
     app: App;
-    vault: Vault; 
+    vault: Vault;
     columnIndex: number;
     filter: string[];
     propertyName: string;
     columnId: string;
-    cnt : number;
+    cnt: number;
 
     setId(a: string): void;
     getId(): string;
@@ -25,17 +16,19 @@ export interface IColumn {
     setPropertyName(a: string): void;
     getPropertyName(): string;
 
-    addCnt1():void;
-    getCnt():number;
-    setCnt(a:number):void;
-    
-    setStrType(a:string):void
-    getStrType():string
-    
+    addCnt1(): void;
+    getCnt(): number;
+    setCnt(a: number): void;
+
+    setStrType(a: string): void;
+    getStrType(): string;
+
     setIndex(a: number): void;
     getIndex(): number;
 
-    fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object|null): void;
+    fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void;
+
+    createModalFilter(contentEl: HTMLElement): void;
 
     createHref(elem: HTMLElement, fname: TFile | string): void;
 
@@ -46,86 +39,89 @@ export interface IColumn {
 
     updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string): Promise<void>;
 
-    sortRows(rows: HTMLElement[], asc:boolean): HTMLElement[];
-	
+    sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[];
 }
 
 export default class Column implements IColumn {
- 
     app: App;
     vault: any;
     columnIndex: number;
     filter: string[];
     propertyName: string;
     columnId: string;
-    cnt : number;
-    
+    cnt: number;
+
     constructor(pname: string, app: App) {
         this.app = app;
         this.vault = app.vault;
-        this.columnIndex = -1
-        this.filter = []
-        this.propertyName = pname
-        this.columnId = ""
+        this.columnIndex = -1;
+        this.filter = [];
+        this.propertyName = pname;
+        this.columnId = "";
         this.cnt = 0;
     }
 
-    public addCnt1(){this.cnt++;}
-    public setCnt(a:number){this.cnt = a;}
-    public getCnt():number{return this.cnt}
-    
-    public setId(a:string) {
+    public addCnt1() {
+        this.cnt++;
+    }
+    public setCnt(a: number) {
+        this.cnt = a;
+    }
+    public getCnt(): number {
+        return this.cnt;
+    }
+
+    public setId(a: string) {
         this.columnId = a;
     }
-    public getId():string {
+    public getId(): string {
         return this.columnId;
     }
 
-    public setPropertyName(a:string) {
+    public setPropertyName(a: string) {
         this.propertyName = a;
     }
-    public getPropertyName():string {
+    public getPropertyName(): string {
         return this.propertyName;
     }
 
-
-    public setIndex(a:number) {
-        this.columnIndex = a
-    };
+    public setIndex(a: number) {
+        this.columnIndex = a;
+    }
     public getIndex(): number {
-        return this.columnIndex
-    };
-    
-    public setStrType(a:string):void{}
-    public getStrType():string {return "";}
+        return this.columnIndex;
+    }
 
+    public setStrType(a: string): void {}
+    public getStrType(): string {
+        return "";
+    }
 
 
     public createHref(elem: HTMLElement, fname: TFile | string) {
-		const fileLink = elem.createEl("a", {
-			text: fname instanceof TFile ? fname.basename : fname,
-			cls: "cm-underline",
-			href: fname instanceof TFile ? fname.path : "/" + fname,
-			attr: { tabindex: "-1" }
-		});
-		fileLink.addEventListener("click", (evt) => {
-			evt.preventDefault();
-			this.app.workspace.openLinkText(fname instanceof TFile ? fname.path : "/" + fname, "", false);
-		});
-	}
+        const fileLink = elem.createEl("a", {
+            text: fname instanceof TFile ? fname.basename : fname,
+            cls: "cm-underline",
+            href: fname instanceof TFile ? fname.path : "/" + fname,
+            attr: { tabindex: "-1" }
+        });
+        fileLink.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            this.app.workspace.openLinkText(fname instanceof TFile ? fname.path : "/" + fname, "", false);
+        });
+    }
 
-    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null){}
+    public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {}
 
-    
-    public setFilter(a:string[]) {
-        this.filter = a
-    };
-    public getFilter():string[] {
-        return this.filter
-    };
+    public setFilter(a: string[]) {
+        this.filter = a;
+    }
+    public getFilter(): string[] {
+        return this.filter;
+    }
 
-    public filterRows(rows : HTMLElement[]) {
-        rows.forEach(row => {
+    public filterRows(rows: HTMLElement[]) {
+        rows.forEach((row) => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
             const cell = cells[this.getIndex()];
@@ -137,8 +133,12 @@ export default class Column implements IColumn {
         });
     }
 
-
-    async updateYamlProperty(filePath: string, prop: string, value: string|string[]|boolean|number|null, actiontype: string) {
+    async updateYamlProperty(
+        filePath: string,
+        prop: string,
+        value: string | string[] | boolean | number | null,
+        actiontype: string
+    ) {
         const fileOrAbstract = this.vault.getAbstractFileByPath(filePath);
         if (!(fileOrAbstract instanceof TFile)) return;
 
@@ -151,7 +151,7 @@ export default class Column implements IColumn {
         const yamlData = parseYaml(yamlContent);
 
         if (actiontype === "update") {
-                yamlData[prop]= value;
+            yamlData[prop] = value;
         } else if (actiontype === "delete") {
             if (Array.isArray(yamlData[prop])) {
                 yamlData[prop] = yamlData[prop].filter((item: any) => item !== value);
@@ -159,19 +159,19 @@ export default class Column implements IColumn {
             } else {
                 delete yamlData[prop];
             }
-        } 
+        }
         const newYaml = stringifyYaml(yamlData);
-        fileContent = match ?
-            fileContent.replace(/^---\n[\s\S]*?\n---/, `---\n${newYaml}---`) :
-            `---\n${newYaml}---\n${fileContent}`;
+        fileContent = match
+            ? fileContent.replace(/^---\n[\s\S]*?\n---/, `---\n${newYaml}---`)
+            : `---\n${newYaml}---\n${fileContent}`;
         await this.vault.modify(fileOrAbstract, fileContent);
     }
 
-    public sortRows(rows  : HTMLElement[], asc:boolean): HTMLElement[] {
+    public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
         return rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
-            console.log("->",cellA, cellB, cellA.localeCompare(cellB), cellB.localeCompare(cellA));
+            console.log("->", cellA, cellB, cellA.localeCompare(cellB), cellB.localeCompare(cellA));
             return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
         });
     }
