@@ -20,11 +20,9 @@ export default class IDColumn extends Column {
 		IDColumn.counter +=0;
     }
 
-    public isFiltering():boolean {
-        return false
-    }
+    public filterRows(rows: HTMLElement[]){} // never used as no filter on ID Column
 
-    getUniqDisplayValues(rows: HTMLElement[]): any[]{return []} //never used as no filter on ID column
+    getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[]{return []} //never used as no filter on ID column
 
 
     public static getStrType():string {

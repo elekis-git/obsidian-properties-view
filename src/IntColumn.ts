@@ -28,17 +28,19 @@ export default class IntColumn extends Column {
         });
     }
 
-    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+    public getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[] {
         let values: (number|string)[] = [];
         let cells = this.extractCells(rows);
         cells.forEach((cell) => {
             let input = cell.querySelector("input");
             if (input && input.value != "") {
                 let value = Number(input.value);
-                if (!isNaN(value) && !values.includes(value)) values.push(value);
+                if (isNaN(value)){return;}
+                if (this.getFilter().length == 0) values.push(value);
+                else if ( this.getFilter().map(a => Number(a)).includes(value)) values.push(value);
             }
+            else{values.push("")};
         });
-        values.push("");
         return [...new Set(values)];
     }
 

@@ -57,7 +57,7 @@ export default class DateTimeColumn extends Column {
         return this.dtype;
     }
 
-    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+    public getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[] {//renvoi minimal et maximal vu que le filtre est 
         let minDate: Date | null = null;
         let maxDate: Date | null = null;
 

@@ -86,3 +86,5 @@ class HTMLElement {
   }
 }
 
+class HTMLInputElement extends HTMLElement{}
+

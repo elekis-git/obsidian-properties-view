@@ -6,7 +6,7 @@ import BasedTextColumn from "./BasedTextColumn";
 
 export default class DirColumn extends BasedTextColumn {
 
-    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+    public getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[] {
         let a= super.getUniqDisplayValuesBasedOnSelector(rows, "div");
         return a.filter(b => b!="");
     }

@@ -8,7 +8,7 @@ export default class ListColumn extends Column {
 	}
 
 
-	public getUniqDisplayValues(rows: HTMLElement[]) {
+	public getUniqDisplayValuesFiltered(rows: HTMLElement[]) {
 		let values: string[] = [];
 		let cells = this.extractCells(rows);
 		cells.forEach((cell) => {

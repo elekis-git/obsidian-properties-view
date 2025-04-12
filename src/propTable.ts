@@ -109,6 +109,7 @@ export class GlobalPropertiesView extends ItemView {
 		buttonGlobF.appendChild(icon2Container);
 		buttonGlobF.addEventListener("click", async (event) => {
 			event.preventDefault();
+			console.log("clearAllFilter");
 			this.clearAllFilters();
 		});
 		/******************************************************/
@@ -301,7 +302,8 @@ export class GlobalPropertiesView extends ItemView {
 			buttonlist.appendChild(createMenuOption("filter", () => this.openFilterModal(col)));
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {
-					this.clearAllFilters();
+					col.setFilter([]);
+					this.reapplyAllFilters()
 				})
 			);
 		}
@@ -330,17 +332,24 @@ export class GlobalPropertiesView extends ItemView {
 
 	//issue with multiple filter.
 	private openFilterModal(col: IColumn) {
-		let allowedValues = col.getUniqDisplayValues(this.getRows());
+		let allowedValues = col.getUniqDisplayValuesFiltered(this.getRows());
 
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
-			this.clearAllFilters();
 			col.setFilter(selectedValues);
-			col.filterRows(this.getRows());
+			this.reapplyAllFilters();
 			this.updateFilterButtonStyles();
 		});
 		modal.open();
 	}
-
+	private reapplyAllFilters(){
+		let allRows = this.getRows();
+		allRows.forEach(r =>  r.style.display = "");
+		this.columnsMapping.forEach((col) => {
+			col.filterRows(allRows);
+			allRows = this.getRows().filter(r =>  r.style.display == "");
+			this.updateFilterButtonStyles();
+		});
+	}
 	private clearAllFilters() {
 		this.columnsMapping.forEach((col) => {
 			col.setFilter([]);

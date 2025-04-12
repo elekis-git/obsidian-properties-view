@@ -47,7 +47,7 @@ export default class BoolColumn extends Column {
         });
     }
 
-    public getUniqDisplayValues(rows: HTMLElement[]) {return [true,false, ""]}
+    public getUniqDisplayValuesFiltered(rows: HTMLElement[]) {return [true,false, ""]}
     
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null): void {
         cell.empty();

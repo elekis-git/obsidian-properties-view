@@ -20,7 +20,7 @@ export default class TextColumn extends BasedTextColumn {
         return "Text";
     }
 
-    public getUniqDisplayValues(rows: HTMLElement[]): any[] {
+    public getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[] {
         return super.getUniqDisplayValuesBasedOnSelector(rows, "input");
     }
     

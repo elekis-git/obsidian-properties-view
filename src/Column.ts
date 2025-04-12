@@ -35,7 +35,7 @@ export interface IColumn {
     getFilter(): string[];
 
     filterRows(rows: HTMLElement[]): void;
-    getUniqDisplayValues(rows: HTMLElement[]): any[];
+    getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[];
 
     updateYamlProperty(filePath: string, prop: string, value: any, actiontype: string): Promise<void>;
 
@@ -63,21 +63,18 @@ export default abstract class Column implements IColumn {
 
     public extractCells(rows: HTMLElement[]): HTMLElement[] {
         let values: HTMLElement[] = [];
-        rows.forEach((row) => {
+        rows.filter(r => r.style.display == "").forEach((row) => {
             let cells = row.querySelectorAll("td");
             let cell = cells[this.getIndex()]; // Récupère la cellule à l'index spécifié
-            if (this.getFilter().length != 0) {
-                if (cell) values.push(cell);
-            } else if (this.getFilter().length == 0 && row.style.display === "") {
-                if (cell) values.push(cell);
-            }
+            if (cell) values.push(cell);
         });
         return values;
     }
 
-    abstract getUniqDisplayValues(rows: HTMLElement[]): any[];
+    abstract getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[];
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
-
+    abstract filterRows(rows: HTMLElement[]):void;
+    
     public addCnt1() {
         this.cnt++;
     }
@@ -132,19 +129,6 @@ export default abstract class Column implements IColumn {
     }
     public getFilter(): string[] {
         return this.filter;
-    }
-
-    public filterRows(rows: HTMLElement[]) {
-        rows.forEach((row) => {
-            row.style.display = "";
-            const cells = row.querySelectorAll("td");
-            const cell = cells[this.getIndex()];
-            if (this.getFilter().length > 0) {
-                if (!this.getFilter().includes(cell?.textContent?.trim() ?? "")) {
-                    row.style.display = "none";
-                }
-            }
-        });
     }
 
     async updateYamlProperty(

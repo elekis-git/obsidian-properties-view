@@ -10,21 +10,29 @@ export default abstract class BasedTextColumn extends Column {
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
 
     public getUniqDisplayValuesBasedOnSelector(rows: HTMLElement[], sQuerry: string): any[] {
+        console.log("getUniq");
         let values: (string | null)[] = [];
         let cells = this.extractCells(rows);
         cells.forEach((cell) => {
             let input = cell.querySelector(sQuerry);
             if (input) {
-                if (input instanceof HTMLInputElement && input.value.trim() !== "") {
+                if (
+                    (input instanceof HTMLInputElement || input instanceof HTMLSelectElement) &&
+                    input.value.trim() !== ""
+                ) {
                     values.push(input.value.trim());
-                } else if (input instanceof HTMLSelectElement && input.value.trim() !== "") {
-                    values.push(input.value.trim());
+                    console.log("dd", input.value);
                 } else if (input.textContent?.trim() !== "") {
                     values.push(input.textContent?.trim() || "");
+                    console.log("=>", input.textContent);
+                } else {
+                    values.push("");
                 }
+            } else {
+                values.push("");
             }
         });
-        values.push("");
+        //        values.push("");
         return [...new Set(values)];
     }
 
