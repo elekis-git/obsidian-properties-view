@@ -421,20 +421,20 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	addANewFile() {
-		new FileNameModal(this.app, async (newFileName: string) => {
+		new FileNameModal(this.app,this.columnsMapping.slice(3), async (newFileName: string, selectedOptions: IColumn[])  => {
 			const fileName = newFileName.endsWith(".md") ? newFileName : `${newFileName}.md`;
 			const filePath = `${this.folderPath}/${fileName}`;
-
+			const props = selectedOptions;
 			if (this.app.vault.getAbstractFileByPath(filePath)) {
 				new Notice("Un fichier avec ce nom existe déjà !");
 				return;
 			}
 			try {
 				let yamlContent = "";
-				if (this.settings.shouldAddFullProperties) {
+				if (props.length > 0) {
 					yamlContent = "---\n";
-					for (const col of this.columnsMapping.splice(3)) {
-						yamlContent += col.getPropertyName() + ":\n";
+					for (const pp of props) {
+						yamlContent += pp.getPropertyName() + ":\n";
 					}
 					yamlContent += "---\n";
 				}

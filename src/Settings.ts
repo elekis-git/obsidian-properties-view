@@ -3,12 +3,10 @@ import { GlobalPropertiesView } from "src/propTable";
 import GlobalPropertiesPlugin from "main";
 
 export interface GlobalPropertiesSettings {
-	shouldAddFullProperties: boolean;
 	shouldAddRibbon : boolean;
 }
 
 export const DEFAULT_SETTINGS: GlobalPropertiesSettings = {
-	shouldAddFullProperties: false,
 	shouldAddRibbon : false
 };
 
@@ -23,16 +21,6 @@ export class GlobalPropertiesSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName("Add full properties on file creation")
-			.setDesc("Automatically add default properties when a new file is created.")
-			.addToggle((toggle) =>
-				toggle.setValue(this.plugin.settings.shouldAddFullProperties).onChange(async (value) => {
-					this.plugin.settings.shouldAddFullProperties = value;
-					await this.plugin.saveSettings();
-				})
-			);
 		
 		new Setting(containerEl)
 		.setName("Show ribbon icon")
