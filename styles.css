@@ -236,3 +236,75 @@
   margin-bottom: 12px; /* Ajuste la valeur selon ton besoin */
 }
 
+
+/*modal file*/
+/* Container de tri */
+.column-sort-container {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+/* Style général pour les icônes */
+.column-sort-container span,
+.toggle-visibility {
+	cursor: pointer;
+	padding: 0.3rem;
+	border-radius: 5px;
+	transition: background-color 0.2s ease;
+}
+.column-sort-container span:hover,
+.toggle-visibility:hover {
+	background-color: var(--interactive-accent-hover);
+}
+
+/* Liste des colonnes */
+.column-filter-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+/* Item colonne (ressemble à une barrette) */
+.column-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.6rem 1rem;
+	border-radius: 8px;
+	background-color: var(--background-secondary);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
+	user-select: none;
+}
+
+.column-item.dragging {
+	opacity: 0.6;
+	background-color: var(--interactive-accent);
+}
+
+/* Lorsque la colonne est masquée (oeil fermé) */
+.column-item:not(:has(.toggle-visibility .lucide-eye)) {
+	background-color: var(--background-modifier-hover);
+	opacity: 0.7;
+}
+
+/* Nom de la colonne */
+.column-name {
+	flex-grow: 1;
+	margin-left: 0.8rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Icône de visibilité */
+.toggle-visibility {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+}
+
