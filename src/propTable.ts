@@ -89,21 +89,27 @@ export class GlobalPropertiesView extends ItemView {
 			this.app,
 			this.columnsMapping.slice(3),
 			(result: Map<IColumn, { newIndex: number; visible: boolean }>) => {
-				let base = this.columnsMapping.slice(0, 3);
-				let cT = this.columnsMapping.slice(3);
+				const base = this.columnsMapping.slice(0, 3);
+				const cT = this.columnsMapping.slice(3);
+
+				const reordered = new Array<IColumn>(cT.length);
 				result.forEach((value, key) => {
-					key.setV(value.visible);
-					const from = key.getIndex() - 3;
-					const to = value.newIndex;
-					[cT[from], cT[to]] = [cT[to], cT[from]];
+					const originalIndex = cT.findIndex((c) => c === key);
+					if (originalIndex !== -1) {
+						key.setV(value.visible);
+						reordered[value.newIndex] = key;
+					}
 				});
-				this.columnsMapping = [...base, ...cT];
+
+				this.columnsMapping = [...base, ...reordered];
+
 				let i = 0;
 				IDColumn.counter = 0;
 				this.columnsMapping.forEach((ci) => {
 					ci.setIndex(i);
 					i += 1;
 				});
+
 				this.createHTMLTablePropView();
 			}
 		);
