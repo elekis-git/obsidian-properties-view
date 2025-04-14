@@ -14,6 +14,7 @@ import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS 
 
 import { FilterModal } from "./filterModal";
 import { FileNameModal } from "./newFileModal";
+import { ColumnFilterModal } from "./ColumnFilterModal";
 
 import FileColumn from "./FileColumn";
 import DirColumn from "./DirColumn";
@@ -83,6 +84,28 @@ export class GlobalPropertiesView extends ItemView {
 		return state;
 	}
 
+	filterColumns(app: App, columns: IColumn[]): void {
+		const modal = new ColumnFilterModal(this.app, this.columnsMapping.slice(3), (result: Map<IColumn, result>) => {
+			let base = this.columnsMapping.slice(0, 3);
+			let cT = this.columnsMapping.slice(3);
+			result.forEach((value, key) => {
+				key.setV(value.visible);
+				const from = key.getIndex() - 3;
+				const to = value.newIndex;
+				[cT[from], cT[to]] = [cT[to], cT[from]];
+			});
+			this.columnsMapping = [...base, ...cT];
+			let i = 0;
+			IDColumn.counter = 0;
+			this.columnsMapping.forEach((ci) => {
+				ci.setIndex(i);
+				i += 1;
+			});
+			this.createHTMLTablePropView();
+		});
+		modal.open();
+	}
+
 	buildButtonHeader() {
 		//global button
 		const buttonListGlobal = this.contentEl.createEl("div", {
@@ -112,7 +135,7 @@ export class GlobalPropertiesView extends ItemView {
 			console.log("clearAllFilter");
 			this.clearAllFilters();
 		});
-		/******************************************************/
+
 		const buttonf = buttonListGlobal.createEl("a", {
 			cls: "ptp-global-button",
 			attr: { href: "#" }
@@ -124,11 +147,35 @@ export class GlobalPropertiesView extends ItemView {
 			event.preventDefault();
 			await this.addANewFile();
 		});
+		
+		const buttone = buttonListGlobal.createEl("a", {
+			cls: "ptp-global-button",
+			attr: { href: "#" }
+		});
+		/*issue when refresh the  value in the file.
+		const icon4Container = document.createElement("div");
+		setIcon(icon4Container, "eye");
+		buttone.appendChild(icon4Container);
+		buttone.addEventListener("click", async (event) => {
+			this.filterColumns();
+		});
+		*/
 	}
 
-	createTablePropView() {
-		if (this.tablecreated == true) return;
-		this.tablecreated = true;
+	applyVisibility() {
+		const headCell = this.table!.querySelectorAll(".ptp-th-container");
+		headCell.forEach((c) => {
+			let cI = Number(c.getAttribute("columnIdx"));
+			if (this.columnsMapping[cI].getV()) c.style.display = "";
+			else c.style.display = "none";
+		});
+
+		this.columnsMapping.forEach((col) => {
+			col.applyV(this.getRows());
+		});
+	}
+
+	createHTMLTablePropView() {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.classList.add("ptp-global-container");
@@ -137,21 +184,24 @@ export class GlobalPropertiesView extends ItemView {
 			cls: "ptp-h1-title"
 		});
 		this.buildButtonHeader();
-		/********************************************/
-		IDColumn.counter = 0;
-		this.columnsMapping = this.buildFileProperties();
+		this.table?.empty();
 		this.table = contentEl.createEl("table", { cls: "ptp-global-table" });
 		this.buildTableHeader();
 		this.buildTableBody();
+		this.applyVisibility();
 		this.addZoomFeature();
-		this.upgradeBehavior();
 		contentEl.scrollTop = 0;
 	}
 
-	upgradeBehavior() {
-		//bugged.
-			return;
-	
+	createTablePropView() {
+		if (this.tablecreated == true) return;
+		this.tablecreated = true;
+		IDColumn.counter = 0;
+		this.columnsMapping = this.buildFileProperties();
+		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
+		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
+		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
+		this.createHTMLTablePropView();
 	}
 
 	async onOpen() {
@@ -239,10 +289,6 @@ export class GlobalPropertiesView extends ItemView {
 		const thead = this.table.createEl("thead", { cls: "ptp-th-container" });
 		const headerRow = thead.createEl("tr");
 
-		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
-		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
-		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
-
 		for (let i = 0; i < this.columnsMapping.length; i++) {
 			this.columnsMapping[i].setIndex(i);
 			this.columnsMapping[i].setId("c" + i);
@@ -303,7 +349,7 @@ export class GlobalPropertiesView extends ItemView {
 			buttonlist.appendChild(
 				createMenuOption("filter-x", () => {
 					col.setFilter([]);
-					this.reapplyAllFilters()
+					this.reapplyAllFilters();
 				})
 			);
 		}
@@ -341,12 +387,12 @@ export class GlobalPropertiesView extends ItemView {
 		});
 		modal.open();
 	}
-	private reapplyAllFilters(){
+	private reapplyAllFilters() {
 		let allRows = this.getRows();
-		allRows.forEach(r =>  r.style.display = "");
+		allRows.forEach((r) => (r.style.display = ""));
 		this.columnsMapping.forEach((col) => {
 			col.filterRows(allRows);
-			allRows = this.getRows().filter(r =>  r.style.display == "");
+			allRows = this.getRows().filter((r) => r.style.display == "");
 			this.updateFilterButtonStyles();
 		});
 	}
@@ -421,31 +467,35 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	addANewFile() {
-		new FileNameModal(this.app,this.columnsMapping.slice(3), async (newFileName: string, selectedOptions: IColumn[])  => {
-			const fileName = newFileName.endsWith(".md") ? newFileName : `${newFileName}.md`;
-			const filePath = `${this.folderPath}/${fileName}`;
-			const props = selectedOptions;
-			if (this.app.vault.getAbstractFileByPath(filePath)) {
-				new Notice("Un fichier avec ce nom existe déjà !");
-				return;
-			}
-			try {
-				let yamlContent = "";
-				if (props.length > 0) {
-					yamlContent = "---\n";
-					for (const pp of props) {
-						yamlContent += pp.getPropertyName() + ":\n";
-					}
-					yamlContent += "---\n";
+		new FileNameModal(
+			this.app,
+			this.columnsMapping.slice(3),
+			async (newFileName: string, selectedOptions: IColumn[]) => {
+				const fileName = newFileName.endsWith(".md") ? newFileName : `${newFileName}.md`;
+				const filePath = `${this.folderPath}/${fileName}`;
+				const props = selectedOptions;
+				if (this.app.vault.getAbstractFileByPath(filePath)) {
+					new Notice("Un fichier avec ce nom existe déjà !");
+					return;
 				}
-				const newFile: TFile = await this.app.vault.create(filePath, yamlContent);
+				try {
+					let yamlContent = "";
+					if (props.length > 0) {
+						yamlContent = "---\n";
+						for (const pp of props) {
+							yamlContent += pp.getPropertyName() + ":\n";
+						}
+						yamlContent += "---\n";
+					}
+					const newFile: TFile = await this.app.vault.create(filePath, yamlContent);
 
-				new Notice(`Fichier "${filePath}" créé avec succès !`);
-			} catch (error) {
-				new Notice("Erreur lors de la création du fichier.");
-				console.error(error);
+					new Notice(`Fichier "${filePath}" créé avec succès !`);
+				} catch (error) {
+					new Notice("Erreur lors de la création du fichier.");
+					console.error(error);
+				}
 			}
-		}).open();
+		).open();
 	}
 
 	getAllValuesForProperty(property: string) {

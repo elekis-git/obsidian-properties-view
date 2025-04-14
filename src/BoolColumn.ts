@@ -29,6 +29,8 @@ export default class BoolColumn extends Column {
             return 0; // Si une des checkboxes est manquante, on ne trie pas
         });
     }
+    
+    
     public filterRows(rows: HTMLElement[]) {
         rows.forEach((row) => {
             row.style.display = "";

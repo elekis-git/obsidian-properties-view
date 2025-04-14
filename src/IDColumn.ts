@@ -17,7 +17,7 @@ export default class IDColumn extends Column {
     
     constructor(pname:string, app:App) {
         super(pname, app);
-		IDColumn.counter +=0;
+		IDColumn.counter = 0;
     }
 
     public filterRows(rows: HTMLElement[]){} // never used as no filter on ID Column

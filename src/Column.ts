@@ -9,12 +9,19 @@ export interface IColumn {
     propertyName: string;
     columnId: string;
     cnt: number;
+    visible: boolean;
+
+    setV(a: boolean): void;
+    getV(): boolean;
+    applyV(rows: HTMLElement[]): void;
 
     setId(a: string): void;
     getId(): string;
 
     setPropertyName(a: string): void;
     getPropertyName(): string;
+
+    print(): void;
 
     addCnt1(): void;
     getCnt(): number;
@@ -50,6 +57,7 @@ export default abstract class Column implements IColumn {
     propertyName: string;
     columnId: string;
     cnt: number;
+    visible: boolean;
 
     constructor(pname: string, app: App) {
         this.app = app;
@@ -59,22 +67,40 @@ export default abstract class Column implements IColumn {
         this.propertyName = pname;
         this.columnId = "";
         this.cnt = 0;
+        this.visible = true;
     }
 
     public extractCells(rows: HTMLElement[]): HTMLElement[] {
         let values: HTMLElement[] = [];
-        rows.filter(r => r.style.display == "").forEach((row) => {
+        rows.filter((r) => r.style.display == "").forEach((row) => {
             let cells = row.querySelectorAll("td");
             let cell = cells[this.getIndex()]; // Récupère la cellule à l'index spécifié
             if (cell) values.push(cell);
         });
         return values;
     }
+    
+    public applyV(rows: HTMLElement[]) {
+        let cells = this.extractCells(rows);
+        cells.forEach((c) => {
+            if (this.getV()) c.style.display = "";
+            else c.style.display = "none";
+        });
+    }
+
+    public print() {
+        console.log("*************************");
+        console.log("prb : ", this.getPropertyName());
+        console.log("cnt : ", this.getCnt());
+        console.log("Id  : ", this.getId());
+        console.log("Idx : ", this.getIndex());
+        console.log("-------------------------");
+    }
 
     abstract getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[];
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
-    abstract filterRows(rows: HTMLElement[]):void;
-    
+    abstract filterRows(rows: HTMLElement[]): void;
+
     public addCnt1() {
         this.cnt++;
     }
@@ -90,6 +116,14 @@ export default abstract class Column implements IColumn {
     }
     public getId(): string {
         return this.columnId;
+    }
+
+    public setV(a: boolean) {
+        this.visible = a;
+    }
+
+    public getV(): string {
+        return this.visible;
     }
 
     public setPropertyName(a: string) {

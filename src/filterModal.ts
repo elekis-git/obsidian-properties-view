@@ -106,10 +106,11 @@ export class FilterModal extends Modal {
       this.onSubmit([]);
       this.close();
     });
+    let div = contentEl.createEl("div");
+    div.appendChild(fromInput.parentElement!);
+    div.appendChild(toInput.parentElement!);
+    this.createCheckbox("", div);
 
-    contentEl.appendChild(fromInput.parentElement!);
-    contentEl.appendChild(toInput.parentElement!);
-    this.createCheckbox("", contentEl);
     contentEl.appendChild(filterButton);
     contentEl.appendChild(clearButton);
   }
@@ -136,7 +137,6 @@ export class FilterModal extends Modal {
     contentEl.appendChild(clearButton);
   }
 
-
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
@@ -144,8 +144,8 @@ export class FilterModal extends Modal {
 
     if (this.col instanceof DateTimeColumn) {
       this.createDateRangeFilter(contentEl);
-//    } else if (this.col instanceof BoolColumn) {
-//      this.createBoolFilter(contentEl);
+      //    } else if (this.col instanceof BoolColumn) {
+      //      this.createBoolFilter(contentEl);
     } else {
       this.createDefaultFilter(contentEl);
     }
