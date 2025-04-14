@@ -15,7 +15,7 @@ export class ColumnFilterModal extends Modal {
 	) {
 		super(app);
 		this.columns = columns;
-		this.items = columns.map((col) => ({ column: col, visible: true }));
+		this.items = columns.map((col) => ({ column: col, visible: col.getV() }));
 		this.onSubmit = onSubmit;
 	}
 
@@ -45,7 +45,7 @@ export class ColumnFilterModal extends Modal {
 
 		// Bouton pour rendre toutes les colonnes visibles
 		const showAllIcon = sortContainer.createEl("span", { cls: "show-all" });
-		setIcon(showAllIcon, "eye");  // icône "eye" pour visible
+		setIcon(showAllIcon, "eye");  
 		showAllIcon.addEventListener("click", () => {
 			this.items.forEach(item => item.visible = true);
 			this.renderList(listContainer);

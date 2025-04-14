@@ -122,7 +122,7 @@ export default abstract class Column implements IColumn {
         this.visible = a;
     }
 
-    public getV(): string {
+    public getV(): boolean {
         return this.visible;
     }
 

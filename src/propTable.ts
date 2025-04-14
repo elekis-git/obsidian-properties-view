@@ -84,25 +84,29 @@ export class GlobalPropertiesView extends ItemView {
 		return state;
 	}
 
-	filterColumns(app: App, columns: IColumn[]): void {
-		const modal = new ColumnFilterModal(this.app, this.columnsMapping.slice(3), (result: Map<IColumn, result>) => {
-			let base = this.columnsMapping.slice(0, 3);
-			let cT = this.columnsMapping.slice(3);
-			result.forEach((value, key) => {
-				key.setV(value.visible);
-				const from = key.getIndex() - 3;
-				const to = value.newIndex;
-				[cT[from], cT[to]] = [cT[to], cT[from]];
-			});
-			this.columnsMapping = [...base, ...cT];
-			let i = 0;
-			IDColumn.counter = 0;
-			this.columnsMapping.forEach((ci) => {
-				ci.setIndex(i);
-				i += 1;
-			});
-			this.createHTMLTablePropView();
-		});
+	filterColumns(): void {
+		const modal = new ColumnFilterModal(
+			this.app,
+			this.columnsMapping.slice(3),
+			(result: Map<IColumn, { newIndex: number; visible: boolean }>) => {
+				let base = this.columnsMapping.slice(0, 3);
+				let cT = this.columnsMapping.slice(3);
+				result.forEach((value, key) => {
+					key.setV(value.visible);
+					const from = key.getIndex() - 3;
+					const to = value.newIndex;
+					[cT[from], cT[to]] = [cT[to], cT[from]];
+				});
+				this.columnsMapping = [...base, ...cT];
+				let i = 0;
+				IDColumn.counter = 0;
+				this.columnsMapping.forEach((ci) => {
+					ci.setIndex(i);
+					i += 1;
+				});
+				this.createHTMLTablePropView();
+			}
+		);
 		modal.open();
 	}
 
@@ -147,27 +151,26 @@ export class GlobalPropertiesView extends ItemView {
 			event.preventDefault();
 			await this.addANewFile();
 		});
-		
+
 		const buttone = buttonListGlobal.createEl("a", {
 			cls: "ptp-global-button",
 			attr: { href: "#" }
 		});
-		/*issue when refresh the  value in the file.
+
 		const icon4Container = document.createElement("div");
 		setIcon(icon4Container, "eye");
 		buttone.appendChild(icon4Container);
 		buttone.addEventListener("click", async (event) => {
 			this.filterColumns();
 		});
-		*/
 	}
 
 	applyVisibility() {
 		const headCell = this.table!.querySelectorAll(".ptp-th-container");
 		headCell.forEach((c) => {
 			let cI = Number(c.getAttribute("columnIdx"));
-			if (this.columnsMapping[cI].getV()) c.style.display = "";
-			else c.style.display = "none";
+			if (this.columnsMapping[cI].getV()) (c as HTMLElement).style.display = "";
+			else (c as HTMLElement).style.display = "none";
 		});
 
 		this.columnsMapping.forEach((col) => {
@@ -193,14 +196,52 @@ export class GlobalPropertiesView extends ItemView {
 		contentEl.scrollTop = 0;
 	}
 
+	createColumnsMappingArray() {
+		//immonde, probalement qu'on peut faire autrement, plus facilement sans tout recreer.
+		let oldOrder: string[] = [];
+		let viewedColumns: Record<string, boolean> = {};
+
+		if (this.columnsMapping) {
+			oldOrder = this.columnsMapping.map((c) => c.getPropertyName());
+			viewedColumns = Object.fromEntries(this.columnsMapping.map((c) => [c.getPropertyName(), c.getV()]));
+		}
+
+		// Reconstruit les colonnes
+		this.columnsMapping = this.buildFileProperties();
+
+		// Ajoute les colonnes fixes au début
+		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
+		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
+		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
+
+		if (oldOrder.length > 0) {
+			// Réordonne les colonnes selon l'ancien ordre
+			this.columnsMapping.sort((a, b) => {
+				const aIndex = oldOrder.indexOf(a.getPropertyName());
+				const bIndex = oldOrder.indexOf(b.getPropertyName());
+
+				// Les colonnes non trouvées dans l'ancien ordre vont à la fin
+				if (aIndex === -1 && bIndex === -1) return 0;
+				if (aIndex === -1) return 1;
+				if (bIndex === -1) return -1;
+				return aIndex - bIndex;
+			});
+
+			// Restaure la visibilité
+			this.columnsMapping.forEach((c) => {
+				const name = c.getPropertyName();
+				if (viewedColumns.hasOwnProperty(name)) {
+					c.setV(viewedColumns[name]);
+				}
+			});
+		}
+	}
+
 	createTablePropView() {
 		if (this.tablecreated == true) return;
 		this.tablecreated = true;
 		IDColumn.counter = 0;
-		this.columnsMapping = this.buildFileProperties();
-		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
-		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
-		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
+		this.createColumnsMappingArray();
 		this.createHTMLTablePropView();
 	}
 
@@ -376,7 +417,6 @@ export class GlobalPropertiesView extends ItemView {
 		});
 	}
 
-	//issue with multiple filter.
 	private openFilterModal(col: IColumn) {
 		let allowedValues = col.getUniqDisplayValuesFiltered(this.getRows());
 
@@ -396,6 +436,7 @@ export class GlobalPropertiesView extends ItemView {
 			this.updateFilterButtonStyles();
 		});
 	}
+
 	private clearAllFilters() {
 		this.columnsMapping.forEach((col) => {
 			col.setFilter([]);
