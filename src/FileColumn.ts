@@ -20,9 +20,6 @@ export default class FileColumn extends BasedTextColumn {
     public getStrType(): string {
         return "FILE";
     }
-    public isFiltering(): boolean {
-        return false;
-    }
 
     public async fillCell(cell: HTMLElement, file: TFile, prop: string, currentValue: Object | null): Promise<void> {    
         this.createHref(cell, file);

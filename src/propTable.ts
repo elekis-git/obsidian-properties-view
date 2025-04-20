@@ -427,6 +427,7 @@ export class GlobalPropertiesView extends ItemView {
 		let allowedValues = col.getUniqDisplayValuesFiltered(this.getRows());
 
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
+			console.log(selectedValues);
 			col.setFilter(selectedValues);
 			this.reapplyAllFilters();
 			this.updateFilterButtonStyles();

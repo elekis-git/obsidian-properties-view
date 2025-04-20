@@ -10,7 +10,6 @@ export default abstract class BasedTextColumn extends Column {
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
 
     public getUniqDisplayValuesBasedOnSelector(rows: HTMLElement[], sQuerry: string): any[] {
-        console.log("getUniq");
         let values: (string | null)[] = [];
         let cells = this.extractCells(rows);
         cells.forEach((cell) => {
@@ -21,10 +20,8 @@ export default abstract class BasedTextColumn extends Column {
                     input.value.trim() !== ""
                 ) {
                     values.push(input.value.trim());
-                    console.log("dd", input.value);
                 } else if (input.textContent?.trim() !== "") {
                     values.push(input.textContent?.trim() || "");
-                    console.log("=>", input.textContent);
                 } else {
                     values.push("");
                 }
@@ -37,6 +34,7 @@ export default abstract class BasedTextColumn extends Column {
     }
 
     public filterRows(rows: HTMLElement[]) {
+        //issue with filter when column is in the text.
         rows.forEach((row) => {
             row.style.display = "";
             const cells = row.querySelectorAll("td");
