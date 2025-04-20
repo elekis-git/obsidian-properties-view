@@ -216,7 +216,7 @@ export class GlobalPropertiesView extends ItemView {
 		this.columnsMapping = this.buildFileProperties();
 
 		// Ajoute les colonnes fixes au début
-		this.columnsMapping.unshift(new FileColumn("Fichier", this.app));
+		this.columnsMapping.unshift(new FileColumn("Fichier", this.app, this.settings.showFilePreviewInTextColumn));
 		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
 		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
 

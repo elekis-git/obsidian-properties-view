@@ -42,7 +42,7 @@ export default class TextColumn extends BasedTextColumn {
         if (value == null) cell.classList.add("ptp-global-table-td-empty");
         else cell.classList.remove("ptp-global-table-td-empty");
         v2 = this.decodeEmojisInText(v2);
-        const displayDiv = cell.createEl("div", { cls: "ptp-markdown-preview" });
+        const displayDiv = cell.createEl("div", { cls: "ptp-text-preview" });
 
         const renderMarkdown = () => {
             displayDiv.empty();
@@ -63,7 +63,7 @@ export default class TextColumn extends BasedTextColumn {
         };
         renderMarkdown();
 
-        const input = cell.createEl("input", { type: "text", cls: "markdown-input" });
+        const input = cell.createEl("input", { type: "text", cls: "ptp-text-preview" });
         input.value = v2;
         input.style.display = "none";
 

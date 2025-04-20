@@ -68,17 +68,28 @@
 }
 
 .ptp-td-container {
-  position: relative;
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-  overflow-wrap: break-word; /* Alternative pour la compatibilité */
-  word-wrap: break-word; /* Force le retour à la ligne si nécessaire */
-  /*  min-width: 100px; /* Garantir qu'il n'y ait pas de largeur minimale définie qui bloque l'extension */
-  max-width: 300px; /* Limite la largeur maximale à 300px */
-  width: auto; /* Permet à la largeur de s'ajuster au contenu */
-  overflow: hidden; /* Cache les éléments qui dépassent la largeur maximale */
+	position: relative;
+	border: 1px solid #ccc;
+	padding: 8px;
+	text-align: left; /* ← Plus lisible pour du texte */
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	width: auto;
+	overflow: hidden;
 }
+.ptp-text-preview {
+	margin-top: 4px;
+	font-size: 0.85em;
+	max-width: 500px;
+    min-width: 300px;
+	color: var(--text-muted);
+	white-space: normal;        /* Assure le retour à la ligne */
+	overflow-wrap: break-word;  /* Coupe proprement si besoin */
+	word-break: break-word;     /* Forcer la casse au besoin */
+	text-align: left;           /* Plus naturel pour des blocs de texte */
+}
+
+
 
 /* Bouton de suppression des filtres */
 .ptp-filter-button {

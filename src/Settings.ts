@@ -4,10 +4,12 @@ import GlobalPropertiesPlugin from "main";
 
 export interface GlobalPropertiesSettings {
 	shouldAddRibbon : boolean;
+	showFilePreviewInTextColumn: boolean; // <--- Nouveau paramètre
 }
 
 export const DEFAULT_SETTINGS: GlobalPropertiesSettings = {
-	shouldAddRibbon : false
+	shouldAddRibbon : false,
+	showFilePreviewInTextColumn: true, // <--- Valeur par défaut
 };
 
 export class GlobalPropertiesSettingTab extends PluginSettingTab {
@@ -32,6 +34,19 @@ export class GlobalPropertiesSettingTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			})
 		);
+		
+		new Setting(containerEl)
+	.setName("Show begin file in file column")
+	.setDesc("If enabled, the beginning of the file will be displayed in file columns.")
+	.addToggle(toggle => 
+		toggle
+			.setValue(this.plugin.settings.showFilePreviewInTextColumn)
+			.onChange(async (value) => {
+				this.plugin.settings.showFilePreviewInTextColumn = value;
+				await this.plugin.saveSettings();
+			})
+	);
+		
 		
 	}
 }
