@@ -49,6 +49,7 @@ export default class IntColumn extends Column {
     }
 
     public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
+        this.isSortedAsc = asc; 
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex];
             const cellB = b.getElementsByTagName("td")[this.columnIndex];

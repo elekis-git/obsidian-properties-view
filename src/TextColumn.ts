@@ -64,9 +64,6 @@ export default class TextColumn extends BasedTextColumn {
         };
         renderMarkdown();
 
-//        const displayDiv = cell.createEl("div", { cls: "ptp-markdown-preview" });
-//        this.renderMarkdownToDiv(displayDiv, v2, file);
-
         const input = cell.createEl("input", { type: "text", cls: "ptp-text-preview" });
         input.value = v2;
         input.style.display = "none";

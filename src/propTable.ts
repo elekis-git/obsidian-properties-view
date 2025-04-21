@@ -39,10 +39,12 @@ export class GlobalPropertiesView extends ItemView {
 	private folderPath: string = "/";
 	private tablecreated = false;
 	private settings;
+	private sortedColumn : null|IColumn;
 
 	constructor(leaf: WorkspaceLeaf, setting: GlobalPropertiesSettings) {
 		super(leaf);
 		this.settings = setting;
+		this.sortedColumn = null; 
 	}
 
 	public rebuildTheView() {
@@ -142,7 +144,6 @@ export class GlobalPropertiesView extends ItemView {
 		buttonGlobF.appendChild(icon2Container);
 		buttonGlobF.addEventListener("click", async (event) => {
 			event.preventDefault();
-			console.log("clearAllFilter");
 			this.clearAllFilters();
 		});
 
@@ -199,6 +200,7 @@ export class GlobalPropertiesView extends ItemView {
 		this.buildTableBody();
 		this.applyVisibility();
 		this.addZoomFeature();
+		if(this.sortedColumn != null) this.sortTable(this.sortedColumn, this.sortedColumn.getSortedAsc());
 		contentEl.scrollTop = 0;
 	}
 
@@ -427,7 +429,6 @@ export class GlobalPropertiesView extends ItemView {
 		let allowedValues = col.getUniqDisplayValuesFiltered(this.getRows());
 
 		const modal = new FilterModal(this.app, col, allowedValues, (selectedValues: any[]) => {
-			console.log(selectedValues);
 			col.setFilter(selectedValues);
 			this.reapplyAllFilters();
 			this.updateFilterButtonStyles();
@@ -480,6 +481,7 @@ export class GlobalPropertiesView extends ItemView {
 		if (!tbody) return;
 		const rows = Array.from(tbody.getElementsByTagName("tr"));
 		tbody.append(...col.sortRows(rows, asc));
+		this.sortedColumn = col;
 	}
 
 	private addZoomFeature() {

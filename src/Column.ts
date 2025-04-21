@@ -10,6 +10,7 @@ export interface IColumn {
     columnId: string;
     cnt: number;
     visible: boolean;
+    isSortedAsc: boolean;
 
     setV(a: boolean): void;
     getV(): boolean;
@@ -20,6 +21,8 @@ export interface IColumn {
 
     setPropertyName(a: string): void;
     getPropertyName(): string;
+
+    getSortedAsc(): boolean;
 
     print(): void;
 
@@ -58,6 +61,7 @@ export default abstract class Column implements IColumn {
     columnId: string;
     cnt: number;
     visible: boolean;
+    isSortedAsc: boolean;
 
     constructor(pname: string, app: App) {
         this.app = app;
@@ -68,6 +72,7 @@ export default abstract class Column implements IColumn {
         this.columnId = "";
         this.cnt = 0;
         this.visible = true;
+        this.isSortedAsc = true;
     }
 
     public extractCells(rows: HTMLElement[]): HTMLElement[] {
@@ -79,7 +84,7 @@ export default abstract class Column implements IColumn {
         });
         return values;
     }
-    
+
     public applyV(rows: HTMLElement[]) {
         let cells = this.extractCells(rows);
         cells.forEach((c) => {
@@ -109,6 +114,10 @@ export default abstract class Column implements IColumn {
     }
     public getCnt(): number {
         return this.cnt;
+    }
+
+    public getSortedAsc(): boolean {
+        return this.isSortedAsc;
     }
 
     public setId(a: string) {
@@ -141,6 +150,7 @@ export default abstract class Column implements IColumn {
     }
 
     public setStrType(a: string): void {}
+    
     public getStrType(): string {
         return "";
     }
@@ -201,6 +211,7 @@ export default abstract class Column implements IColumn {
     }
 
     public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
+        this.isSortedAsc = asc;
         return rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";

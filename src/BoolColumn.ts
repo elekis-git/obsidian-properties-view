@@ -10,6 +10,7 @@ export default class BoolColumn extends Column {
         return "Bool";
     }
     public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
+        this.isSortedAsc = asc; 
         return rows.sort((a, b) => {
             // Récupère les cases à cocher (checkbox) dans les cellules
             const cellA = a.getElementsByTagName("td")[this.columnIndex];

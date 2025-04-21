@@ -29,6 +29,7 @@ export default class IDColumn extends Column {
         return "ID";
     }
     public sortRows(rows : HTMLElement[], asc:boolean) : HTMLElement[] {
+        this.isSortedAsc = asc; 
         rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
