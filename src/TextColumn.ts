@@ -23,8 +23,7 @@ export default class TextColumn extends BasedTextColumn {
     public getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[] {
         return super.getUniqDisplayValuesBasedOnSelector(rows, "input");
     }
-    
-    
+
     public sortRows(rows: HTMLElement[], asc: boolean): HTMLElement[] {
         return super.sortRows(rows, asc);
     }
@@ -38,6 +37,8 @@ export default class TextColumn extends BasedTextColumn {
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {
         cell.empty();
+        cell.style.position = "relative";
+
         let v2 = value != null ? String(value) : "";
         if (value == null) cell.classList.add("ptp-global-table-td-empty");
         else cell.classList.remove("ptp-global-table-td-empty");
@@ -63,9 +64,27 @@ export default class TextColumn extends BasedTextColumn {
         };
         renderMarkdown();
 
+//        const displayDiv = cell.createEl("div", { cls: "ptp-markdown-preview" });
+//        this.renderMarkdownToDiv(displayDiv, v2, file);
+
         const input = cell.createEl("input", { type: "text", cls: "ptp-text-preview" });
         input.value = v2;
         input.style.display = "none";
+        cell.appendChild(input);
+
+        const suggestionBox = createDiv({ cls: "ptp-suggestion-box" });
+        suggestionBox.style.display = "none";
+        cell.appendChild(suggestionBox);
+
+        const context = {
+            currentIndex: -1,
+            matches: [] as TFile[],
+            suggestMenu: null as HTMLDivElement | null,
+            suggestionBox
+        };
+
+        input.addEventListener("input", () => this.onInput(input, context));
+        input.addEventListener("keydown", (e) => this.onKeydown(e, input, context));
 
         cell.addEventListener("dblclick", () => {
             displayDiv.style.display = "none";
@@ -74,20 +93,19 @@ export default class TextColumn extends BasedTextColumn {
         });
 
         input.addEventListener("focus", () => {
-            input.dataset.oldValue = input.value; // Stocke l'ancienne valeur
+            input.dataset.oldValue = input.value;
         });
 
         input.addEventListener("blur", async () => {
             value = input.value;
-            let oldValue = input.dataset.oldValue; // Récupère l'ancienne valeur
+            const oldValue = input.dataset.oldValue;
             displayDiv.style.display = "block";
             input.style.display = "none";
-            renderMarkdown();
+            suggestionBox.style.display = "none";
+            this.renderMarkdownToDiv(displayDiv, String(value), file);
             this.fillCell(cell, file, prop, value);
             if (oldValue !== value)
                 await this.updateYamlProperty(file.path, prop, value == null ? "" : value.toString(), "update");
-            
         });
-        cell.appendChild(input);
     }
 }

@@ -315,7 +315,39 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 24px;
+	width: 36px;
+	height: 36px;
 }
+
+.link-suggest-menu {
+  background-color: var(--background-primary); /* même fond que les modals */
+  color: var(--text-normal);                   /* texte par défaut */
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: var(--shadow-s);
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+  z-index: 1000;
+  position: "absolute"
+            
+}
+
+.link-suggest-menu .suggestion-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.link-suggest-menu .suggestion-item:hover,
+.link-suggest-menu .suggestion-item.selected {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+
+
+
+
 
