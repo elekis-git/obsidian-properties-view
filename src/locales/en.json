@@ -1,0 +1,7 @@
+{
+  "plugin.name": "Folder Property Manager",
+  "column.dir": "directories",
+  "column.file": "files",
+  "column.id": "id"
+
+}

@@ -29,6 +29,9 @@ import IDColumn from "./IDColumn";
 import ListColumn from "./ListColumn";
 import IntColumn from "./IntColumn";
 
+import { I18n } from "./i18n";
+
+
 export class GlobalPropertiesView extends ItemView {
 	fileProperties: any[] = [];
 	public static GLOBAL_PROPERTIES_VIEW = "glbVeID";
@@ -40,11 +43,13 @@ export class GlobalPropertiesView extends ItemView {
 	private tablecreated = false;
 	private settings;
 	private sortedColumn : null|IColumn;
+	private i18n: I18n;
 
 	constructor(leaf: WorkspaceLeaf, setting: GlobalPropertiesSettings) {
 		super(leaf);
 		this.settings = setting;
 		this.sortedColumn = null; 
+		this.i18n = new I18n(this.app);
 	}
 
 	public rebuildTheView() {
@@ -218,8 +223,8 @@ export class GlobalPropertiesView extends ItemView {
 		this.columnsMapping = this.buildFileProperties();
 
 		// Ajoute les colonnes fixes au début
-		this.columnsMapping.unshift(new FileColumn("Fichier", this.app, this.settings.showFilePreviewInTextColumn));
-		this.columnsMapping.unshift(new DirColumn("Dossier", this.app));
+		this.columnsMapping.unshift(new FileColumn(this.i18n.t("column.file"), this.app, this.settings.showFilePreviewInTextColumn));
+		this.columnsMapping.unshift(new DirColumn(this.i18n.t("column.dir"), this.app));
 		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
 
 		if (oldOrder.length > 0) {
@@ -254,6 +259,7 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	async onOpen() {
+		
 		console.log("onOpen");
 	}
 

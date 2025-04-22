@@ -1,6 +1,6 @@
-# Obsidian Plugin: obsidian-properties-view
+# Obsidian Plugin: Property That Folder
 
-## EN DEVELOPPEMENT...
+![option](sc0.png)
 ![matrix property view](sc1.png)
 
 ## 🚀 Overview
@@ -14,6 +14,7 @@ The Usual.
 ## 📌 Usage
 - **Right clic on a directory -> Properties that folder.
 - **Click on 3 dots next to property column
+- **double click to change a value.
 
 
 ## 📝 Contributing

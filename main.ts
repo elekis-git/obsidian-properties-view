@@ -39,7 +39,7 @@ export default class GlobalPropertiesPlugin extends Plugin {
 			this.app.workspace.on("file-menu", (menu: Menu, file) => {
 				if (file instanceof TFolder) {
 					menu.addItem((item) => {
-						item.setTitle("Properties that Folder")
+						item.setTitle("Property that folder")
 							.setIcon("wrench")
 							.onClick(() => {
 								this.openTab(file);

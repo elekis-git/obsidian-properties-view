@@ -1,9 +1,9 @@
 {
-	"id": "proptable",
+	"id": "FolderPropertiesManager",
 	"name": "Folder Property Manager",
-	"version": "0.0.6",
+	"version": "1.0.0",
 	"minAppVersion": "0.0.1",
-	"description": "Manage Properties per folder",
+	"description": "Get a view of all properties of a folder",
 	"author": "elekis",
 	"authorUrl": "https://www.elekis.net",
 	"fundingUrl": "na",
