@@ -2,6 +2,9 @@
   "plugin.name": "Folder Property Manager",
   "column.dir": "directories",
   "column.file": "files",
-  "column.id": "id"
+  "column.id": "id",
+  "newFileName.titleH2": "Enter filename",
+  "newFileName.choose": "Choose Properties to create with",
+    "newFileName.errorfilename": "Invalid name: must not be empty and must not contain / or \\."
 
 }

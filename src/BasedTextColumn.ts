@@ -55,18 +55,12 @@ export default abstract class BasedTextColumn extends Column {
         cursorPos: number,
         context: any
     ) {
-        // Insérer la suggestion à la position du curseur
         const valueBefore = input.value.slice(0, cursorPos);
         const valueAfter = input.value.slice(cursorPos);
         input.value = valueBefore + suggestion + valueAfter;
 
-        // Mettre à jour la position du curseur
         input.selectionStart = input.selectionEnd = valueBefore.length + suggestion.length;
-
-        // Garder le focus sur l'élément (input ou textarea)
         input.focus();
-
-        // Masquer le menu de suggestions après l'insertion
         if (context.suggestMenu) {
             context.suggestMenu.style.display = "none"; // Cache le menu
         }
@@ -74,7 +68,7 @@ export default abstract class BasedTextColumn extends Column {
 
     protected onInput(input: HTMLInputElement | HTMLTextAreaElement, context: any) {
         if (!input || !(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) {
-            return; // On ne fait rien si ce n'est ni un input ni un textarea
+            return;
         }
 
         const cursorPos = input.selectionStart || 0;
@@ -108,10 +102,6 @@ export default abstract class BasedTextColumn extends Column {
             context.suggestMenu.empty();
             context.matches.forEach((f: TFile, index: number) => {
                 const item = createDiv({ text: f.path, cls: "suggestion-item" });
-                item.style.padding = "4px";
-                item.style.cursor = "pointer";
-
-                // Remplacer l'eventListener de souris pour insérer la suggestion et cacher le menu
                 item.addEventListener("mousedown", (e) => {
                     e.preventDefault(); // Empêche la perte de focus
                     const cursorPos = input.selectionStart || 0;

@@ -6,6 +6,20 @@
   color: #555;
 }
 
+.ptp-table-container {
+  overflow: auto;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Table avec zoom */
+.ptp-zoomed-table {
+  transform-origin: top left;
+  /* Le scale sera appliqué dynamiquement via JS */
+}
+
+
 .ptp-global-table {
   width: 100%;
   border-collapse: collapse;
@@ -87,9 +101,12 @@
 	overflow-wrap: break-word;  /* Coupe proprement si besoin */
 	word-break: break-word;     /* Forcer la casse au besoin */
 	text-align: left;           /* Plus naturel pour des blocs de texte */
+    display : none;
 }
 
-
+.ptp-suggestion-box{
+  display : none; 
+}
 
 /* Bouton de suppression des filtres */
 .ptp-filter-button {
@@ -346,6 +363,62 @@
   color: var(--text-normal);
 }
 
+/* Titre principal */
+.ptp-modal-title {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+}
+
+/* Champ de saisie */
+.ptp-modal-input {
+  width: 100%;
+  padding: 6px;
+  font-size: 1em;
+  margin-bottom: 1em;
+  box-sizing: border-box;
+}
+
+/* Message d'erreur */
+.ptp-modal-error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Titre des propriétés */
+.ptp-modal-subtitle {
+  font-size: 1.2em;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Conteneur de checkboxes */
+.ptp-checkbox-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Espacement entre checkbox et son label */
+.ptp-checkbox-label {
+  margin-left: 5px;
+}
+
+/* Conteneur des boutons */
+.ptp-button-container {
+  margin-top: 10px;
+}
+
+/* Boutons */
+.ptp-button {
+  padding: 6px 12px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.ptp-button + .ptp-button {
+  margin-left: 10px;
+}
 
 
 

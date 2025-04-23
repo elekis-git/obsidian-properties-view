@@ -37,7 +37,6 @@ export default class TextColumn extends BasedTextColumn {
 
     public fillCell(cell: HTMLElement, file: TFile, prop: string, value: Object | null) {
         cell.empty();
-        cell.style.position = "relative";
 
         let v2 = value != null ? String(value) : "";
         if (value == null) cell.classList.add("ptp-global-table-td-empty");
@@ -66,11 +65,11 @@ export default class TextColumn extends BasedTextColumn {
 
         const input = cell.createEl("input", { type: "text", cls: "ptp-text-preview" });
         input.value = v2;
-        input.style.display = "none";
+//        input.style.display = "none";
         cell.appendChild(input);
 
         const suggestionBox = createDiv({ cls: "ptp-suggestion-box" });
-        suggestionBox.style.display = "none";
+//        suggestionBox.style.display = "none";
         cell.appendChild(suggestionBox);
 
         const context: {

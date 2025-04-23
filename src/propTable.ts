@@ -31,7 +31,6 @@ import IntColumn from "./IntColumn";
 
 import { I18n } from "./i18n";
 
-
 export class GlobalPropertiesView extends ItemView {
 	fileProperties: any[] = [];
 	public static GLOBAL_PROPERTIES_VIEW = "glbVeID";
@@ -42,14 +41,13 @@ export class GlobalPropertiesView extends ItemView {
 	private folderPath: string = "/";
 	private tablecreated = false;
 	private settings;
-	private sortedColumn : null|IColumn;
-	private i18n: I18n;
+	private sortedColumn: null | IColumn;
 
 	constructor(leaf: WorkspaceLeaf, setting: GlobalPropertiesSettings) {
 		super(leaf);
 		this.settings = setting;
-		this.sortedColumn = null; 
-		this.i18n = new I18n(this.app);
+		this.sortedColumn = null;
+		I18n.init(this.app);
 	}
 
 	public rebuildTheView() {
@@ -203,7 +201,7 @@ export class GlobalPropertiesView extends ItemView {
 		this.buildTableBody();
 		this.applyVisibility();
 		this.addZoomFeature();
-		if(this.sortedColumn != null) this.sortTable(this.sortedColumn, this.sortedColumn.getSortedAsc());
+		if (this.sortedColumn != null) this.sortTable(this.sortedColumn, this.sortedColumn.getSortedAsc());
 		contentEl.scrollTop = 0;
 	}
 
@@ -221,8 +219,10 @@ export class GlobalPropertiesView extends ItemView {
 		this.columnsMapping = this.buildFileProperties();
 
 		// Ajoute les colonnes fixes au début
-		this.columnsMapping.unshift(new FileColumn(this.i18n.t("column.file"), this.app, this.settings.showFilePreviewInTextColumn));
-		this.columnsMapping.unshift(new DirColumn(this.i18n.t("column.dir"), this.app));
+		this.columnsMapping.unshift(
+			new FileColumn(I18n.I().t("column.file"), this.app, this.settings.showFilePreviewInTextColumn)
+		);
+		this.columnsMapping.unshift(new DirColumn(I18n.I().t("column.dir"), this.app));
 		this.columnsMapping.unshift(new IDColumn("⇅", this.app));
 
 		if (oldOrder.length > 0) {
@@ -256,8 +256,7 @@ export class GlobalPropertiesView extends ItemView {
 		this.createHTMLTablePropView();
 	}
 
-	async onOpen() {
-	}
+	async onOpen() {}
 
 	private detectPropertyType(key: string, value: any, pMap: Map<string, IColumn | null>): IColumn | null {
 		const isDate = (value: string): boolean => {
@@ -488,14 +487,12 @@ export class GlobalPropertiesView extends ItemView {
 	private addZoomFeature() {
 		const container = this.table.parentElement;
 		if (!container) return;
-		container.style.overflow = "auto";
-		container.style.overflowX = "auto"; // Assurer que le scroll horizontal est activé
-		container.style.whiteSpace = "nowrap"; // Empêcher le retour à la ligne
-		container.style.maxWidth = "100%"; // Éviter que le conteneur soit plus petit que la table
 
-		// Appliquer le zoom
+		container.classList.add("ptp-table-container");
+		this.table.classList.add("ptp-zoomed-table");
+
+		// Appliquer dynamiquement le zoom
 		this.table.style.transform = `scale(${this.scale})`;
-		this.table.style.transformOrigin = "top left";
 
 		this.table.addEventListener("wheel", (event) => {
 			if (event.shiftKey) {

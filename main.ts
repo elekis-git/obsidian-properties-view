@@ -5,7 +5,7 @@ import { GlobalPropertiesSettings, GlobalPropertiesSettingTab, DEFAULT_SETTINGS 
 export default class GlobalPropertiesPlugin extends Plugin {
 	settings: GlobalPropertiesSettings;
 	ribbonIconEl: HTMLElement | null = null; // Stocker l'élément du ribbon :
-	
+
 	async updateRibbon() {
 		if (this.settings.shouldAddRibbon) {
 			if (!this.ribbonIconEl) {
@@ -103,10 +103,7 @@ export default class GlobalPropertiesPlugin extends Plugin {
 
 		const newView = newLeaf.view;
 		if (newView instanceof GlobalPropertiesView) {
-			console.log("Vue correctement récupérée :", newView);
 			newView.createTablePropView();
-		} else {
-			console.error("Vue non reconnue !");
 		}
 	}
 }
