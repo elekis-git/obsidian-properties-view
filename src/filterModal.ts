@@ -70,7 +70,6 @@ export class FilterModal extends Modal {
   }
 
   private createDateRangeFilter(contentEl: HTMLElement) {
-    console.log("createDateRag")
     const { allowedValues } = this;
     const validDates = allowedValues.map((date) => new Date(date)).filter((date) => !isNaN(date.getTime()));
 
@@ -124,14 +123,12 @@ export class FilterModal extends Modal {
 
     const filterButton = contentEl.createEl("button", { text: "Filtrer", cls: "ptp-filter-button" });
     filterButton.addEventListener("click", () => {
-      console.log("ici3");
       this.onSubmit(Array.from(this.selectedValues));
       this.close();
     });
 
     const clearButton = contentEl.createEl("button", { text: "Clear Filter", cls: "ptp-filter-button" });
     clearButton.addEventListener("click", () => {
-      console.log("ici2");
       this.onSubmit([]);
       this.close();
     });

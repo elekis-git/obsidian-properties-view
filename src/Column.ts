@@ -24,8 +24,6 @@ export interface IColumn {
 
     getSortedAsc(): boolean;
 
-    print(): void;
-
     addCnt1(): void;
     getCnt(): number;
     setCnt(a: number): void;
@@ -93,14 +91,6 @@ export default abstract class Column implements IColumn {
         });
     }
 
-    public print() {
-        console.log("*************************");
-        console.log("prb : ", this.getPropertyName());
-        console.log("cnt : ", this.getCnt());
-        console.log("Id  : ", this.getId());
-        console.log("Idx : ", this.getIndex());
-        console.log("-------------------------");
-    }
 
     abstract getUniqDisplayValuesFiltered(rows: HTMLElement[]): any[];
     abstract fillCell(cell: HTMLElement, file: any, prop: any, value: any): void;
@@ -215,7 +205,6 @@ export default abstract class Column implements IColumn {
         return rows.sort((a, b) => {
             const cellA = a.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
             const cellB = b.getElementsByTagName("td")[this.columnIndex]?.textContent?.trim().toLowerCase() || "";
-            console.log("->", cellA, cellB, cellA.localeCompare(cellB), cellB.localeCompare(cellA));
             return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
         });
     }

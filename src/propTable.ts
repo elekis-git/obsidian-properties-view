@@ -78,7 +78,6 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	async setState(state: any, result: ViewStateResult): Promise<void> {
-		console.log("setState");
 		if (state.folderPath) {
 			this.folderPath = state.folderPath;
 		}
@@ -86,7 +85,6 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	getState(): any {
-		console.log("getState");
 		const state = { folderPath: this.folderPath };
 		return state;
 	}
@@ -259,8 +257,6 @@ export class GlobalPropertiesView extends ItemView {
 	}
 
 	async onOpen() {
-		
-		console.log("onOpen");
 	}
 
 	private detectPropertyType(key: string, value: any, pMap: Map<string, IColumn | null>): IColumn | null {
@@ -468,7 +464,6 @@ export class GlobalPropertiesView extends ItemView {
 	private buildTableBody() {
 		if (!this.table) return;
 		const tbody = this.table.createEl("tbody", { cls: "ptp-tbody-container" });
-		//		console.log(this.fileProperties);
 		for (const { file, props } of this.fileProperties) {
 			const tr = tbody.createEl("tr");
 

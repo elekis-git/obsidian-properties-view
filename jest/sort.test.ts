@@ -24,7 +24,6 @@ describe("SortAlgo", () => {
         expect(cells).toEqual([4, 5, 7, 8, 3, 9, 2, 1, 10, 6]);
         column.sortRows(rows, true);
         cells = rows.map((row) => Number(row.querySelectorAll("td")[0].textContent));
-        console.log(cells)
         expect(cells).toEqual([6,10,1,2,9,3,4,5,7,8]);
     });
 

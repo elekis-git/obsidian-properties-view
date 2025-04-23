@@ -12,7 +12,6 @@ describe("Test my plugin", function () {
         try {
             await fs.emptyDir(vaultTest);
             await fs.copy(vaultTestFile, vaultTest);
-            console.log("vaultTest a été réinitialisé avec le contenu de vaultTestFile");
         } catch (error) {
             console.error("Erreur lors de la préparation du test :", error);
         }
