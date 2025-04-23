@@ -73,10 +73,15 @@ export default class TextColumn extends BasedTextColumn {
         suggestionBox.style.display = "none";
         cell.appendChild(suggestionBox);
 
-        const context = {
+        const context: {
+            currentIndex: number;
+            matches: TFile[];
+            suggestMenu: HTMLDivElement | null;
+            suggestionBox: HTMLDivElement;
+        } = {
             currentIndex: -1,
-            matches: [] as TFile[],
-            suggestMenu: null as HTMLDivElement | null,
+            matches: [],
+            suggestMenu: null,
             suggestionBox
         };
 
